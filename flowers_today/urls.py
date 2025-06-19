@@ -23,6 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #modificar despues
     path('',lambda request: redirect('login')),
-    path('login/',Login,name='login'),
-    path('crear_cuenta/',Crear_Cuenta,name='registro')
+    path('login/',Vista_Login,name='login'),
+    path('crear_cuenta/',Vista_Crear_Cuenta,name='registro')
 ]
