@@ -8,3 +8,6 @@ para poder iniciar sesion.
 """
 def Login(request):
     return render(request,'login.html')
+
+def Crear_Cuenta(request):
+    return render(request,'registro.html')

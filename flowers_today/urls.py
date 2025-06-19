@@ -24,4 +24,5 @@ urlpatterns = [
     #modificar despues
     path('',lambda request: redirect('login')),
     path('login/',Login,name='login'),
+    path('crear_cuenta/',Crear_Cuenta,name='registro')
 ]

@@ -24,9 +24,10 @@
                     <input type="checkbox" class="form-check-input" id="rememberMe">
                     <label class="form-check-label" for="rememberMe">Recuérdame</label>
                 </div>
-                <button type="submit" id="btn" class="btn w-100 text-white rounded-pill" style="background-color: #6C2DC7;">Iniciar sesión</button>
+                <button type="submit" id="btn" class="btn w-100 bg-dark text-white rounded-pill" style="background-color: #6C2DC7;">Iniciar sesión</button>
                 <div class="text-center mt-3">
-                    <a href="#" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
+                    <a href="{% url 'registro' %}" id="btn" class="btn w-100 text-white rounded-pill mb-3" style="background-color: #6C2DC7;">Crear Cuenta</a>
+                    <a href="#" class="text-decoration-none text-dark">¿Olvidaste Tu Contraseña?</a>
                 </div>
             </form>
             <div>
