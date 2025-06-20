@@ -45,21 +45,16 @@
           </div>
         </div>
       </form>
-
-      {% if messages %}
-        {% for message in messages %}
-          <div class="mt-3 alert 
-            {% if 'success' in message.tags %}alert-success
-            {% elif 'error' in message.tags or 'danger' in message.tags %}alert-danger alert-dismissible fade show
-            {% elif 'warning' in message.tags or 'warning' in message.tags %}alert-warning alert-dismissible fade show
-            {% else %}alert-info
-            {% endif %}" 
-            role="alert">
-            {{ message }}  
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        {% endfor %}
-      {% endif %}
+      <div>
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
     </div>
   </div>
 

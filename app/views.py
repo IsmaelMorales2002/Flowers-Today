@@ -28,4 +28,7 @@ def Crear_Cuenta_Cliente(request):
     password = request.POST.get('txtPasswordN','').strip()
 
     if not all([nombre,apellido,telefono,correo,password]):
-        return JsonResponse({'Ok': False, 'mensaje':'Todos los campos son obligatorios'})
+        messages.warning(request,'Porfavor No Dejar Campos En Blanco')
+        return redirect('registro')
+    
+    return redirect('login')
