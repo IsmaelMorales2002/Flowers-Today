@@ -27,8 +27,47 @@ def Crear_Cuenta_Cliente(request):
     correo = request.POST.get('txtCorreoN','').strip()
     password = request.POST.get('txtPasswordN','').strip()
 
+    contexto = {
+        'nombre': nombre,
+        'apellido': apellido,
+        'telefono': telefono,
+        'correo': correo,
+    }
+
     if not all([nombre,apellido,telefono,correo,password]):
         messages.warning(request,'Porfavor No Dejar Campos En Blanco')
-        return redirect('registro')
+        return render(request,'registro.html',contexto)
     
+    #Creacion de registro en tabla Rol en Base De Datos
+    try:
+        rol = Rol(
+            nombre_rol = 'C'
+        )
+    #Termina la creacion del registro Rol
+
+    #Verificacion de correo y telefono existente
+        datosExistentes = Usuario.objects.filter(Q(correo_usuario = correo) | Q(telefono_usuario = telefono))
+        if datosExistentes:
+            messages.warning(request,'!Correo o Telefono, ya registrado!')
+            return render(request,'registro.html',contexto)
+
+    #Creacion de registo en tabla Usuario en Base De Datos
+        cliente = Usuario(
+            id_rol = rol,
+            nombre_usuario = nombre,
+            apellido_usuario = apellido,
+            correo_usuario = correo,
+            password_usuario = password,
+            telefono_usuario = telefono,
+            usuario_activo = True
+        )
+    #Termina la creacion del registro Usuario
+    #Si todo salio bien , vamos a guardar todo en base de datos
+        rol.save()
+        cliente.save()
+        messages.success(request,'!Cuenta Creada Con Exito!')
+
+    except Exception:
+        messages.error(request,'!Error!, Cuenta no creada')
+
     return redirect('login')
