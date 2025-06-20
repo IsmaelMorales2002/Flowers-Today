@@ -69,7 +69,7 @@ def Crear_Cuenta_Cliente(request):
         rol.save()
         cliente.save()
         messages.success(request,'!Cuenta Creada Con Exito!')
-
+        return redirect('login')
     except Exception:
         messages.error(request,'!Error!, Cuenta no creada')
 
