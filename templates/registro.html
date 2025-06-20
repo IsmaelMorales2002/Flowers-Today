@@ -12,7 +12,7 @@
   <div class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="card shadow p-4 w-100" style="max-width: 500px; border-radius: 12px;">
       <h3 class="text-center mb-2">Crear Cuenta</h3>
-      <form method="post" action="#">{% csrf_token %}
+      <form method="post" action="{% url 'CrearCuenta' %}">{% csrf_token %}
         <div class="row g-3">
           <div class="col-md-6">
             <label for="nombre" class="form-label">Nombre</label>
@@ -54,11 +54,13 @@
         {% for message in messages %}
           <div class="mt-3 alert 
             {% if 'success' in message.tags %}alert-success
-            {% elif 'error' in message.tags or 'danger' in message.tags %}alert-danger
+            {% elif 'error' in message.tags or 'danger' in message.tags %}alert-danger alert-dismissible fade show
+            {% elif 'warning' in message.tags or 'warning' in message.tags %}alert-warning alert-dismissible fade show
             {% else %}alert-info
             {% endif %}" 
             role="alert">
-            {{ message }}
+            {{ message }}  
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         {% endfor %}
       {% endif %}
