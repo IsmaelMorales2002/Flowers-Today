@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib import messages
 from .models import *
 from django.db.models import Q
-from django.http import JsonResponse
+from django.contrib.auth.hashers import make_password,check_password
 
 # Create your views here.
 
@@ -25,7 +25,7 @@ def Crear_Cuenta_Cliente(request):
     apellido = request.POST.get('txtApellidoN','').strip()
     telefono = request.POST.get('txtTelefonoN','').strip()
     correo = request.POST.get('txtCorreoN','').strip()
-    password = request.POST.get('txtPasswordN','').strip()
+    password_plano = request.POST.get('txtPasswordN','').strip()
 
     contexto = {
         'nombre': nombre,
@@ -34,7 +34,7 @@ def Crear_Cuenta_Cliente(request):
         'correo': correo,
     }
 
-    if not all([nombre,apellido,telefono,correo,password]):
+    if not all([nombre,apellido,telefono,correo,password_plano]):
         messages.warning(request,'Porfavor No Dejar Campos En Blanco')
         return render(request,'registro.html',contexto)
     
@@ -50,6 +50,9 @@ def Crear_Cuenta_Cliente(request):
         if datosExistentes:
             messages.warning(request,'!Correo o Telefono, ya registrado!')
             return render(request,'registro.html',contexto)
+
+        #Cifrar Contraseña
+        password = make_password(password_plano)
 
     #Creacion de registo en tabla Usuario en Base De Datos
         cliente = Usuario(

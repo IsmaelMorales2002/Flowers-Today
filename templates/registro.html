@@ -28,12 +28,12 @@
           </div>
           <div class="col-12">
             <label for="email" class="form-label">Correo electrónico</label>
-            <input type="email" value="{{correo}}" class="form-control" id="email" placeholder="Ingrese su correo electrónico" required name="txtCorreoN">
+            <input type="email" value="{{correo}}" class="form-control" id="email" placeholder="Ingrese su correo electrónico" name="txtCorreoN" required>
           </div>
           <div class="col-12">
             <label for="password" class="form-label">Contraseña</label>
             <div class="input-group">
-              <input type="password" class="form-control" id="password" placeholder="Ingrese una contraseña" required name="txtPasswordN">
+              <input type="password" class="form-control" id="password" placeholder="Ingrese una contraseña" name="txtPasswordN" maxlength="10" minlength="8" required>
               <button type="button" class="btn btn-outline-secondary" id="togglePassword">Mostrar</button>
             </div>
           </div>
