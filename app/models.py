@@ -19,7 +19,7 @@ class Usuario(models.Model):
     nombre_usuario = models.CharField(max_length=50,verbose_name='Nombre')
     apellido_usuario = models.CharField(max_length=50,verbose_name='Apellido')
     correo_usuario = models.CharField(max_length=100,verbose_name='Correo Electronico')
-    password_usuario = models.CharField(max_length=15,verbose_name='Contraseña')
+    password_usuario = models.CharField(max_length=150,verbose_name='Contraseña')
     telefono_usuario = models.CharField(max_length=10,verbose_name='Telefono')
     imagen_usuario = models.ImageField(blank=True,verbose_name='Imagen Usuario')
     usuario_activo = models.BooleanField(verbose_name='Cuenta Activa')
