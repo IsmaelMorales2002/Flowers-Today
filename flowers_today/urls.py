@@ -12,6 +12,7 @@ urlpatterns = [
     path('crear_cuenta/',Vista_Crear_Cuenta,name='registro'),
     path('inicio/',Vista_Inicio,name='inicio'),
     #Logico
+    path('IniciarSesion/',Iniciar_Sesion,name='IniciarSesion'),
     path('CrearCuenta/',Crear_Cuenta_Cliente,name='CrearCuenta'),
     path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion')
     #Endpoints

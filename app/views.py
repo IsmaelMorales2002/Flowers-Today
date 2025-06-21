@@ -79,7 +79,7 @@ def Crear_Cuenta_Cliente(request):
         rol.save()
         cliente.save()
         messages.success(request,'!Cuenta Creada Con Exito!')
-        request.session['correo_usuario'] = cliente.correo_usuario
+        request.session['usuario_correo'] = cliente.correo_usuario
         return redirect('inicio')
     except Exception as e:
         messages.error(request,'!Error!, Cuenta no creada')
@@ -93,7 +93,37 @@ def Vista_Inicio(request):
         'correo': correo
     })
 
+"""Funcion: Iniciar_Sesion
+Descripcion:
+Verifica que el correo y contraseña sean los correcto para darle acceso al sistema
+"""
+def Iniciar_Sesion(request):
+    correo = request.POST.get('txtCorreo')
+    password = request.POST.get('txtPassword')
+
+    try:
+        usuario = Usuario.objects.get(correo_usuario = correo)
+        
+        #Verificacion de contraseña
+        if check_password(password,usuario.password_usuario):
+            #Session para guardar informacion del cliente
+            request.session['usuario_nombre'] = usuario.nombre_usuario
+            request.session['usuario_apellido'] = usuario.apellido_usuario
+            request.session['usuario_correo'] = usuario.correo_usuario
+            return redirect('inicio')
+        else:
+            messages.warning(request,'Credenciales Incorrectas')
+            return render(request,'login.html',{
+                'correo': correo
+            })
+
+    except Usuario.DoesNotExist:
+        messages.error(request,'!Usuario No Encontrado!')
+        return redirect('login')
+
+
+
 #Funcion Cerrar_Sesion, Cierra Session y elimina las session creadas
 def Cerrar_Sesion(request):
-    del request.session['correo_usuario']
+    del request.session['usuario_correo']
     return redirect('login')
