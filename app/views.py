@@ -4,8 +4,6 @@ from .models import *
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password,check_password
 
-# Create your views here.
-
 #Funcion Vista_Login, Muestra la vista Login.html
 def Vista_Login(request):
     return render(request,'login.html')
@@ -69,6 +67,7 @@ def Crear_Cuenta_Cliente(request):
         rol.save()
         cliente.save()
         messages.success(request,'!Cuenta Creada Con Exito!')
+        request.session['correo_usuario'] = cliente.correo_usuario
         return redirect('inicio')
     except Exception:
         messages.error(request,'!Error!, Cuenta no creada')
@@ -77,4 +76,12 @@ def Crear_Cuenta_Cliente(request):
 
 #Funcion Vista_Inicio, Muestra la vista Inicio.html
 def Vista_Inicio(request):
-    return render(request,'inicio.html')
+    correo = request.session.get('correo_usuario')
+    return render(request,'inicio.html',{
+        'correo': correo
+    })
+
+#Funcion Cerrar_Sesion, Cierra Session y elimina las session creadas
+def Cerrar_Sesion(request):
+    del request.session['correo_usuario']
+    return redirect('login')
