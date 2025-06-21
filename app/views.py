@@ -69,8 +69,12 @@ def Crear_Cuenta_Cliente(request):
         rol.save()
         cliente.save()
         messages.success(request,'!Cuenta Creada Con Exito!')
-
+        return redirect('inicio')
     except Exception:
         messages.error(request,'!Error!, Cuenta no creada')
 
     return redirect('login')
+
+#Funcion Vista_Inicio, Muestra la vista Inicio.html
+def Vista_Inicio(request):
+    return render(request,'inicio.html')

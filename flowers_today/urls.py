@@ -22,10 +22,11 @@ from app.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     #modificar despues
-    path('',lambda request: redirect('login')),
+    path('',lambda request: redirect('inicio')),
     #Vistas
     path('login/',Vista_Login,name='login'),
     path('crear_cuenta/',Vista_Crear_Cuenta,name='registro'),
+    path('inicio/',Vista_Inicio,name='inicio'),
     #Logico
     path('CrearCuenta/',Crear_Cuenta_Cliente,name='CrearCuenta')
     #Endpoints
