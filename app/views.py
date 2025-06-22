@@ -79,6 +79,8 @@ def Crear_Cuenta_Cliente(request):
         rol.save()
         cliente.save()
         messages.success(request,'!Cuenta Creada Con Exito!')
+        request.session['usuario_apellido'] = cliente.apellido_usuario
+        request.session['usuario_correo'] = cliente.correo_usuario
         request.session['usuario_correo'] = cliente.correo_usuario
         return redirect('inicio')
     except Exception as e:
@@ -88,7 +90,7 @@ def Crear_Cuenta_Cliente(request):
 
 #Funcion Vista_Inicio, Muestra la vista Inicio.html
 def Vista_Inicio(request):
-    correo = request.session.get('correo_usuario')
+    correo = request.session.get('usuario_correo',None)
     return render(request,'inicio.html',{
         'correo': correo
     })
@@ -126,13 +128,14 @@ def Iniciar_Sesion(request):
 #Funcion Cerrar_Sesion, Cierra Session y elimina las session creadas
 def Cerrar_Sesion(request):
     del request.session['usuario_correo']
+    del request.session['usuario_apellido']
+    del request.session['usuario_nombre']
     return redirect('login')
 
 #Funcion Vista_Ver_Perfil, Muestra la vista perfil.html
 # Esta vista puede ser utilizada para mostrar la informacion del usuario logueado
 def Vista_Ver_Perfil(request):
     return render(request, 'perfil.html')
-
 
 #Funcion Vista_Editar_Perfil, Muestra la vista editar_perfil.html
 # Esta vista puede ser utilizada para editar la informacion del usuario logueado

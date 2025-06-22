@@ -4,14 +4,14 @@
 {% block content %}
 
 <section class="container my-5 text-white">
-    <div class="card bg-dark text-white mx-auto" style="max-width: 600px; border: none;">
-        <div class="card-body text-center">
-            <h2 class="mb-4">Editar Perfil</h2>
+    <h2 class="mb-4 text-center">Editar Perfil</h2>
 
-            <form id="form-editar-perfil" method="post" enctype="multipart/form-data" action="#">
-                {% csrf_token %}
+    <form id="form-editar-perfil" method="post" enctype="multipart/form-data" action="#">
+        {% csrf_token %}
 
-                <!-- Imagen de perfil -->
+        <div class="row gy-4 align-items-start">
+            <!-- Imagen de perfil -->
+            <div class="col-12 col-md-4 text-center mb-3">
                 <img id="preview-imagen" 
                      src="https://acortar.link/xrxnFa" 
                      alt="Foto de Perfil" 
@@ -20,29 +20,46 @@
 
                 <!-- Subir nueva imagen -->
                 <input type="file" 
-                       class="form-control form-control-sm mb-2 mx-auto" 
+                       class="form-control form-control-sm mb-2" 
                        id="imagen_usuario" 
                        name="imagen_usuario" 
                        accept="image/*" 
-                       style="max-width: 400px;">
+                       style="max-width: 300px; margin: 0 auto;">
                 <div id="error-imagen" class="text-danger mb-3"></div>
+            </div>
 
+            <!-- Campos del usuario -->
+            <div class="col-12 col-md-8">
                 <!-- Nombre -->
-                <div class="row mb-3 align-items-center justify-content-center">
+                <div class="row mb-3 align-items-center">
                     <label for="nombre_usuario" class="col-auto col-form-label">Nombre:</label>
                     <div class="col">
                         <input type="text" 
                                class="form-control form-control-sm" 
                                id="nombre_usuario" 
                                name="nombre_usuario" 
-                               value="Ismael Morales" 
+                               value="Ismael" 
+                               required 
+                               style="max-width: 400px;">
+                    </div>
+                </div>
+
+                <!-- Apellido -->
+                <div class="row mb-3 align-items-center">
+                    <label for="apellido_usuario" class="col-auto col-form-label">Apellido:</label>
+                    <div class="col">
+                        <input type="text" 
+                               class="form-control form-control-sm" 
+                               id="apellido_usuario" 
+                               name="apellido_usuario" 
+                               value="Morales" 
                                required 
                                style="max-width: 400px;">
                     </div>
                 </div>
 
                 <!-- Teléfono -->
-                <div class="row mb-4 align-items-center justify-content-center">
+                <div class="row mb-3 align-items-center">
                     <label for="telefono_usuario" class="col-auto col-form-label">Teléfono:</label>
                     <div class="col">
                         <input type="text" 
@@ -50,6 +67,20 @@
                                id="telefono_usuario" 
                                name="telefono_usuario" 
                                value="+503 1234-5678" 
+                               required 
+                               style="max-width: 400px;">
+                    </div>
+                </div>
+
+                <!-- Correo -->
+                <div class="row mb-4 align-items-center">
+                    <label for="correo_usuario" class="col-auto col-form-label">Correo:</label>
+                    <div class="col">
+                        <input type="email" 
+                               class="form-control form-control-sm" 
+                               id="correo_usuario" 
+                               name="correo_usuario" 
+                               value="ismael.morales@flowerstoday.com" 
                                required 
                                style="max-width: 400px;">
                     </div>
@@ -64,10 +95,9 @@
                         <i class="bi bi-x-circle me-1"></i> Cancelar
                     </a>
                 </div>
-
-            </form>
+            </div>
         </div>
-    </div>
+    </form>
 </section>
 
 <!-- Validación de imagen + Redirección al guardar -->
@@ -78,7 +108,6 @@ document.getElementById('form-editar-perfil').addEventListener('submit', functio
     const errorDiv = document.getElementById('error-imagen');
     errorDiv.textContent = '';
 
-    // Validar imagen
     if (file) {
         const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'];
 
@@ -89,16 +118,13 @@ document.getElementById('form-editar-perfil').addEventListener('submit', functio
         }
     }
 
-    // Validar campos requeridos (nombre y teléfono)
     const nombre = document.getElementById('nombre_usuario').value.trim();
     const telefono = document.getElementById('telefono_usuario').value.trim();
 
     if (nombre === '' || telefono === '') {
-        // El navegador mostrará los warnings con required
         return true; 
     }
 
-    // Si todo está bien, prevenir submit normal y redirigir:
     event.preventDefault();
     window.location.href = "{% url 'ver_perfil' %}";
 });
@@ -117,8 +143,8 @@ document.getElementById('imagen_usuario').addEventListener('change', function() 
 
         if (!allowedTypes.includes(file.type)) {
             errorDiv.textContent = 'Solo se permiten archivos de imagen (JPG, PNG, GIF, WEBP).';
-            this.value = ''; // Limpiar input
-            preview.src = "https://acortar.link/xrxnFa"; // Reset imagen
+            this.value = ''; 
+            preview.src = "https://acortar.link/xrxnFa"; 
             return;
         }
 
