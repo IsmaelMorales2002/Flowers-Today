@@ -15,6 +15,9 @@ urlpatterns = [
     path('perfil/editar/', Vista_Editar_Perfil, name='editar_perfil'),
     path('recuperar-password/', Vista_Recuperar_Password, name='recuperar_password'),
     path('nueva-password/<token>/', Vista_Nueva_Password, name='nueva_password'),
+    path('categoria/listar/', Vista_Listar_Categoria, name='listar_categoria'),
+    path('categoria/insertar/', Vista_Insertar_Categoria, name='insertar_categoria'),
+
 
 
     #Logico
