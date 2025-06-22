@@ -13,6 +13,8 @@ urlpatterns = [
     path('inicio/',Vista_Inicio,name='inicio'),
     path('perfil/', Vista_Ver_Perfil, name='ver_perfil'),
     path('perfil/editar/', Vista_Editar_Perfil, name='editar_perfil'),
+    path('recuperar-password/', Vista_Recuperar_Password, name='recuperar_password'),
+    path('nueva-password/<token>/', Vista_Nueva_Password, name='nueva_password'),
 
 
     #Logico

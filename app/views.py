@@ -138,3 +138,12 @@ def Vista_Ver_Perfil(request):
 # Esta vista puede ser utilizada para editar la informacion del usuario logueado
 def Vista_Editar_Perfil(request):
     return render(request, 'editar_perfil.html')
+
+#Funcion Vista_Recuperar_Password, Muestra la vista recuperar_password.html
+# Esta vista puede ser utilizada para iniciar el proceso de recuperacion de contraseña
+def Vista_Recuperar_Password(request):
+    return render(request, 'recuperar_password.html')
+
+def Vista_Nueva_Password(request, token):
+    return render(request, 'nueva_password.html', {'token': token})
+
