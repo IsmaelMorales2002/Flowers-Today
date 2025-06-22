@@ -90,10 +90,12 @@ def Crear_Cuenta_Cliente(request):
 
 #Funcion Vista_Inicio, Muestra la vista Inicio.html
 def Vista_Inicio(request):
-    correo = request.session.get('usuario_correo',None)
-    return render(request,'inicio.html',{
-        'correo': correo
-    })
+    activo = request.session.get('usuario_correo',None)
+    if activo:
+        return render(request,'inicio.html',{
+            'activo': activo
+        })
+    return render(request,'inicio.html')
 
 """Funcion: Iniciar_Sesion
 Descripcion:
@@ -116,7 +118,7 @@ def Iniciar_Sesion(request):
         else:
             messages.warning(request,'Credenciales Incorrectas')
             return render(request,'login.html',{
-                'correo': correo
+                'activo': request.session.get('usuario_correo')
             })
 
     except Usuario.DoesNotExist:
@@ -130,17 +132,40 @@ def Cerrar_Sesion(request):
     del request.session['usuario_correo']
     del request.session['usuario_apellido']
     del request.session['usuario_nombre']
-    return redirect('login')
+    return redirect('inicio')
 
 #Funcion Vista_Ver_Perfil, Muestra la vista perfil.html
 # Esta vista puede ser utilizada para mostrar la informacion del usuario logueado
 def Vista_Ver_Perfil(request):
-    return render(request, 'perfil.html')
+    #Seguridad de Rutas
+    activo = request.session.get('usuario_correo',None)
+    if activo:
+        try:
+            usuario = Usuario.objects.get(correo_usuario = activo)
+            return render(request, 'perfil.html',{
+                'activo': activo,
+                'usuario': usuario
+            })
+        except Usuario.DoesNotExist:
+            return redirect('inicio')
+    else:
+        return redirect('login')
 
 #Funcion Vista_Editar_Perfil, Muestra la vista editar_perfil.html
 # Esta vista puede ser utilizada para editar la informacion del usuario logueado
 def Vista_Editar_Perfil(request):
-    return render(request, 'editar_perfil.html')
+    activo = request.session.get('usuario_correo',None)
+    if activo:
+        try:
+            usuario = Usuario.objects.get(correo_usuario = activo)
+            return render(request,'editar_perfil.html',{
+                'activo': activo,
+                'usuario': usuario
+            })
+        except Usuario.DoesNotExist:
+            return redirect('inicio')
+    else:
+        return redirect('login')
 
 #Funcion Vista_Recuperar_Password, Muestra la vista recuperar_password.html
 # Esta vista puede ser utilizada para iniciar el proceso de recuperacion de contraseña
