@@ -16,39 +16,71 @@
         <div class="row g-3">
           <div class="col-md-6">
             <label for="nombre" class="form-label">Nombre</label>
-            <input type="text" value="{{nombre}}" class="form-control" id="nombre" placeholder="Ingrese Su Nombre" required name="txtNombreN">
+            <input type="text" value="{{ nombre }}" name="txtNombreN" id="nombre"
+              class="form-control {% if 'nombre' in campos_vacios %}is-invalid{% endif %}"
+              placeholder="Ingrese Su Nombre" required>
+            {% if 'nombre' in campos_vacios %}
+              <div class="invalid-feedback">Este campo es obligatorio.</div>
+            {% endif %}
           </div>
+
           <div class="col-md-6">
             <label for="apellido" class="form-label">Apellido</label>
-            <input type="text" value="{{apellido}}" class="form-control" id="apellido" placeholder="Ingrese Su Apellido" required name="txtApellidoN">
+            <input type="text" value="{{ apellido }}" name="txtApellidoN" id="apellido"
+              class="form-control {% if 'apellido' in campos_vacios %}is-invalid{% endif %}"
+              placeholder="Ingrese Su Apellido" required>
+            {% if 'apellido' in campos_vacios %}
+              <div class="invalid-feedback">Este campo es obligatorio.</div>
+            {% endif %}
           </div>
+
           <div class="col-12">
             <label for="telefono" class="form-label">Número De Contacto</label>
-            <input type="text" value="{{telefono}}" class="form-control" id="telefono" name="txtTelefonoN" placeholder="Ingrese su número telefónico" inputmode="numeric" pattern="[0-9]+" maxlength="10" required>
+            <input type="text" value="{{ telefono }}" name="txtTelefonoN" id="telefono"
+              class="form-control {% if 'telefono' in campos_vacios %}is-invalid{% endif %}"
+              placeholder="Ingrese su número telefónico" inputmode="numeric" pattern="[0-9]+" maxlength="10" required>
+            {% if 'telefono' in campos_vacios %}
+              <div class="invalid-feedback">Este campo es obligatorio.</div>
+            {% endif %}
           </div>
+
           <div class="col-12">
             <label for="email" class="form-label">Correo electrónico</label>
-            <input type="email" value="{{correo}}" class="form-control" id="email" placeholder="Ingrese su correo electrónico" name="txtCorreoN" required>
+            <input type="email" value="{{ correo }}" name="txtCorreoN" id="email"
+              class="form-control {% if 'correo' in campos_vacios %}is-invalid{% endif %}"
+              placeholder="Ingrese su correo electrónico" required>
+            {% if 'correo' in campos_vacios %}
+              <div class="invalid-feedback">Este campo es obligatorio.</div>
+            {% endif %}
           </div>
+
           <div class="col-12">
             <label for="password" class="form-label">Contraseña</label>
             <div class="input-group">
-              <input type="password" class="form-control" id="password" placeholder="Ingrese una contraseña" name="txtPasswordN" maxlength="12" minlength="8" required>
-              <button type="button" class="btn btn-outline-secondary" id="togglePassword">Mostrar</button>
+                <input type="password" name="txtPasswordN" id="password"
+                    class="form-control {% if 'password' in campos_vacios %}is-invalid{% endif %}"
+                    placeholder="Ingrese una contraseña" maxlength="12" minlength="8" required>
+                <button type="button" class="btn text-white" style="background-color: #6C2DC7;" id="togglePassword">Mostrar</button>
+                {% if 'password' in campos_vacios %}
+                    <div class="invalid-feedback">Este campo es obligatorio.</div>
+                {% endif %}
             </div>
-          </div>
+        </div>
+
+
           <div class="col-12">
-                <button type="submit" id="btn" class="btn w-100 bg-dark text-white rounded-pill">Registrarme</button>
+            <button type="submit" id="btn" class="btn w-100 bg-dark text-white rounded-pill">Registrarme</button>
           </div>
           <div class="col-12">
             <a href="{% url 'login' %}" class="btn btn-danger w-100 rounded-pill">Cancelar</a>
           </div>
         </div>
       </form>
+
       <div>
         {% if messages %}
           {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3" role="alert">
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show mt-3" role="alert">
               {{ message }}
               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -62,6 +94,7 @@
   <script src="{% static 'js/toggle.js' %}"></script>
   <script src="{% static 'js/input_telefono.js' %}"></script>
   <script src="{% static 'js/carga_btn_registro.js' %}"></script>
+  <script src="{% static 'js/campos_vacios.js' %}"></script>
 
 </body>
 </html>
