@@ -1,0 +1,134 @@
+{% extends 'menu.html' %}
+{% block title %} Editar Perfil {% endblock %}
+
+{% block content %}
+
+<section class="container my-5 text-white">
+    <div class="card bg-dark text-white mx-auto" style="max-width: 600px; border: none;">
+        <div class="card-body text-center">
+            <h2 class="mb-4">Editar Perfil</h2>
+
+            <form id="form-editar-perfil" method="post" enctype="multipart/form-data" action="#">
+                {% csrf_token %}
+
+                <!-- Imagen de perfil -->
+                <img id="preview-imagen" 
+                     src="https://acortar.link/xrxnFa" 
+                     alt="Foto de Perfil" 
+                     class="rounded-circle img-thumbnail mb-3" 
+                     style="width: 200px; height: 200px;">
+
+                <!-- Subir nueva imagen -->
+                <input type="file" 
+                       class="form-control form-control-sm mb-2 mx-auto" 
+                       id="imagen_usuario" 
+                       name="imagen_usuario" 
+                       accept="image/*" 
+                       style="max-width: 400px;">
+                <div id="error-imagen" class="text-danger mb-3"></div>
+
+                <!-- Nombre -->
+                <div class="row mb-3 align-items-center justify-content-center">
+                    <label for="nombre_usuario" class="col-auto col-form-label">Nombre:</label>
+                    <div class="col">
+                        <input type="text" 
+                               class="form-control form-control-sm" 
+                               id="nombre_usuario" 
+                               name="nombre_usuario" 
+                               value="Ismael Morales" 
+                               required 
+                               style="max-width: 400px;">
+                    </div>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="row mb-4 align-items-center justify-content-center">
+                    <label for="telefono_usuario" class="col-auto col-form-label">Teléfono:</label>
+                    <div class="col">
+                        <input type="text" 
+                               class="form-control form-control-sm" 
+                               id="telefono_usuario" 
+                               name="telefono_usuario" 
+                               value="+503 1234-5678" 
+                               required 
+                               style="max-width: 400px;">
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
+                    <button type="submit" class="btn btn-primary" style="background-color: #6C2DC7; border: #6C2DC7;">
+                        <i class="bi bi-save me-1"></i> Guardar
+                    </button>
+                    <a href="{% url 'ver_perfil' %}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle me-1"></i> Cancelar
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Validación de imagen + Redirección al guardar -->
+<script>
+document.getElementById('form-editar-perfil').addEventListener('submit', function(event) {
+    const fileInput = document.getElementById('imagen_usuario');
+    const file = fileInput.files[0];
+    const errorDiv = document.getElementById('error-imagen');
+    errorDiv.textContent = '';
+
+    // Validar imagen
+    if (file) {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'];
+
+        if (!allowedTypes.includes(file.type)) {
+            event.preventDefault();
+            errorDiv.textContent = 'Solo se permiten archivos de imagen (JPG, PNG, GIF, WEBP).';
+            return false;
+        }
+    }
+
+    // Validar campos requeridos (nombre y teléfono)
+    const nombre = document.getElementById('nombre_usuario').value.trim();
+    const telefono = document.getElementById('telefono_usuario').value.trim();
+
+    if (nombre === '' || telefono === '') {
+        // El navegador mostrará los warnings con required
+        return true; 
+    }
+
+    // Si todo está bien, prevenir submit normal y redirigir:
+    event.preventDefault();
+    window.location.href = "{% url 'ver_perfil' %}";
+});
+</script>
+
+<!-- Preview en vivo -->
+<script>
+document.getElementById('imagen_usuario').addEventListener('change', function() {
+    const file = this.files[0];
+    const preview = document.getElementById('preview-imagen');
+    const errorDiv = document.getElementById('error-imagen');
+    errorDiv.textContent = '';
+
+    if (file) {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'];
+
+        if (!allowedTypes.includes(file.type)) {
+            errorDiv.textContent = 'Solo se permiten archivos de imagen (JPG, PNG, GIF, WEBP).';
+            this.value = ''; // Limpiar input
+            preview.src = "https://acortar.link/xrxnFa"; // Reset imagen
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+
+{% endblock %}

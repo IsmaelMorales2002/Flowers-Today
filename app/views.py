@@ -134,3 +134,7 @@ def Vista_Ver_Perfil(request):
     return render(request, 'perfil.html')
 
 
+#Funcion Vista_Editar_Perfil, Muestra la vista editar_perfil.html
+# Esta vista puede ser utilizada para editar la informacion del usuario logueado
+def Vista_Editar_Perfil(request):
+    return render(request, 'editar_perfil.html')

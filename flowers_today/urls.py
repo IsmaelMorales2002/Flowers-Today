@@ -12,6 +12,8 @@ urlpatterns = [
     path('crear_cuenta/',Vista_Crear_Cuenta,name='registro'),
     path('inicio/',Vista_Inicio,name='inicio'),
     path('perfil/', Vista_Ver_Perfil, name='ver_perfil'),
+    path('perfil/editar/', Vista_Editar_Perfil, name='editar_perfil'),
+
 
     #Logico
     path('IniciarSesion/',Iniciar_Sesion,name='IniciarSesion'),
