@@ -116,7 +116,7 @@ def Iniciar_Sesion(request):
         else:
             messages.warning(request,'Credenciales Incorrectas')
             return render(request,'login.html',{
-                'correo': correo
+                'activo': request.session.get('usuario_correo')
             })
 
     except Usuario.DoesNotExist:
@@ -135,7 +135,9 @@ def Cerrar_Sesion(request):
 #Funcion Vista_Ver_Perfil, Muestra la vista perfil.html
 # Esta vista puede ser utilizada para mostrar la informacion del usuario logueado
 def Vista_Ver_Perfil(request):
-    return render(request, 'perfil.html')
+    return render(request, 'perfil.html',{
+        'activo': request.session.get('usuario_correo')
+    })
 
 #Funcion Vista_Editar_Perfil, Muestra la vista editar_perfil.html
 # Esta vista puede ser utilizada para editar la informacion del usuario logueado
