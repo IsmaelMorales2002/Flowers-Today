@@ -1,19 +1,3 @@
-"""
-URL configuration for flowers_today project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
 from django.shortcuts import redirect
@@ -22,11 +6,14 @@ from app.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     #modificar despues
-    path('',lambda request: redirect('login')),
+    path('',lambda request: redirect('inicio')),
     #Vistas
     path('login/',Vista_Login,name='login'),
     path('crear_cuenta/',Vista_Crear_Cuenta,name='registro'),
+    path('inicio/',Vista_Inicio,name='inicio'),
     #Logico
-    path('CrearCuenta/',Crear_Cuenta_Cliente,name='CrearCuenta')
+    path('IniciarSesion/',Iniciar_Sesion,name='IniciarSesion'),
+    path('CrearCuenta/',Crear_Cuenta_Cliente,name='CrearCuenta'),
+    path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion')
     #Endpoints
 ]
