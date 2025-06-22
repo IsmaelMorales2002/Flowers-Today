@@ -150,3 +150,38 @@ def Vista_Recuperar_Password(request):
 def Vista_Nueva_Password(request, token):
     return render(request, 'nueva_password.html', {'token': token})
 
+# Funcion Vista_Listar_Categoria, Muestra la vista listar_categoria.html
+# Esta vista lista todas las categorias disponibles en la base de datos
+def Vista_Listar_Categoria(request):
+    try:
+        categorias = Categoria.objects.all().order_by('nombre_categoria')
+        return render(request, 'listar_categoria.html', {'categorias': categorias})
+    except Exception as e:
+        messages.error(request, f'Error al cargar las categorías: {str(e)}')
+        return render(request, 'listar_categoria.html', {'categorias': []})
+    
+# Funcion Vista_Insertar_Categoria, Muestra la vista insertar_categoria.html
+# Esta vista permite al usuario registrar una nueva categoria en la base de datos 
+def Vista_Insertar_Categoria(request):
+    if request.method == 'POST':
+        nombre_categoria = request.POST.get('nombre_categoria', '').strip()
+
+        if nombre_categoria == '':
+            messages.error(request, 'El nombre de la categoría no puede estar vacío.')
+            return redirect('insertar_categoria')
+
+        # Validar duplicado
+        if Categoria.objects.filter(nombre_categoria__iexact=nombre_categoria).exists():
+            messages.error(request, 'Ya existe una categoría con ese nombre.')
+            return redirect('insertar_categoria')
+
+        try:
+            nueva_categoria = Categoria(nombre_categoria=nombre_categoria)
+            nueva_categoria.save()
+            messages.success(request, 'Categoría registrada exitosamente.')
+            return redirect('listar_categoria')  # Redirigir a la lista
+        except Exception as e:
+            messages.error(request, f'Ocurrió un error al registrar la categoría: {str(e)}')
+            return redirect('insertar_categoria')
+
+    return render(request, 'insertar_categoria.html')

@@ -1,0 +1,113 @@
+{% extends 'menu.html' %}
+{% block title %} Gestionar Categorías {% endblock %}
+
+{% block content %}
+
+<section class="container my-5 text-white">
+    <h2 class="mb-4 text-center">Gestionar Categorías</h2>
+
+    <div class="card bg-dark border-0">
+        <div class="card-body">
+            <div class="d-flex justify-content-end mb-3">
+                <a href="{% url 'insertar_categoria' %}" 
+                   class="btn rounded-circle" 
+                   title="Agregar Categoría"
+                   style="background-color: #6C2DC7; color: white; width: 40px; height: 40px; padding: 0;">
+                    <i class="bi bi-plus fs-4"></i>
+                </a>
+            </div>
+
+            <!-- Mensajes -->
+            <div>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                        <div class="modal fade" id="modalExito" tabindex="-1" aria-labelledby="modalExitoLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content bg-dark text-white">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="modalExitoLabel">Registro Exitoso</h5>
+                              </div>
+                              <div class="modal-body">
+                                {{ message }}
+                              </div>
+                              <div class="modal-footer">
+                                <a href="{% url 'listar_categoria' %}" class="btn btn-primary" style="background-color: #6C2DC7; border: #6C2DC7;">Aceptar</a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Tabla -->
+            <div class="table-responsive">
+                <table id="tabla-categorias" class="table table-striped table-bordered bg-white text-dark">
+                    <thead class="table-secondary text-dark">
+                        <tr>
+                            <th style="width: 10%;">ID</th>
+                            <th style="width: 40%;">Nombre de Categoría</th>
+                            <th class="text-center" style="width: 20%;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for categoria in categorias %}
+                        <tr>
+                            <td>{{ categoria.id_categoria }}</td>
+                            <td>{{ categoria.nombre_categoria }}</td>
+                            <td class="text-center">
+                                <a href="#" class="btn btn-sm bg-dark text-white" title="Editar">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm" style="background-color: #ff4b4b; color: white; border-color: #ff4b4b;" title="Eliminar">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">No hay categorías registradas.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Scripts DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#tabla-categorias').DataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+        },
+        order: [[0, 'desc']]  // Ordenar por ID de mayor a menor
+    });
+
+    // Mostrar modal si éxito
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                var myModal = new bootstrap.Modal(document.getElementById('modalExito'), {});
+                myModal.show();
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+});
+</script>
+
+{% endblock %}
