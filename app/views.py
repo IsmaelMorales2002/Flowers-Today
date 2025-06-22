@@ -90,10 +90,12 @@ def Crear_Cuenta_Cliente(request):
 
 #Funcion Vista_Inicio, Muestra la vista Inicio.html
 def Vista_Inicio(request):
-    correo = request.session.get('usuario_correo',None)
-    return render(request,'inicio.html',{
-        'correo': correo
-    })
+    activo = request.session.get('usuario_correo',None)
+    if activo:
+        return render(request,'inicio.html',{
+            'activo': activo
+        })
+    return render(request,'inicio.html')
 
 """Funcion: Iniciar_Sesion
 Descripcion:
@@ -130,7 +132,7 @@ def Cerrar_Sesion(request):
     del request.session['usuario_correo']
     del request.session['usuario_apellido']
     del request.session['usuario_nombre']
-    return redirect('login')
+    return redirect('inicio')
 
 #Funcion Vista_Ver_Perfil, Muestra la vista perfil.html
 # Esta vista puede ser utilizada para mostrar la informacion del usuario logueado
