@@ -154,7 +154,18 @@ def Vista_Ver_Perfil(request):
 #Funcion Vista_Editar_Perfil, Muestra la vista editar_perfil.html
 # Esta vista puede ser utilizada para editar la informacion del usuario logueado
 def Vista_Editar_Perfil(request):
-    return render(request, 'editar_perfil.html')
+    activo = request.session.get('usuario_correo',None)
+    if activo:
+        try:
+            usuario = Usuario.objects.get(correo_usuario = activo)
+            return render(request,'editar_perfil.html',{
+                'activo': activo,
+                'usuario': usuario
+            })
+        except Usuario.DoesNotExist:
+            return redirect('inicio')
+    else:
+        return redirect('login')
 
 #Funcion Vista_Recuperar_Password, Muestra la vista recuperar_password.html
 # Esta vista puede ser utilizada para iniciar el proceso de recuperacion de contraseña
