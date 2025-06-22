@@ -127,3 +127,10 @@ def Iniciar_Sesion(request):
 def Cerrar_Sesion(request):
     del request.session['usuario_correo']
     return redirect('login')
+
+#Funcion Vista_Ver_Perfil, Muestra la vista perfil.html
+# Esta vista puede ser utilizada para mostrar la informacion del usuario logueado
+def Vista_Ver_Perfil(request):
+    return render(request, 'perfil.html')
+
+
