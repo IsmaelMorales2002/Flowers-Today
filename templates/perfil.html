@@ -20,28 +20,31 @@
                 <table class="table table-dark table-striped">
                     <tr>
                         <th>Nombre:</th>
-                        <td>Ismael</td>
+                        <td>{{usuario.nombre_usuario}}</td>
                     </tr>
                     <tr>
                         <th>Apellido:</th>
-                        <td>Morales</td>
+                        <td>{{usuario.apellido_usuario}}</td>
                     </tr>
                     <tr>
                         <th>Correo Electrónico:</th>
-                        <td>ismael.morales@flowerstoday.com</td>
+                        <td>{{usuario.correo_usuario}}</td>
                     </tr>
                     <tr>
                         <th>Teléfono:</th>
-                        <td>+503 1234-5678</td>
-                    </tr>
-                    <tr>
-                        <th>Rol:</th>
-                        <td>Cliente</td>
+                        <td>{{usuario.telefono_usuario}}</td>
                     </tr>
                     <tr>
                         <th>Estado:</th>
                         <td>
-                            <span class="badge bg-success">Activo</span>
+                            {% if usuario.usuario_activo%}
+                                <span class="badge bg-success">
+                                Activo
+                                {%else%}
+                                <span class="badge bg-danger">
+                                Inactivo
+                                {%endif%}
+                            </span>
                         </td>
                     </tr>
                 </table>

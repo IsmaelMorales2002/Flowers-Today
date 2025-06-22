@@ -137,9 +137,19 @@ def Cerrar_Sesion(request):
 #Funcion Vista_Ver_Perfil, Muestra la vista perfil.html
 # Esta vista puede ser utilizada para mostrar la informacion del usuario logueado
 def Vista_Ver_Perfil(request):
-    return render(request, 'perfil.html',{
-        'activo': request.session.get('usuario_correo')
-    })
+    #Seguridad de Rutas
+    activo = request.session.get('usuario_correo',None)
+    if activo:
+        try:
+            usuario = Usuario.objects.get(correo_usuario = activo)
+            return render(request, 'perfil.html',{
+                'activo': activo,
+                'usuario': usuario
+            })
+        except Usuario.DoesNotExist:
+            return redirect('inicio')
+    else:
+        return redirect('login')
 
 #Funcion Vista_Editar_Perfil, Muestra la vista editar_perfil.html
 # Esta vista puede ser utilizada para editar la informacion del usuario logueado
