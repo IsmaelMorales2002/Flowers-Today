@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib import messages
 from .models import *
 from django.db.models import Q
@@ -210,3 +210,161 @@ def Vista_Insertar_Categoria(request):
             return redirect('insertar_categoria')
 
     return render(request, 'insertar_categoria.html')
+
+def Vista_Insertar_Producto(request):
+    categorias = Categoria.objects.all().order_by('nombre_categoria')
+
+    if request.method == 'POST':
+        try:
+            nombre_producto = request.POST.get('nombre_producto', '').strip()
+            id_categoria = request.POST.get('id_categoria')
+            descripcion_producto = request.POST.get('descripcion_producto', '').strip()
+            
+            # Usamos la URL predefinida
+            imagen_producto = 'https://acortar.link/zPqL3t'
+
+            cantidad_maxima = request.POST.get('cantidad_maxima')
+            cantidad_minima = request.POST.get('cantidad_minima')
+            precio_producto = request.POST.get('precio_producto')
+            
+            existencia_producto = request.POST.get('existencia_producto')
+            
+            tipo_producto = request.POST.get('tipo_producto')
+            
+            # Checkbox
+            activo = True if request.POST.get('producto_activo') else False
+
+            # Validación básica
+            if nombre_producto == '' or id_categoria == '' or tipo_producto == '':
+                messages.error(request, 'Debe completar todos los campos.')
+                return redirect('insertar_producto')
+
+            nuevo_producto = Producto(
+                nombre_producto = nombre_producto,
+                id_categoria_id = id_categoria,
+                descripcion_producto = descripcion_producto,
+                imagen_producto = imagen_producto,
+                cantidad_maxima = cantidad_maxima,
+                cantidad_minima = cantidad_minima,
+                precio_producto = precio_producto,
+                existencia_prodcuto = existencia_producto,  # respetando el modelo
+                tipo_producto = tipo_producto,
+                producto_activo = activo
+            )
+            nuevo_producto.save()
+
+            messages.success(request, 'Producto registrado exitosamente.')
+            return redirect('listar_producto')
+
+        except Exception as e:
+            messages.error(request, f'Error al registrar el producto: {str(e)}')
+            return redirect('insertar_producto')
+
+    return render(request, 'insertar_producto.html', {'categorias': categorias})
+
+
+TIPO_PRODUCTO = {
+    1: 'Arreglos Mixto',
+    2: 'Flores',
+    3: 'Arreglos Flores'
+}
+
+def Vista_Listar_Producto(request):
+    productos = Producto.objects.select_related('id_categoria').all().order_by('-id_producto')
+    categorias = Categoria.objects.all().order_by('nombre_categoria')
+
+    lista_productos = []
+    for p in productos:
+        lista_productos.append({
+            'id_producto': p.id_producto,
+            'nombre_producto': p.nombre_producto,
+            'nombre_categoria': p.id_categoria.nombre_categoria if p.id_categoria else '',
+            'id_categoria': p.id_categoria.id_categoria if p.id_categoria else '',
+            'tipo_producto': TIPO_PRODUCTO.get(p.tipo_producto, 'Desconocido'),
+            'tipo_producto_val': p.tipo_producto,
+            'descripcion_producto': p.descripcion_producto,
+            'cantidad_maxima': p.cantidad_maxima,
+            'cantidad_minima': p.cantidad_minima,
+            'precio_producto': p.precio_producto,
+            'existencia_prodcuto': p.existencia_prodcuto,
+            'producto_activo': p.producto_activo,
+            'imagen_producto': p.imagen_producto,  # ya es URL
+        })
+
+    return render(request, 'listar_producto.html', {
+        'productos': lista_productos,
+        'categorias': categorias
+    })
+
+    
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+
+def Vista_Editar_Producto(request):
+    if request.method == 'POST':
+        try:
+            id_producto = request.POST.get('id_producto')
+            producto = get_object_or_404(Producto, id_producto=id_producto)
+
+            nombre_producto = request.POST.get('nombre_producto', '').strip()
+            id_categoria = request.POST.get('id_categoria')
+            tipo_producto = request.POST.get('tipo_producto')
+            descripcion_producto = request.POST.get('descripcion_producto', '').strip()
+            cantidad_maxima = request.POST.get('cantidad_maxima')
+            cantidad_minima = request.POST.get('cantidad_minima')
+            precio_producto = request.POST.get('precio_producto')
+            existencia_producto = request.POST.get('existencia_producto')
+            imagen_producto = request.POST.get('imagen_producto', '').strip()
+            producto_activo = True if request.POST.get('producto_activo') == 'on' else False
+
+            #  Validación: ningún campo vacío
+            if (not nombre_producto or not id_categoria or not tipo_producto or not descripcion_producto 
+                or not cantidad_maxima or not cantidad_minima or not precio_producto or not existencia_producto 
+                ):
+                
+                messages.error(request, 'Debe completar todos los campos.')
+                return redirect('listar_producto')
+
+            # Si todo bien: actualizar
+            producto.nombre_producto = nombre_producto
+            producto.id_categoria_id = id_categoria
+            producto.tipo_producto = tipo_producto
+            producto.descripcion_producto = descripcion_producto
+            producto.cantidad_maxima = cantidad_maxima
+            producto.cantidad_minima = cantidad_minima
+            producto.precio_producto = precio_producto
+            producto.existencia_prodcuto = existencia_producto
+            producto.imagen_producto = producto.imagen_producto
+            producto.producto_activo = producto_activo
+
+            producto.save()
+
+            messages.success(request, 'Producto editado correctamente.')
+            return redirect('listar_producto')
+
+        except Exception as e:
+            messages.error(request, f'Error al editar producto: {str(e)}')
+            return redirect('listar_producto')
+    else:
+        messages.error(request, 'Método no permitido.')
+        return redirect('listar_producto')
+    
+    
+def Vista_Cambiar_Estado_Producto(request):
+    if request.method == 'POST':
+        id_producto = request.POST.get('id_producto')
+        accion = request.POST.get('accion')  # puede ser 'activar' o 'desactivar'
+
+        producto = get_object_or_404(Producto, id_producto=id_producto)
+
+        if accion == 'activar':
+            producto.producto_activo = True
+        else:
+            producto.producto_activo = False
+
+        producto.save()
+        messages.success(request, 'Estado del producto actualizado correctamente.')
+        return redirect('listar_producto')
+    else:
+        messages.error(request, 'Solicitud inválida.')
+        return redirect('listar_producto')
