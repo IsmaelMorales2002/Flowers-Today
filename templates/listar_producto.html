@@ -27,6 +27,11 @@
         color: black;
         border: 1px solid #ddd;
     }
+    #modalEditarProducto .modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
 
     .btn-close-white {
         filter: none;
@@ -301,6 +306,9 @@
             <div class="mb-3">
                 <label class="form-label">Nombre del Producto:</label>
                 <input type="text" class="form-control" name="nombre_producto" id="editar-nombre-producto" required>
+                 <div class="invalid-feedback">
+                    El nombre del producto es obligatorio.
+                </div>
             </div>
             <div class="row mb-3">
                 <div class="col-md-6">
@@ -311,6 +319,10 @@
                         <option value="{{ categoria.id_categoria }}">{{ categoria.nombre_categoria }}</option>
                         {% endfor %}
                     </select>
+                    <div class="invalid-feedback">
+                        Debe seleccionar una categoría.
+                    </div>
+
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Tipo:</label>
@@ -320,30 +332,48 @@
                         <option value="2">Flores</option>
                         <option value="3">Arreglos Flores</option>
                     </select>
+                    <div class="invalid-feedback">
+                    El tipo del producto  es obligatorio.
+                </div>
                 </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Descripción:</label>
                 <textarea class="form-control" name="descripcion_producto" id="editar-descripcion-producto" rows="2" required></textarea>
+                <div class="invalid-feedback">
+                    La descripcion del producto  es obligatorio.
+                </div>
             </div>
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label class="form-label">Cantidad Máxima:</label>
                     <input type="number" class="form-control" name="cantidad_maxima" id="editar-cantidad-maxima" min="1" required>
+                    <div class="invalid-feedback">
+                        La Cantidad Máxima de producto es obligatorio.
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Cantidad Mínima:</label>
                     <input type="number" class="form-control" name="cantidad_minima" id="editar-cantidad-minima" min="0" required>
+                    <div class="invalid-feedback">
+                        La Cantidad Mínima de producto es obligatorio.
+                    </div>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label class="form-label">Precio:</label>
                     <input type="number" class="form-control" name="precio_producto" id="editar-precio-producto" step="0.01" min="0" required>
+                    <div class="invalid-feedback">
+                        El precio de producto es obligatorio.
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Existencia Actual:</label>
                     <input type="number" class="form-control" name="existencia_producto" id="editar-existencia-producto" min="0" required>
+                    <div class="invalid-feedback">
+                        La existencia de producto es obligatorio.
+                    </div>
                 </div>
             </div>
         </div>
@@ -445,6 +475,7 @@ $(document).ready(function() {
 
     // EDITAR PRODUCTO
     $(document).on('click', '.editar-producto-btn', function() {
+        $('#formEditarProducto').removeClass('was-validated');
         $('#editar-id-producto').val($(this).data('id'));
         $('#editar-nombre-producto').val($(this).data('nombre'));
         $('#editar-categoria-producto').val($(this).data('idcategoria'));
@@ -489,13 +520,14 @@ $(document).ready(function() {
 $('#btnAbrirConfirmar').on('click', function() {
     const form = document.getElementById('formEditarProducto');
 
-    // Validación HTML5
+    // Si el formulario no es válido (HTML5)
     if (!form.checkValidity()) {
-        form.reportValidity();
+        // Forzar que Bootstrap muestre los mensajes de error
+        $(form).addClass('was-validated');
         return;
     }
 
-    // Verificar si hubo cambios:
+    // Si es válido:
     let cambios = false;
 
     // Revisamos campos texto/select/number
@@ -523,10 +555,9 @@ $('#btnAbrirConfirmar').on('click', function() {
         var modalConfirmar = new bootstrap.Modal(document.getElementById('modalConfirmarEdicion'));
         modalConfirmar.show();
     } else {
-        console.log("No se hicieron cambios, no se muestra modal Confirmar.");
+        console.log("No se hicieron cambios.");
     }
 });
-
 
 $('#btnConfirmarGuardar').click(function() {
     $('#formEditarProducto').submit();

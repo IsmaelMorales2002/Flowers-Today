@@ -6,7 +6,11 @@
 <section class="container my-5 text-white text-center">
     <h2 class="mb-4">Insertar Nueva Categoría</h2>
 
-    <form method="post" action="{% url 'insertar_categoria' %}" id="form-insertar-categoria" class="d-flex flex-column align-items-center">
+    <form method="post" 
+          action="{% url 'insertar_categoria' %}" 
+          id="form-insertar-categoria" 
+          class="d-flex flex-column align-items-center needs-validation" 
+          novalidate>
         {% csrf_token %}
 
         <!-- Nombre categoría -->
@@ -19,6 +23,9 @@
                    placeholder="Ej: Flores" 
                    required 
                    maxlength="25">
+            <div class="invalid-feedback text-start">
+                Por favor, ingrese un nombre de categoría válido (máximo 25 caracteres).
+            </div>
         </div>
 
         <!-- Botones -->
@@ -44,5 +51,26 @@
         {% endif %}
     </div>
 </section>
+
+<!-- Script para validación de Bootstrap -->
+<script>
+    // Validación de Bootstrap
+    (function () {
+        'use strict'
+
+        const forms = document.querySelectorAll('.needs-validation')
+
+        Array.from(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
 
 {% endblock %}
