@@ -1,4 +1,12 @@
+import os
+import uuid
 from django.db import models
+
+#Funcion para crear Nombre Unico a la Imagen
+def ruta_unica(instance, filename):
+    extension = filename.split('.')[-1]
+    return f'uploads/{uuid.uuid4()}.{extension}'
+
 
 # Create your models here.
 class Rol(models.Model):
@@ -21,7 +29,7 @@ class Usuario(models.Model):
     correo_usuario = models.CharField(max_length=100,verbose_name='Correo Electronico')
     password_usuario = models.CharField(max_length=150,verbose_name='Contraseña')
     telefono_usuario = models.CharField(max_length=10,verbose_name='Telefono')
-    imagen_usuario = models.ImageField(blank=True,verbose_name='Imagen Usuario')
+    imagen_usuario = models.ImageField(upload_to=ruta_unica,blank=True,verbose_name='Imagen Usuario')
     usuario_activo = models.BooleanField(verbose_name='Cuenta Activa')
 
     class Meta:
