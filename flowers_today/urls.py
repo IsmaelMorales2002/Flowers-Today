@@ -17,12 +17,22 @@ urlpatterns = [
     path('nueva-password/<token>/', Vista_Nueva_Password, name='nueva_password'),
     path('categoria/listar/', Vista_Listar_Categoria, name='listar_categoria'),
     path('categoria/insertar/', Vista_Insertar_Categoria, name='insertar_categoria'),
-
+    path('producto/insertar/', Vista_Insertar_Producto, name='insertar_producto'),
+    path('producto/listar/', Vista_Listar_Producto, name='listar_producto'),
+    path('editar_producto/', Vista_Editar_Producto, name='editar_producto'),
+    path('producto/cambiar_estado/', Vista_Cambiar_Estado_Producto, name='cambiar_estado_producto'),
 
 
     #Logico
     path('IniciarSesion/',Iniciar_Sesion,name='IniciarSesion'),
     path('CrearCuenta/',Crear_Cuenta_Cliente,name='CrearCuenta'),
-    path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion')
+    path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion'),
+
+    
+
+
+
+    path('EditarPerfil/',EditarPerfil,name='EditarPerfil'),
+
     #Endpoints
 ]
