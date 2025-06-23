@@ -17,7 +17,10 @@
                  alt="Foto de Perfil"
                  class="rounded-circle shadow img-thumbnail"
                  style="width: 150px; height: 150px; object-fit: cover;">
+                 <!-- Formulario -->
             <div class="mt-2">
+              <form method="POST" enctype="multipart/form-data" action="{% url 'EditarPerfil' %}" id="form-editar-perfil">
+              {% csrf_token %}
               <input type="file"
                      class="form-control form-control-sm mx-auto"
                      style="max-width: 300px;"
@@ -28,9 +31,6 @@
             </div>
           </div>
 
-          <!-- Formulario -->
-          <form method="POST" enctype="multipart/form-data" action="{% url 'EditarPerfil' %}" id="form-editar-perfil">
-            {% csrf_token %}
 
             <!-- Alerta -->
             {% if messages %}

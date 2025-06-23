@@ -79,9 +79,10 @@ def Crear_Cuenta_Cliente(request):
         rol.save()
         cliente.save()
         messages.success(request,'!Cuenta Creada Con Exito!')
+        request.session['usuario_nombre'] = cliente.nombre_usuario
         request.session['usuario_apellido'] = cliente.apellido_usuario
         request.session['usuario_correo'] = cliente.correo_usuario
-        request.session['usuario_correo'] = cliente.correo_usuario
+        request.session['usuario_id'] = cliente.id_usuario
         return redirect('inicio')
     except Exception as e:
         messages.error(request,'!Error!, Cuenta no creada')
@@ -381,6 +382,7 @@ def EditarPerfil(request):
     apellido = request.POST.get('txtApellidoA','').strip()
     telefono = request.POST.get('txtTelefonoA','').strip()
     correo = request.POST.get('txtCorreoA','').strip()
+    imagen = request.FILES.get('imagen_usuario')
 
     campos_vacios = []
     if not nombre:
@@ -394,7 +396,6 @@ def EditarPerfil(request):
 
     if campos_vacios:
         messages.warning(request,'Por Favor No Dejar Campos En Blanco')
-        print(nombre)
         return redirect('editar_perfil')
     
     #Verificacion de Actualziacion De Campos
@@ -404,6 +405,8 @@ def EditarPerfil(request):
         usuario.apellido_usuario = apellido
         usuario.telefono_usuario = telefono
         usuario.correo_usuario = correo
+        if imagen:
+            usuario.imagen_usuario = imagen
         usuario.save()
         request.session['usuario_nombre'] = usuario.nombre_usuario
         request.session['usuario_apellido'] = usuario.apellido_usuario
@@ -413,6 +416,4 @@ def EditarPerfil(request):
         messages.error(request,'!Error!, Actualización No Realizada')
         return redirect('editar_perfil')
 
-
-    return redirect('ver_perfil')
 
