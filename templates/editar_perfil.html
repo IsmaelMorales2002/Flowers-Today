@@ -1,4 +1,5 @@
 {% extends 'menu.html' %}
+{% load static %}
 {% block title %} Editar Perfil {% endblock %}
 
 {% block content %}
@@ -12,7 +13,7 @@
           <!-- Imagen de perfil -->
           <div class="text-center mb-4">
             <img id="preview-imagen"
-                 src="https://acortar.link/xrxnFa"
+                 src="{% if usuario.imagen_usuario %}{{ usuario.imagen_usuario.url }}{% else %}{% static 'img/perfil-default.webp' %}{% endif %}"
                  alt="Foto de Perfil"
                  class="rounded-circle shadow img-thumbnail"
                  style="width: 150px; height: 150px; object-fit: cover;">
