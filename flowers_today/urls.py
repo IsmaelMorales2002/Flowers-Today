@@ -21,6 +21,10 @@ urlpatterns = [
     path('producto/listar/', Vista_Listar_Producto, name='listar_producto'),
     path('editar_producto/', Vista_Editar_Producto, name='editar_producto'),
     path('producto/cambiar_estado/', Vista_Cambiar_Estado_Producto, name='cambiar_estado_producto'),
+    path('categoria/verificar_existente/', Vista_Verificar_Categoria_Existente, name='verificar_categoria_existente'),
+    path('categoria/actualizar/', Vista_Actualizar_Categoria, name='actualizar_categoria'),
+    path('categoria/cambiar_estado/', cambiar_estado_categoria, name='cambiar_estado_categoria'),
+
 
 
     #Logico
