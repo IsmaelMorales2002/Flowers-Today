@@ -50,6 +50,7 @@ class Comentario(models.Model):
 class Categoria_Servicio(models.Model):
     id_categoria_servicio = models.AutoField(primary_key=True,verbose_name='ID')
     nombre_categoria_servicio = models.CharField(max_length=25)
+    estado_categoria_servicio = models.BooleanField(verbose_name='Estado',default=True)
 
     class Meta:
         db_table = 'Categoria Servicio'
@@ -62,6 +63,7 @@ class Categoria_Servicio(models.Model):
 class Categoria(models.Model):
     id_categoria = models.AutoField(primary_key=True,verbose_name='ID')
     nombre_categoria = models.CharField(max_length=25)
+    estado_categoria = models.BooleanField(verbose_name='Estado',default=True)
 
     class Meta:
         db_table = 'Categoria'
@@ -97,7 +99,7 @@ class Producto(models.Model):
     cantidad_maxima = models.IntegerField(verbose_name='Cantidad Maxina')
     cantidad_minima = models.IntegerField(verbose_name='Cantidad Minima')
     precio_producto = models.DecimalField(max_digits=8,decimal_places=2)
-    existencia_prodcuto = models.IntegerField(verbose_name='Existencia')
+    existencia_producto = models.IntegerField(verbose_name='Existencia')
     tipo_producto = models.IntegerField(verbose_name='Tipo Producto')
     producto_activo = models.BooleanField(verbose_name='Producto Activo')
 
