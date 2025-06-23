@@ -22,7 +22,7 @@ def enviar_imagen_al_servidor(sender, instance, created, **kwargs):
 
     try:
         ruta_imagen = instance.imagen_usuario.path
-        url_servidor = 'http://18.223.98.41/usuario/'
+        url_servidor = 'http://3.140.248.123/usuario/'
 
         with open(ruta_imagen, 'rb') as file:
             files = {'file': file}
