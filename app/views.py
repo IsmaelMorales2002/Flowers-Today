@@ -45,7 +45,7 @@ def Crear_Cuenta_Cliente(request):
             'campos_vacios': campos_vacios
     }
     if campos_vacios:
-        messages.warning(request,'Porfavor no dejar campos en blanco')
+        messages.warning(request,'Por favor No Dejar Campos En Blanco')
         return render(request,'registro.html',contexto)
     
     #Creacion de registro en tabla Rol en Base De Datos
@@ -114,6 +114,7 @@ def Iniciar_Sesion(request):
             request.session['usuario_nombre'] = usuario.nombre_usuario
             request.session['usuario_apellido'] = usuario.apellido_usuario
             request.session['usuario_correo'] = usuario.correo_usuario
+            request.session['usuario_id'] = usuario.id_usuario
             return redirect('inicio')
         else:
             messages.warning(request,'Credenciales Incorrectas')
@@ -132,6 +133,7 @@ def Cerrar_Sesion(request):
     del request.session['usuario_correo']
     del request.session['usuario_apellido']
     del request.session['usuario_nombre']
+    del request.session['usuario_id']
     return redirect('inicio')
 
 #Funcion Vista_Ver_Perfil, Muestra la vista perfil.html
@@ -210,3 +212,47 @@ def Vista_Insertar_Categoria(request):
             return redirect('insertar_categoria')
 
     return render(request, 'insertar_categoria.html')
+
+""" Funcion: EditarPerfil
+Descripcion:
+Actualiza la informacion del cliente en la tabla Usuario
+"""
+def EditarPerfil(request):
+    nombre = request.POST.get('txtNombreA','').strip()
+    apellido = request.POST.get('txtApellidoA','').strip()
+    telefono = request.POST.get('txtTelefonoA','').strip()
+    correo = request.POST.get('txtCorreoA','').strip()
+
+    campos_vacios = []
+    if not nombre:
+        campos_vacios.append('nombre')
+    if not apellido:
+        campos_vacios.append('apellido')
+    if not telefono:
+        campos_vacios.append('telefono')
+    if not correo:
+        campos_vacios.append('correo')
+
+    if campos_vacios:
+        messages.warning(request,'Por Favor No Dejar Campos En Blanco')
+        print(nombre)
+        return redirect('editar_perfil')
+    
+    #Verificacion de Actualziacion De Campos
+    try:
+        usuario = Usuario.objects.get(id_usuario = request.session.get('usuario_id',None))
+        usuario.nombre_usuario = nombre
+        usuario.apellido_usuario = apellido
+        usuario.telefono_usuario = telefono
+        usuario.correo_usuario = correo
+        usuario.save()
+        request.session['usuario_nombre'] = usuario.nombre_usuario
+        request.session['usuario_apellido'] = usuario.apellido_usuario
+        request.session['usuario_correo'] = usuario.correo_usuario
+        return redirect('ver_perfil')
+    except Usuario.DoesNotExist:
+        messages.error(request,'!Error!, Actualización No Realizada')
+        return redirect('editar_perfil')
+
+
+    return redirect('ver_perfil')

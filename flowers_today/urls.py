@@ -23,6 +23,7 @@ urlpatterns = [
     #Logico
     path('IniciarSesion/',Iniciar_Sesion,name='IniciarSesion'),
     path('CrearCuenta/',Crear_Cuenta_Cliente,name='CrearCuenta'),
-    path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion')
+    path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion'),
+    path('EditarPerfil/',EditarPerfil,name='EditarPerfil'),
     #Endpoints
 ]

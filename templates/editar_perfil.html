@@ -2,159 +2,127 @@
 {% block title %} Editar Perfil {% endblock %}
 
 {% block content %}
+<section class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+      <div class="card bg-dark text-white border-0 shadow-lg rounded-4">
+        <div class="card-body p-5">
+          <h2 class="text-center mb-4">Editar Perfil</h2>
 
-<section class="container my-5 text-white">
-    <h2 class="mb-4 text-center">Editar Perfil</h2>
+          <!-- Imagen de perfil -->
+          <div class="text-center mb-4">
+            <img id="preview-imagen"
+                 src="https://acortar.link/xrxnFa"
+                 alt="Foto de Perfil"
+                 class="rounded-circle shadow img-thumbnail"
+                 style="width: 150px; height: 150px; object-fit: cover;">
+            <div class="mt-2">
+              <input type="file"
+                     class="form-control form-control-sm mx-auto"
+                     style="max-width: 300px;"
+                     id="imagen_usuario"
+                     name="imagen_usuario"
+                     accept="image/*">
+              <div id="error-imagen" class="text-danger small mt-1"></div>
+            </div>
+          </div>
 
-    <form id="form-editar-perfil" method="post" enctype="multipart/form-data" action="#">
-        {% csrf_token %}
+          <!-- Formulario -->
+          <form method="POST" enctype="multipart/form-data" action="{% url 'EditarPerfil' %}" id="form-editar-perfil">
+            {% csrf_token %}
 
-        <div class="row gy-4 align-items-start">
-            <!-- Imagen de perfil -->
-            <div class="col-12 col-md-4 text-center mb-3">
-                <img id="preview-imagen" 
-                     src="https://acortar.link/xrxnFa" 
-                     alt="Foto de Perfil" 
-                     class="rounded-circle img-thumbnail mb-3" 
-                     style="width: 200px; height: 200px;">
+            <!-- Alerta -->
+            {% if messages %}
+              <div class="mb-4">
+                {% for message in messages %}
+                  <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show text-center" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
 
-                <!-- Subir nueva imagen -->
-                <input type="file" 
-                       class="form-control form-control-sm mb-2" 
-                       id="imagen_usuario" 
-                       name="imagen_usuario" 
-                       accept="image/*" 
-                       style="max-width: 300px; margin: 0 auto;">
-                <div id="error-imagen" class="text-danger mb-3"></div>
+            <!-- Nombre -->
+            <div class="mb-3">
+              <label for="nombre_usuario" class="form-label">Nombre</label>
+              <input type="text"
+                     class="form-control form-control-sm bg-dark text-white border-secondary"
+                     id="nombre_usuario"
+                     name="txtNombreA"
+                     value="{{ usuario.nombre_usuario }}"
+                     required>
             </div>
 
-            <!-- Campos del usuario -->
-            <div class="col-12 col-md-8">
-                <!-- Nombre -->
-                <div class="row mb-3 align-items-center">
-                    <label for="nombre_usuario" class="col-auto col-form-label">Nombre:</label>
-                    <div class="col">
-                        <input type="text" 
-                               class="form-control form-control-sm" 
-                               id="nombre_usuario" 
-                               name="nombre_usuario" 
-                               value="{{usuario.nombre_usuario}}" 
-                               required 
-                               style="max-width: 400px;">
-                    </div>
-                </div>
-
-                <!-- Apellido -->
-                <div class="row mb-3 align-items-center">
-                    <label for="apellido_usuario" class="col-auto col-form-label">Apellido:</label>
-                    <div class="col">
-                        <input type="text" 
-                               class="form-control form-control-sm" 
-                               id="apellido_usuario" 
-                               name="apellido_usuario" 
-                               value="{{usuario.apellido_usuario}}" 
-                               required 
-                               style="max-width: 400px;">
-                    </div>
-                </div>
-
-                <!-- Teléfono -->
-                <div class="row mb-3 align-items-center">
-                    <label for="telefono_usuario" class="col-auto col-form-label">Teléfono:</label>
-                    <div class="col">
-                        <input type="text" 
-                               class="form-control form-control-sm" 
-                               id="telefono_usuario" 
-                               name="telefono_usuario" 
-                               value="{{usuario.telefono_usuario}}" 
-                               required 
-                               style="max-width: 400px;">
-                    </div>
-                </div>
-
-                <!-- Correo -->
-                <div class="row mb-4 align-items-center">
-                    <label for="correo_usuario" class="col-auto col-form-label">Correo:</label>
-                    <div class="col">
-                        <input type="email" 
-                               class="form-control form-control-sm" 
-                               id="correo_usuario" 
-                               name="correo_usuario" 
-                               value="{{usuario.correo_usuario}}" 
-                               required 
-                               style="max-width: 400px;">
-                    </div>
-                </div>
-
-                <!-- Botones -->
-                <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
-                    <button type="submit" class="btn btn-primary" style="background-color: #6C2DC7; border: #6C2DC7;">
-                        <i class="bi bi-save me-1"></i> Guardar
-                    </button>
-                    <a href="{% url 'ver_perfil' %}" class="btn btn-danger">
-                        <i class="bi bi-x-circle me-1"></i> Cancelar
-                    </a>
-                </div>
+            <div class="mb-3">
+              <label for="apellido_usuario" class="form-label">Apellido</label>
+              <input type="text"
+                     class="form-control form-control-sm bg-dark text-white border-secondary"
+                     id="apellido_usuario"
+                     name="txtApellidoA"
+                     value="{{ usuario.apellido_usuario }}"
+                     required>
             </div>
+
+            <div class="mb-3">
+              <label for="correo_usuario" class="form-label">Correo Electrónico</label>
+              <input type="email"
+                     class="form-control form-control-sm bg-dark text-white border-secondary"
+                     id="correo_usuario"
+                     name="txtCorreoA"
+                     value="{{ usuario.correo_usuario }}"
+                     required>
+            </div>
+
+            <div class="mb-4">
+              <label for="telefono_usuario" class="form-label">Teléfono</label>
+              <input type="text"
+                     class="form-control form-control-sm bg-dark text-white border-secondary"
+                     id="telefono_usuario"
+                     name="txtTelefonoA"
+                     value="{{ usuario.telefono_usuario }}"
+                     required>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
+              <button type="submit" class="btn btn-primary w-100 w-md-auto" style="background-color: #6C2DC7; border: #6C2DC7;">
+                <i class="bi bi-save me-1"></i> Guardar Cambios
+              </button>
+              <a href="{% url 'ver_perfil' %}" class="btn btn-danger w-100 w-md-auto">
+                <i class="bi bi-x-circle me-1"></i> Cancelar
+              </a>
+            </div>
+          </form>
         </div>
-    </form>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- Validación de imagen + Redirección al guardar -->
+<!-- Script: preview imagen -->
 <script>
-document.getElementById('form-editar-perfil').addEventListener('submit', function(event) {
-    const fileInput = document.getElementById('imagen_usuario');
-    const file = fileInput.files[0];
-    const errorDiv = document.getElementById('error-imagen');
-    errorDiv.textContent = '';
+document.getElementById('imagen_usuario').addEventListener('change', function () {
+  const file = this.files[0];
+  const preview = document.getElementById('preview-imagen');
+  const errorDiv = document.getElementById('error-imagen');
+  errorDiv.textContent = '';
 
-    if (file) {
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'];
-
-        if (!allowedTypes.includes(file.type)) {
-            event.preventDefault();
-            errorDiv.textContent = 'Solo se permiten archivos de imagen (JPG, PNG, GIF, WEBP).';
-            return false;
-        }
+  if (file) {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      errorDiv.textContent = 'Solo se permiten imágenes JPG, PNG, GIF o WEBP.';
+      this.value = '';
+      preview.src = "https://acortar.link/xrxnFa";
+      return;
     }
 
-    const nombre = document.getElementById('nombre_usuario').value.trim();
-    const telefono = document.getElementById('telefono_usuario').value.trim();
-
-    if (nombre === '' || telefono === '') {
-        return true; 
-    }
-
-    event.preventDefault();
-    window.location.href = "{% url 'ver_perfil' %}";
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      preview.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
 });
 </script>
-
-<!-- Preview en vivo -->
-<script>
-document.getElementById('imagen_usuario').addEventListener('change', function() {
-    const file = this.files[0];
-    const preview = document.getElementById('preview-imagen');
-    const errorDiv = document.getElementById('error-imagen');
-    errorDiv.textContent = '';
-
-    if (file) {
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'];
-
-        if (!allowedTypes.includes(file.type)) {
-            errorDiv.textContent = 'Solo se permiten archivos de imagen (JPG, PNG, GIF, WEBP).';
-            this.value = ''; 
-            preview.src = "https://acortar.link/xrxnFa"; 
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.src = e.target.result;
-        }
-        reader.readAsDataURL(file);
-    }
-});
-</script>
-
 {% endblock %}
