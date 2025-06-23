@@ -250,7 +250,7 @@ def Vista_Insertar_Producto(request):
                 cantidad_maxima = cantidad_maxima,
                 cantidad_minima = cantidad_minima,
                 precio_producto = precio_producto,
-                existencia_prodcuto = existencia_producto,  # respetando el modelo
+                existencia_producto = existencia_producto,  # respetando el modelo
                 tipo_producto = tipo_producto,
                 producto_activo = activo
             )
@@ -289,7 +289,7 @@ def Vista_Listar_Producto(request):
             'cantidad_maxima': p.cantidad_maxima,
             'cantidad_minima': p.cantidad_minima,
             'precio_producto': p.precio_producto,
-            'existencia_prodcuto': p.existencia_prodcuto,
+            'existencia_producto': p.existencia_producto,
             'producto_activo': p.producto_activo,
             'imagen_producto': p.imagen_producto,  # ya es URL
         })
@@ -336,7 +336,7 @@ def Vista_Editar_Producto(request):
             producto.cantidad_maxima = cantidad_maxima
             producto.cantidad_minima = cantidad_minima
             producto.precio_producto = precio_producto
-            producto.existencia_prodcuto = existencia_producto
+            producto.existencia_producto = existencia_producto
             producto.imagen_producto = producto.imagen_producto
             producto.producto_activo = producto_activo
 
