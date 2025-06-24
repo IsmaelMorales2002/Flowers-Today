@@ -29,13 +29,8 @@
             <td class="text-center">{{categoria.id_categoria}}</td>
             <td class="text-center">{{categoria.nombre_categoria}}</td>
             <td class="text-center">
-                <a href="#" 
-                    class="btn btn-sm me-1 bg-dark text-white" 
-                    title="Editar"
-                    data-bs-toggle="modal" 
-                    data-bs-target="#modalEditarCategoria"
-                    data-id="{{categoria.id_categoria}}" 
-                    data-nombre="{{categoria.nombre_categoria}}">
+                <a href="{% url 'actualizar_categoria' categoria.id_categoria %}" 
+                    class="btn btn-sm me-1 bg-dark text-white" title="Editar">
                     <i class="bi bi-pencil-square"></i>
                 </a>
                 <a href="#" class="btn btn-sm btn-danger" title="Eliminar">
@@ -48,6 +43,17 @@
       </tbody>
     </table>
   </div>
+</div>
+
+<div>
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show mt-3" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
 </div>
 
 

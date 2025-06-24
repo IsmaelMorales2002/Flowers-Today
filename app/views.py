@@ -514,3 +514,37 @@ def Vista_Listar_Usuarios(request):
     return render(request, 'listar_usuarios.html', {
         'usuarios': usuarios
     })
+
+def Vista_Actualizar_Categoria(request,id):
+    try:
+        categoria = Categoria.objects.get(id_categoria=id)
+        return render(request,'actualizarCategoria.html',{
+        'categoria': categoria
+        })
+    except Categoria.DoesNotExist:
+        return render('login')
+   
+
+def Actualizar_Categoria(request):
+    id_categoria = request.POST.get('id_categoria',None)
+    nombre_categoria = request.POST.get('nombre_categoria','').strip()
+
+    if not nombre_categoria:
+        messages.warning(request,'!Por favor No dejar campos en blanco!')
+        return redirect('actualizar_categoria',id=id_categoria)
+    
+    #Verificas Categoria Existente
+    existe = Categoria.objects.filter(nombre_categoria = nombre_categoria).exists()
+    if existe:
+        messages.warning(request,'!Categoria Ya Registrada!')
+        return redirect('actualizar_categoria',id=id_categoria)
+    
+    try: 
+        categoria = Categoria.objects.get(id_categoria = id_categoria)
+        categoria.nombre_categoria = nombre_categoria
+        categoria.save()
+        messages.success(request,'Categoria Actualizada')
+        return redirect('listar_categoria')
+    except Categoria.DoesNotExist:
+        messages.error(request,'!No se puedo actulizar!, Intente mas tarde!')
+        return redirect('actualizar_categoria',id=id_categoria)
