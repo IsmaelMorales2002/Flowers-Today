@@ -26,7 +26,8 @@ urlpatterns = [
     path('categoria/verificar_existente/', Vista_Verificar_Categoria_Existente, name='verificar_categoria_existente'),
     path('categoria/actualizar/', Vista_Actualizar_Categoria, name='actualizar_categoria'),
     path('categoria/cambiar_estado/', cambiar_estado_categoria, name='cambiar_estado_categoria'),
-
+    path('inicio-admin/',Vista_Inicio_Administrador,name='inicio_admin'),
+    path('perfil-admin/',Vista_Ver_Perfil_Admin,name='ver_perfil_admin'),
 
 
     #Logico

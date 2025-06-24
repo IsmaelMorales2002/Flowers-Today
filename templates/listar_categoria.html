@@ -1,299 +1,54 @@
-{% extends 'menu.html' %}
+{% extends 'menuAdministrador.html' %}
+{% load static %}
 {% block title %} Gestionar Categorías {% endblock %}
 
 {% block content %}
-<style>
-    /* Texto blanco en el selector de registros y en el label de búsqueda */
-    #tabla-categorias_wrapper .dataTables_length label,
-    #tabla-categorias_wrapper .dataTables_filter label {
-        color: white;
-    }
 
-    /* Input de búsqueda */
-    #tabla-categorias_wrapper .dataTables_filter input {
-        color: black;
-        background-color: white;
-    }
+<div class="container my-5 text-white">
+  <h2 class="text-center mb-4">Gestionar Categorías</h2>
 
-    /* Selector de registros */
-    #tabla-categorias_wrapper .dataTables_length select {
-        color: black;
-        background-color: white;
-    }
-</style>
+  <!-- Botón Agregar Categoría -->
+  <div class="d-flex justify-content-end mb-3">
+    <a href="{% url 'insertar_categoria' %}" class="btn btn-primary" style="background-color: #6C2DC7; border: none;">
+      <i class="bi bi-plus-circle me-1"></i> Agregar Categoría
+    </a>
+  </div>
 
-<section class="container my-5 text-white">
-    <h2 class="mb-4 text-center">Gestionar Categorías</h2>
-
-    <div class="card bg-dark border-0">
-        <div class="card-body">
-            <!-- Botón Agregar -->
-            <div class="d-flex justify-content-end mb-3">
-                <a href="{% url 'insertar_categoria' %}" 
-                   class="btn" 
-                   style="background-color: #6C2DC7; color: white;">
-                    <i class="bi bi-plus-circle me-1"></i> Agregar Categoria
+  <div class="table-responsive">
+    <table id="tabla-categorias" class="table table-striped table-bordered bg-white text-dark">
+      <thead class="table-secondary text-dark text-center">
+        <tr>
+          <th class="text-center">ID</th>
+          <th class="text-center">Nombre de Categoría</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for categoria in categorias %}
+        <tr>
+            <td class="text-center">{{categoria.id_categoria}}</td>
+            <td class="text-center">{{categoria.nombre_categoria}}</td>
+            <td class="text-center">
+                <a href="{% url 'editar_categoria' categoria.id_categoria %}" class="btn btn-sm btn-warning me-1" title="Editar">
+                    <i class="bi bi-pencil-square"></i>
+                 </a>
+                <a href="{% url 'eliminar_categoria' categoria.id_categoria %}" class="btn btn-sm btn-danger" title="Eliminar">
+                    <i class="bi bi-trash-fill"></i>
                 </a>
-            </div>
+          </td>
+            </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 
-            <!-- Mensajes -->
-            <div>
-                {% if messages %}
-                    {% for message in messages %}
-                        {% if message.tags == 'success' %}
-                        <div class="modal fade" id="modalExito" tabindex="-1" aria-labelledby="modalExitoLabel" aria-hidden="true">
-                          <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content bg-dark text-white">
-                              <div class="modal-header">
-                                <h5 class="modal-title" id="modalExitoLabel">Registro Exitoso</h5>
-                              </div>
-                              <div class="modal-body">
-                                {{ message }}
-                              </div>
-                              <div class="modal-footer">
-                                <a href="{% url 'listar_categoria' %}" class="btn btn-primary" style="background-color: #6C2DC7; border: #6C2DC7;">Aceptar</a>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {% else %}
-                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-            </div>
-
-            <!-- Tabla -->
-            <div class="table-responsive">
-                <table id="tabla-categorias" class="table table-striped table-bordered bg-white text-dark">
-                    <thead class="table-secondary text-dark">
-                        <tr>
-                            <th style="width: 10%; text-align: center;">ID</th>
-                            <th style="width: 30%; text-align: center">Nombre de Categoría</th>
-                            <th class="text-center" style="width: 10%;">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for categoria in categorias %}
-                        <tr>
-                            <td style="text-align: center;">{{ categoria.id_categoria }}</td>
-                            <td style="text-align: center;">{{ categoria.nombre_categoria }}</td>
-                            <td class="text-center">
-                                <a href="#" class="btn btn-sm bg-dark text-white btn-editar-categoria" 
-                                    data-id="{{ categoria.id_categoria }}" 
-                                    data-nombre="{{ categoria.nombre_categoria }}" 
-                                    title="Editar">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-                                {% if categoria.estado_categoria %}
-                                <a href="#" class="btn btn-sm btn-danger cambiar-estado-categoria-btn" 
-                                    data-id="{{ categoria.id_categoria }}" 
-                                    data-accion="desactivar"
-                                    data-nombre="{{ categoria.nombre_categoria }}"
-                                    title="Desactivar">
-                                    <i class="bi bi-trash-fill"></i>
-                                </a>
-                            {% else %}
-                                <a href="#" class="btn btn-sm btn-success cambiar-estado-categoria-btn" 
-                                    data-id="{{ categoria.id_categoria }}" 
-                                    data-accion="activar"
-                                    data-nombre="{{ categoria.nombre_categoria }}"
-                                    title="Activar">
-                                    <i class="bi bi-arrow-clockwise"></i>
-                                </a>
-                            {% endif %}
-
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="3" class="text-center">No hay categorías registradas.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Scripts DataTables -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<!-- DataTables -->
+<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
-<script>
-$(document).ready(function() {
-    $('#tabla-categorias').DataTable({
-        language: {
-            "decimal": "",
-            "emptyTable": "No hay datos disponibles en la tabla",
-            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-            "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-            "infoFiltered": "(filtrado de _MAX_ registros totales)",
-            "lengthMenu": "Mostrar _MENU_ registros",
-            "loadingRecords": "Cargando...",
-            "processing": "Procesando...",
-            "search": "Buscar:",
-            "zeroRecords": "No se encontraron registros coincidentes",
-            "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
-            }
-        },
-        order: [[0, 'asc']], 
-        dom: '<"d-flex justify-content-between align-items-center mb-3"lf>rt<"d-flex justify-content-between align-items-center mt-3"ip>'
-    });
-
-    // Mostrar modal si éxito
-    {% if messages %}
-        {% for message in messages %}
-            {% if message.tags == 'success' %}
-                var myModal = new bootstrap.Modal(document.getElementById('modalExito'), {});
-                myModal.show();
-            {% endif %}
-        {% endfor %}
-    {% endif %}
-});
-
-// Al hacer clic en "Editar", llenar el modal
-$(document).on('click', '.btn-editar-categoria', function() {
-    const id = $(this).data('id');
-    const nombre = $(this).data('nombre');
-
-    $('#editCategoriaId').val(id);
-    $('#editNombreCategoria').val(nombre);
-    $('#editNombreCategoria').removeClass('is-invalid'); // Limpiar errores anteriores
-
-    $('#modalEditarCategoria').modal('show');
-});
-
-// Guardar categoría editada
-$(document).on('click', '#btnGuardarCategoriaEditada', function() {
-    const id_categoria = $('#editCategoriaId').val();
-    const nombre_categoria = $('#editNombreCategoria').val().trim();
-
-    if (!nombre_categoria) {
-        $('#editNombreCategoria').addClass('is-invalid');
-        return;
-    } else {
-        $('#editNombreCategoria').removeClass('is-invalid');
-    }
-
-    // Verificar si ya existe ese nombre
-    $.ajax({
-        url: '{% url "verificar_categoria_existente" %}',  
-        method: 'POST',
-        data: {
-            'nombre_categoria': nombre_categoria,
-            'id_categoria': id_categoria,
-            'csrfmiddlewaretoken': '{{ csrf_token }}'
-        },
-        success: function(response) {
-            if (response.existe) {
-                $('#editNombreCategoria').addClass('is-invalid');
-            } else {
-                $('#editNombreCategoria').removeClass('is-invalid');
-
-                // No existe, actualizar
-                $.ajax({
-                    url: '{% url "actualizar_categoria" %}',
-                    method: 'POST',
-                    data: {
-                        'id_categoria': id_categoria,
-                        'nombre_categoria': nombre_categoria,
-                        'csrfmiddlewaretoken': '{{ csrf_token }}'
-                    },
-                    success: function(resp) {
-                        if (resp.ok) {
-                            $('#modalEditarCategoria').modal('hide');
-                            location.reload();
-                        } else {
-                            $('#editNombreCategoria').addClass('is-invalid');
-                        }
-                    }
-                });
-            }
-        }
-    });
-});
-// Al hacer clic en cambiar estado
-$(document).on('click', '.cambiar-estado-categoria-btn', function() {
-    let id = $(this).data('id');
-    let accion = $(this).data('accion');
-    let nombre = $(this).data('nombre');
-
-    $('#estado-id-categoria').val(id);
-    $('#estado-accion-categoria').val(accion);
-
-    if (accion == 'activar') {
-        $('#texto-confirmar-estado-categoria').html('¿Está seguro que desea <strong style="color: green;">activar</strong> la categoría <strong>"' + nombre + '"</strong>?');
-    } else {
-        $('#texto-confirmar-estado-categoria').html('¿Está seguro que desea <strong style="color: red;">desactivar</strong> la categoría <strong>"' + nombre + '"</strong>?');
-    }
-
-    var modalEstado = new bootstrap.Modal(document.getElementById('modalConfirmarEstadoCategoria'));
-    modalEstado.show();
-});
-
-</script>
-
-<!-- Modal Editar Categoría -->
-<div class="modal fade" id="modalEditarCategoria" tabindex="-1" aria-labelledby="modalEditarCategoriaLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content bg-white text-dark">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalEditarCategoriaLabel">Editar Categoría</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        <form id="formEditarCategoria" novalidate>
-          <input type="hidden" id="editCategoriaId" name="id_categoria">
-          <div class="mb-3">
-            <label for="editNombreCategoria" class="form-label">Nombre de la Categoría</label>
-            <input type="text" class="form-control" id="editNombreCategoria" name="nombre_categoria" required>
-            <div class="invalid-feedback">
-                El nombre de la categoría no puede estar vacío o ya existe.
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn" id="btnGuardarCategoriaEditada" style="background-color: #6C2DC7; color: white;">Guardar</button>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- MODAL CONFIRMAR ESTADO CATEGORIA -->
-<div class="modal fade" id="modalConfirmarEstadoCategoria" tabindex="-1" aria-labelledby="modalConfirmarEstadoCategoriaLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalConfirmarEstadoCategoriaLabel">Confirmar Acción</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body text-center">
-        <p id="texto-confirmar-estado-categoria"></p>
-      </div>
-      <div class="modal-footer">
-        <form method="post" action="{% url 'cambiar_estado_categoria' %}">
-          {% csrf_token %}
-          <input type="hidden" name="id_categoria" id="estado-id-categoria">
-          <input type="hidden" name="accion" id="estado-accion-categoria">
-          <button type="submit" class="btn" style="background-color: #6C2DC7; color: white;">Confirmar</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border: red; background-color: red;">Cancelar</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
+<script src="{% static 'js/dataTableCategorias.js'%}"></script>
 
 {% endblock %}
