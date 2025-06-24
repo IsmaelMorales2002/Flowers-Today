@@ -119,6 +119,15 @@ def obtener_productos_por_categoria():
 
     return categorias_con_productos
 
+#Funcion Vista_Inicio_Administrador, Muestra la vista InicioAdministrador.html
+def Vista_Inicio_Administrador(request):
+    activo_admin = request.session.get('admin_correo',None)
+    if activo_admin:
+        return render(request,'inicioAdministrador.html',{
+            'activo_admin': activo_admin
+        })
+    return render(request,'inicio.html')
+
 """Funcion: Iniciar_Sesion
 Descripcion:
 Verifica que el correo y contraseña sean los correcto para darle acceso al sistema
@@ -133,11 +142,23 @@ def Iniciar_Sesion(request):
         #Verificacion de contraseña
         if check_password(password,usuario.password_usuario):
             #Session para guardar informacion del cliente
-            request.session['usuario_nombre'] = usuario.nombre_usuario
-            request.session['usuario_apellido'] = usuario.apellido_usuario
-            request.session['usuario_correo'] = usuario.correo_usuario
-            request.session['usuario_id'] = usuario.id_usuario
-            return redirect('inicio')
+            if usuario.id_rol.nombre_rol == 'C':
+                request.session['usuario_nombre'] = usuario.nombre_usuario
+                request.session['usuario_apellido'] = usuario.apellido_usuario
+                request.session['usuario_correo'] = usuario.correo_usuario
+                request.session['usuario_id'] = usuario.id_usuario
+                return redirect('inicio')
+            
+            elif usuario.id_rol.nombre_rol == 'A':
+                request.session['admin_nombre'] = usuario.nombre_usuario
+                request.session['admin_apellido'] = usuario.apellido_usuario
+                request.session['admin_correo'] = usuario.correo_usuario
+                request.session['admin_id'] = usuario.id_usuario
+                return redirect('inicio_admin')
+            
+            else:
+                messages.error(request,'!Usuario No Encontrado!')
+                return redirect('login')
         else:
             messages.warning(request,'Credenciales Incorrectas')
             return render(request,'login.html',{
@@ -152,11 +173,26 @@ def Iniciar_Sesion(request):
 
 #Funcion Cerrar_Sesion, Cierra Session y elimina las session creadas
 def Cerrar_Sesion(request):
-    del request.session['usuario_correo']
-    del request.session['usuario_apellido']
-    del request.session['usuario_nombre']
-    del request.session['usuario_id']
-    return redirect('inicio')
+    try:
+        usuario = Usuario.objects.get(id_usuario = request.session.get('usuario_id',None))
+        if usuario.id_rol.nombre_rol == 'C':
+            del request.session['usuario_correo']
+            del request.session['usuario_apellido']
+            del request.session['usuario_nombre']
+            del request.session['usuario_id']
+            return redirect('inicio')
+    
+    except Usuario.DoesNotExist as e:
+        try:
+            admin = Usuario.objects.get(id_usuario = request.session.get('admin_id',None))
+            if admin.id_rol.nombre_rol == 'A': 
+                del request.session['admin_correo']
+                del request.session['admin_apellido']
+                del request.session['admin_nombre']
+                del request.session['admin_id']
+                return redirect('inicio')
+        except Usuario.DoesNotExist:
+            return redirect('login')
 
 #Funcion Vista_Ver_Perfil, Muestra la vista perfil.html
 # Esta vista puede ser utilizada para mostrar la informacion del usuario logueado
@@ -174,6 +210,22 @@ def Vista_Ver_Perfil(request):
             return redirect('inicio')
     else:
         return redirect('login')
+    
+def Vista_Ver_Perfil_Admin(request):
+    #Seguridad de Rutas
+    activo_admin = request.session.get('admin_correo',None)
+    if activo_admin:
+        try:
+            usuario = Usuario.objects.get(correo_usuario = activo_admin)
+            return render(request, 'perfilAdministrador.html',{
+                'activo_admin': activo_admin,
+                'usuario': usuario
+            })
+        except Usuario.DoesNotExist:
+            return redirect('inicio')
+    else:
+        return redirect('login')
+
 
 #Funcion Vista_Editar_Perfil, Muestra la vista editar_perfil.html
 # Esta vista puede ser utilizada para editar la informacion del usuario logueado
@@ -202,12 +254,19 @@ def Vista_Nueva_Password(request, token):
 # Funcion Vista_Listar_Categoria, Muestra la vista listar_categoria.html
 # Esta vista lista todas las categorias disponibles en la base de datos
 def Vista_Listar_Categoria(request):
-    try:
-        categorias = Categoria.objects.all().order_by('nombre_categoria')
-        return render(request, 'listar_categoria.html', {'categorias': categorias})
-    except Exception as e:
-        messages.error(request, f'Error al cargar las categorías: {str(e)}')
-        return render(request, 'listar_categoria.html', {'categorias': []})
+    #Seguridad De Ruta
+    activo_admin = request.session.get('admin_correo',None)
+    if activo_admin:
+        try:
+            categorias = Categoria.objects.all().order_by('nombre_categoria')
+            return render(request, 'listar_categoria.html', {
+                'categorias': categorias,
+                'activo_admin': activo_admin
+            })
+        except Exception as e:
+            messages.error(request, f'Error al cargar las categorías: {str(e)}')
+            return render(request, 'listar_categoria.html', {'categorias': []})
+    return redirect('login')
     
 # Funcion Vista_Insertar_Categoria, Muestra la vista insertar_categoria.html
 # Esta vista permite al usuario registrar una nueva categoria en la base de datos 
@@ -321,9 +380,6 @@ def Vista_Listar_Producto(request):
         'categorias': categorias
     })
 
-    
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
 
 def Vista_Editar_Producto(request):
     if request.method == 'POST':
