@@ -534,3 +534,8 @@ def cambiar_estado_categoria(request):
         messages.success(request, 'El estado de la categoría ha sido actualizado.')
         return redirect('listar_categoria')
 
+def Vista_Listar_Usuarios(request):
+    usuarios = Usuario.objects.all()
+    return render(request, 'listar_usuarios.html', {
+        'usuarios': usuarios
+    })
