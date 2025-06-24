@@ -81,11 +81,11 @@ WSGI_APPLICATION = 'flowers_today.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'flowers',
+        'NAME': 'railway',
         'USER': 'postgres',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'HOST': 'shortline.proxy.rlwy.net',
+        'PASSWORD': 'gThztsmrNyDdxRFpMRmeXFEQFzwTeyJp',
+        'PORT': '39417'
     }
 }
 
