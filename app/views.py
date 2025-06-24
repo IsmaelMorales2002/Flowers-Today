@@ -308,8 +308,7 @@ def Vista_Insertar_Producto(request):
                 id_categoria = request.POST.get('id_categoria')
                 descripcion_producto = request.POST.get('descripcion_producto', '').strip()
                 
-                # Usamos la URL predefinida
-                imagen_producto = 'https://acortar.link/zPqL3t'
+                imagen_producto = request.FILES.get('imagen_producto')
 
                 cantidad_maxima = request.POST.get('cantidad_maxima')
                 cantidad_minima = request.POST.get('cantidad_minima')
