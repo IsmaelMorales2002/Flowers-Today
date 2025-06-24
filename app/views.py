@@ -380,7 +380,7 @@ def Vista_Listar_Producto(request):
                 'precio_producto': p.precio_producto,
                 'existencia_producto': p.existencia_producto,
                 'producto_activo': p.producto_activo,
-                'imagen_producto': p.imagen_producto,  # ya es URL
+                'imagen_producto': p.imagen_producto.url,  # ya es URL
             })
 
         return render(request, 'listar_producto.html', {
