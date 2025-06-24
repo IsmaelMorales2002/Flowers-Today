@@ -297,55 +297,61 @@ def Vista_Insertar_Categoria(request):
 
 
 def Vista_Insertar_Producto(request):
-    categorias = Categoria.objects.all().order_by('nombre_categoria')
+    activo_admin = request.session.get('admin_correo',None)
 
-    if request.method == 'POST':
-        try:
-            nombre_producto = request.POST.get('nombre_producto', '').strip()
-            id_categoria = request.POST.get('id_categoria')
-            descripcion_producto = request.POST.get('descripcion_producto', '').strip()
-            
-            # Usamos la URL predefinida
-            imagen_producto = 'https://acortar.link/zPqL3t'
+    if activo_admin:
+        categorias = Categoria.objects.all().order_by('nombre_categoria')
 
-            cantidad_maxima = request.POST.get('cantidad_maxima')
-            cantidad_minima = request.POST.get('cantidad_minima')
-            precio_producto = request.POST.get('precio_producto')
-            
-            existencia_producto = request.POST.get('existencia_producto')
-            
-            tipo_producto = request.POST.get('tipo_producto')
-            
-            # Checkbox
-            activo = True if request.POST.get('producto_activo') else False
+        if request.method == 'POST':
+            try:
+                nombre_producto = request.POST.get('nombre_producto', '').strip()
+                id_categoria = request.POST.get('id_categoria')
+                descripcion_producto = request.POST.get('descripcion_producto', '').strip()
+                
+                # Usamos la URL predefinida
+                imagen_producto = 'https://acortar.link/zPqL3t'
 
-            # Validación básica
-            if nombre_producto == '' or id_categoria == '' or tipo_producto == '':
-                messages.error(request, 'Debe completar todos los campos.')
+                cantidad_maxima = request.POST.get('cantidad_maxima')
+                cantidad_minima = request.POST.get('cantidad_minima')
+                precio_producto = request.POST.get('precio_producto')
+                
+                existencia_producto = request.POST.get('existencia_producto')
+                
+                tipo_producto = request.POST.get('tipo_producto')
+                
+                # Checkbox
+                activo = True if request.POST.get('producto_activo') else False
+
+                # Validación básica
+                if nombre_producto == '' or id_categoria == '' or tipo_producto == '':
+                    messages.error(request, 'Debe completar todos los campos.')
+                    return redirect('insertar_producto')
+
+                nuevo_producto = Producto(
+                    nombre_producto = nombre_producto,
+                    id_categoria_id = id_categoria,
+                    descripcion_producto = descripcion_producto,
+                    imagen_producto = imagen_producto,
+                    cantidad_maxima = cantidad_maxima,
+                    cantidad_minima = cantidad_minima,
+                    precio_producto = precio_producto,
+                    existencia_producto = existencia_producto,  # respetando el modelo
+                    tipo_producto = tipo_producto,
+                    producto_activo = activo
+                )
+                nuevo_producto.save()
+
+                messages.success(request, 'Producto registrado exitosamente.')
+                return redirect('listar_producto')
+
+            except Exception as e:
+                messages.error(request, f'Error al registrar el producto: {str(e)}')
                 return redirect('insertar_producto')
 
-            nuevo_producto = Producto(
-                nombre_producto = nombre_producto,
-                id_categoria_id = id_categoria,
-                descripcion_producto = descripcion_producto,
-                imagen_producto = imagen_producto,
-                cantidad_maxima = cantidad_maxima,
-                cantidad_minima = cantidad_minima,
-                precio_producto = precio_producto,
-                existencia_producto = existencia_producto,  # respetando el modelo
-                tipo_producto = tipo_producto,
-                producto_activo = activo
-            )
-            nuevo_producto.save()
-
-            messages.success(request, 'Producto registrado exitosamente.')
-            return redirect('listar_producto')
-
-        except Exception as e:
-            messages.error(request, f'Error al registrar el producto: {str(e)}')
-            return redirect('insertar_producto')
-
-    return render(request, 'insertar_producto.html', {'categorias': categorias})
+        return render(request, 'insertar_producto.html', {
+            'categorias': categorias,
+            'activo_admin': activo_admin
+            })
 
 
 TIPO_PRODUCTO = {
@@ -355,31 +361,34 @@ TIPO_PRODUCTO = {
 }
 
 def Vista_Listar_Producto(request):
-    productos = Producto.objects.select_related('id_categoria').all().order_by('-id_producto')
-    categorias = Categoria.objects.all().order_by('nombre_categoria')
+    activo_admin = request.session.get('admin_correo',None)
+    if activo_admin:
+        productos = Producto.objects.select_related('id_categoria').all().order_by('-id_producto')
+        categorias = Categoria.objects.all().order_by('nombre_categoria')
 
-    lista_productos = []
-    for p in productos:
-        lista_productos.append({
-            'id_producto': p.id_producto,
-            'nombre_producto': p.nombre_producto,
-            'nombre_categoria': p.id_categoria.nombre_categoria if p.id_categoria else '',
-            'id_categoria': p.id_categoria.id_categoria if p.id_categoria else '',
-            'tipo_producto': TIPO_PRODUCTO.get(p.tipo_producto, 'Desconocido'),
-            'tipo_producto_val': p.tipo_producto,
-            'descripcion_producto': p.descripcion_producto,
-            'cantidad_maxima': p.cantidad_maxima,
-            'cantidad_minima': p.cantidad_minima,
-            'precio_producto': p.precio_producto,
-            'existencia_producto': p.existencia_producto,
-            'producto_activo': p.producto_activo,
-            'imagen_producto': p.imagen_producto,  # ya es URL
+        lista_productos = []
+        for p in productos:
+            lista_productos.append({
+                'id_producto': p.id_producto,
+                'nombre_producto': p.nombre_producto,
+                'nombre_categoria': p.id_categoria.nombre_categoria if p.id_categoria else '',
+                'id_categoria': p.id_categoria.id_categoria if p.id_categoria else '',
+                'tipo_producto': TIPO_PRODUCTO.get(p.tipo_producto, 'Desconocido'),
+                'tipo_producto_val': p.tipo_producto,
+                'descripcion_producto': p.descripcion_producto,
+                'cantidad_maxima': p.cantidad_maxima,
+                'cantidad_minima': p.cantidad_minima,
+                'precio_producto': p.precio_producto,
+                'existencia_producto': p.existencia_producto,
+                'producto_activo': p.producto_activo,
+                'imagen_producto': p.imagen_producto,  # ya es URL
+            })
+
+        return render(request, 'listar_producto.html', {
+            'productos': lista_productos,
+            'categorias': categorias,
+            'activo_admin': activo_admin
         })
-
-    return render(request, 'listar_producto.html', {
-        'productos': lista_productos,
-        'categorias': categorias
-    })
 
 
 def Vista_Editar_Producto(request):
