@@ -29,9 +29,15 @@
             <td class="text-center">{{categoria.id_categoria}}</td>
             <td class="text-center">{{categoria.nombre_categoria}}</td>
             <td class="text-center">
-                <a href="#" class="btn btn-sm me-1 bg-dark text-white" title="Editar">
+                <a href="#" 
+                    class="btn btn-sm me-1 bg-dark text-white" 
+                    title="Editar"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalEditarCategoria"
+                    data-id="{{categoria.id_categoria}}" 
+                    data-nombre="{{categoria.nombre_categoria}}">
                     <i class="bi bi-pencil-square"></i>
-                 </a>
+                </a>
                 <a href="#" class="btn btn-sm btn-danger" title="Eliminar">
                     <i class="bi bi-trash-fill"></i>
                 </a>
@@ -44,11 +50,41 @@
   </div>
 </div>
 
+
+<!-- MODAL -->
+<div class="modal fade" id="modalEditarCategoria" tabindex="-1" aria-labelledby="modalEditarCategoriaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="formEditarCategoria">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEditarCategoriaLabel">Editar Categoría</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Campo oculto para ID -->
+          <input type="hidden" id="editIdCategoria" name="id_categoria">
+
+          <!-- Campo visible para el nombre -->
+          <div class="mb-3">
+            <label for="editNombreCategoria" class="form-label">Nombre de Categoría</label>
+            <input type="text" class="form-control" id="editNombreCategoria" name="nombre_categoria">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn text-white" style="background-color: #6C2DC7;">Guardar cambios</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- DataTables -->
 <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script src="{% static 'js/dataTableCategorias.js'%}"></script>
+<script src="{% static 'js/modalCategoria.js'%}"></script>
 
 {% endblock %}
