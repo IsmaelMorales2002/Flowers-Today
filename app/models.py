@@ -103,7 +103,7 @@ class Producto(models.Model):
     id_categoria = models.ForeignKey(Categoria,on_delete=models.RESTRICT)
     nombre_producto = models.CharField(max_length=50,verbose_name='Nombre')
     descripcion_producto = models.CharField(max_length=100,verbose_name='Descripcion')
-    imagen_producto = models.ImageField(blank=True,verbose_name='Imagen Producto')
+    imagen_producto = models.ImageField(upload_to=ruta_unica,blank=True,verbose_name='Imagen Producto')
     cantidad_maxima = models.IntegerField(verbose_name='Cantidad Maxina')
     cantidad_minima = models.IntegerField(verbose_name='Cantidad Minima')
     precio_producto = models.DecimalField(max_digits=8,decimal_places=2)

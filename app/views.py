@@ -417,10 +417,6 @@ def EditarPerfil(request):
         messages.error(request,'!Error!, Actualización No Realizada')
         return redirect('editar_perfil')
 
-
-
-    return redirect('ver_perfil')
-
 def Vista_Verificar_Categoria_Existente(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre_categoria')
