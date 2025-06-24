@@ -99,6 +99,10 @@ def Vista_Inicio(request):
         })
     return render(request,'inicio.html')
 
+#Funcion Vista_Inicio_Administrador, Muestra la vista InicioAdministrador.html
+def Vista_Inicio_Administrador(request):
+    return render(request,'inicioAdministrador.html')
+
 """Funcion: Iniciar_Sesion
 Descripcion:
 Verifica que el correo y contraseña sean los correcto para darle acceso al sistema
