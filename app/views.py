@@ -92,12 +92,32 @@ def Crear_Cuenta_Cliente(request):
 
 #Funcion Vista_Inicio, Muestra la vista Inicio.html
 def Vista_Inicio(request):
-    activo = request.session.get('usuario_correo',None)
-    if activo:
-        return render(request,'inicio.html',{
-            'activo': activo
-        })
-    return render(request,'inicio.html')
+    activo = request.session.get('usuario_correo', None)
+    categorias_con_productos = obtener_productos_por_categoria()
+
+    return render(request, 'inicio.html', {
+        'activo': activo,
+        'categorias_con_productos': categorias_con_productos
+    })
+
+
+def obtener_productos_por_categoria():
+    categorias = Categoria.objects.filter(estado_categoria=True)
+    categorias_con_productos = []
+
+    for categoria in categorias:
+        productos = Producto.objects.filter(
+            id_categoria=categoria,
+            producto_activo=True
+        )
+
+        if productos.exists():
+            categorias_con_productos.append({
+                'categoria': categoria,
+                'productos': productos
+            })
+
+    return categorias_con_productos
 
 #Funcion Vista_Inicio_Administrador, Muestra la vista InicioAdministrador.html
 def Vista_Inicio_Administrador(request):
@@ -244,7 +264,7 @@ def Vista_Listar_Categoria(request):
                 'activo_admin': activo_admin
             })
         except Exception as e:
-            messages.error(request, f'Error al cargar las categorías: {str(e)}')
+            print(e)
             return render(request, 'listar_categoria.html', {'categorias': []})
     return redirect('login')
     
