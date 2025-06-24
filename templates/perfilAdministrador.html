@@ -1,0 +1,64 @@
+{% extends 'menuAdministrador.html' %}
+{% load static %}
+{% block title %} Perfil {% endblock %}
+
+{% block content %}
+
+<section class="container my-5 text-white">
+    <h2 class="mb-4 text-center">Mi Perfil</h2>
+    <div class="row gy-4 align-items-center">
+        <!-- Imagen de perfil -->
+        <div class="col-12 col-md-4 text-center mb-3">
+            <img src="{% if usuario.imagen_usuario %}{{ usuario.imagen_usuario.url }}{% else %}{% static 'img/perfil-default.webp' %}{% endif %}" 
+                 alt="Foto de Perfil" 
+                 class="rounded-circle img-thumbnail" 
+                 style="width: 200px; height: 200px;">
+        </div>
+
+        <!-- Datos del usuario -->
+        <div class="col-12 col-md-8">
+            <div class="table-responsive">
+                <table class="table table-dark table-striped">
+                    <tr>
+                        <th>Nombre:</th>
+                        <td>{{usuario.nombre_usuario}}</td>
+                    </tr>
+                    <tr>
+                        <th>Apellido:</th>
+                        <td>{{usuario.apellido_usuario}}</td>
+                    </tr>
+                    <tr>
+                        <th>Correo Electrónico:</th>
+                        <td>{{usuario.correo_usuario}}</td>
+                    </tr>
+                    <tr>
+                        <th>Teléfono:</th>
+                        <td>{{usuario.telefono_usuario}}</td>
+                    </tr>
+                    <tr>
+                        <th>Estado:</th>
+                        <td>
+                            {% if usuario.usuario_activo%}
+                                <span class="badge bg-success">
+                                Activo
+                                {%else%}
+                                <span class="badge bg-danger">
+                                Inactivo
+                                {%endif%}
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Botón Editar -->
+            <a href="{% url 'editar_perfil' %}" class="btn btn-primary mt-3" style="background-color: #6C2DC7; border: #6C2DC7;">
+                 <i class="bi bi-pencil-square me-1"></i> Editar Perfil
+            </a>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

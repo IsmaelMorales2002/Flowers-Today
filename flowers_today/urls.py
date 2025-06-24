@@ -23,23 +23,19 @@ urlpatterns = [
     path('producto/listar/', Vista_Listar_Producto, name='listar_producto'),
     path('editar_producto/', Vista_Editar_Producto, name='editar_producto'),
     path('producto/cambiar_estado/', Vista_Cambiar_Estado_Producto, name='cambiar_estado_producto'),
-    path('categoria/verificar_existente/', Vista_Verificar_Categoria_Existente, name='verificar_categoria_existente'),
-    path('categoria/actualizar/', Vista_Actualizar_Categoria, name='actualizar_categoria'),
     path('categoria/cambiar_estado/', cambiar_estado_categoria, name='cambiar_estado_categoria'),
-
+    path('inicio-admin/',Vista_Inicio_Administrador,name='inicio_admin'),
+    path('perfil-admin/',Vista_Ver_Perfil_Admin,name='ver_perfil_admin'),
+    path('usuario/listar/', Vista_Listar_Usuarios, name='listar_usuarios'),
+    path('categoria/actualizar/<int:id>',Vista_Actualizar_Categoria,name='actualizar_categoria'),
 
 
     #Logico
     path('IniciarSesion/',Iniciar_Sesion,name='IniciarSesion'),
     path('CrearCuenta/',Crear_Cuenta_Cliente,name='CrearCuenta'),
     path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion'),
-
-    
-
-
-
     path('EditarPerfil/',EditarPerfil,name='EditarPerfil'),
-
+    path('ActualizarCategoria/',Actualizar_Categoria,name='ActualizarCategoria'),
     #Endpoints
 ]
 

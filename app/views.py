@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib import messages
 from .models import *
+import json
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password,check_password
 
@@ -92,10 +93,39 @@ def Crear_Cuenta_Cliente(request):
 
 #Funcion Vista_Inicio, Muestra la vista Inicio.html
 def Vista_Inicio(request):
-    activo = request.session.get('usuario_correo',None)
-    if activo:
-        return render(request,'inicio.html',{
-            'activo': activo
+    activo = request.session.get('usuario_correo', None)
+    categorias_con_productos = obtener_productos_por_categoria()
+
+    return render(request, 'inicio.html', {
+        'activo': activo,
+        'categorias_con_productos': categorias_con_productos
+    })
+
+
+def obtener_productos_por_categoria():
+    categorias = Categoria.objects.filter(estado_categoria=True)
+    categorias_con_productos = []
+
+    for categoria in categorias:
+        productos = Producto.objects.filter(
+            id_categoria=categoria,
+            producto_activo=True
+        )
+
+        if productos.exists():
+            categorias_con_productos.append({
+                'categoria': categoria,
+                'productos': productos
+            })
+
+    return categorias_con_productos
+
+#Funcion Vista_Inicio_Administrador, Muestra la vista InicioAdministrador.html
+def Vista_Inicio_Administrador(request):
+    activo_admin = request.session.get('admin_correo',None)
+    if activo_admin:
+        return render(request,'inicioAdministrador.html',{
+            'activo_admin': activo_admin
         })
     return render(request,'inicio.html')
 
@@ -113,11 +143,23 @@ def Iniciar_Sesion(request):
         #Verificacion de contraseña
         if check_password(password,usuario.password_usuario):
             #Session para guardar informacion del cliente
-            request.session['usuario_nombre'] = usuario.nombre_usuario
-            request.session['usuario_apellido'] = usuario.apellido_usuario
-            request.session['usuario_correo'] = usuario.correo_usuario
-            request.session['usuario_id'] = usuario.id_usuario
-            return redirect('inicio')
+            if usuario.id_rol.nombre_rol == 'C':
+                request.session['usuario_nombre'] = usuario.nombre_usuario
+                request.session['usuario_apellido'] = usuario.apellido_usuario
+                request.session['usuario_correo'] = usuario.correo_usuario
+                request.session['usuario_id'] = usuario.id_usuario
+                return redirect('inicio')
+            
+            elif usuario.id_rol.nombre_rol == 'A':
+                request.session['admin_nombre'] = usuario.nombre_usuario
+                request.session['admin_apellido'] = usuario.apellido_usuario
+                request.session['admin_correo'] = usuario.correo_usuario
+                request.session['admin_id'] = usuario.id_usuario
+                return redirect('inicio_admin')
+            
+            else:
+                messages.error(request,'!Usuario No Encontrado!')
+                return redirect('login')
         else:
             messages.warning(request,'Credenciales Incorrectas')
             return render(request,'login.html',{
@@ -132,11 +174,26 @@ def Iniciar_Sesion(request):
 
 #Funcion Cerrar_Sesion, Cierra Session y elimina las session creadas
 def Cerrar_Sesion(request):
-    del request.session['usuario_correo']
-    del request.session['usuario_apellido']
-    del request.session['usuario_nombre']
-    del request.session['usuario_id']
-    return redirect('inicio')
+    try:
+        usuario = Usuario.objects.get(id_usuario = request.session.get('usuario_id',None))
+        if usuario.id_rol.nombre_rol == 'C':
+            del request.session['usuario_correo']
+            del request.session['usuario_apellido']
+            del request.session['usuario_nombre']
+            del request.session['usuario_id']
+            return redirect('inicio')
+    
+    except Usuario.DoesNotExist as e:
+        try:
+            admin = Usuario.objects.get(id_usuario = request.session.get('admin_id',None))
+            if admin.id_rol.nombre_rol == 'A': 
+                del request.session['admin_correo']
+                del request.session['admin_apellido']
+                del request.session['admin_nombre']
+                del request.session['admin_id']
+                return redirect('inicio')
+        except Usuario.DoesNotExist:
+            return redirect('login')
 
 #Funcion Vista_Ver_Perfil, Muestra la vista perfil.html
 # Esta vista puede ser utilizada para mostrar la informacion del usuario logueado
@@ -154,6 +211,22 @@ def Vista_Ver_Perfil(request):
             return redirect('inicio')
     else:
         return redirect('login')
+    
+def Vista_Ver_Perfil_Admin(request):
+    #Seguridad de Rutas
+    activo_admin = request.session.get('admin_correo',None)
+    if activo_admin:
+        try:
+            usuario = Usuario.objects.get(correo_usuario = activo_admin)
+            return render(request, 'perfilAdministrador.html',{
+                'activo_admin': activo_admin,
+                'usuario': usuario
+            })
+        except Usuario.DoesNotExist:
+            return redirect('inicio')
+    else:
+        return redirect('login')
+
 
 #Funcion Vista_Editar_Perfil, Muestra la vista editar_perfil.html
 # Esta vista puede ser utilizada para editar la informacion del usuario logueado
@@ -182,12 +255,19 @@ def Vista_Nueva_Password(request, token):
 # Funcion Vista_Listar_Categoria, Muestra la vista listar_categoria.html
 # Esta vista lista todas las categorias disponibles en la base de datos
 def Vista_Listar_Categoria(request):
-    try:
-        categorias = Categoria.objects.all().order_by('nombre_categoria')
-        return render(request, 'listar_categoria.html', {'categorias': categorias})
-    except Exception as e:
-        messages.error(request, f'Error al cargar las categorías: {str(e)}')
-        return render(request, 'listar_categoria.html', {'categorias': []})
+    #Seguridad De Ruta
+    activo_admin = request.session.get('admin_correo',None)
+    if activo_admin:
+        try:
+            categorias = Categoria.objects.all().order_by('nombre_categoria')
+            return render(request, 'listar_categoria.html', {
+                'categorias': categorias,
+                'activo_admin': activo_admin
+            })
+        except Exception as e:
+            print(e)
+            return render(request, 'listar_categoria.html', {'categorias': []})
+    return redirect('login')
     
 # Funcion Vista_Insertar_Categoria, Muestra la vista insertar_categoria.html
 # Esta vista permite al usuario registrar una nueva categoria en la base de datos 
@@ -217,55 +297,60 @@ def Vista_Insertar_Categoria(request):
 
 
 def Vista_Insertar_Producto(request):
-    categorias = Categoria.objects.all().order_by('nombre_categoria')
+    activo_admin = request.session.get('admin_correo',None)
 
-    if request.method == 'POST':
-        try:
-            nombre_producto = request.POST.get('nombre_producto', '').strip()
-            id_categoria = request.POST.get('id_categoria')
-            descripcion_producto = request.POST.get('descripcion_producto', '').strip()
-            
-            # Usamos la URL predefinida
-            imagen_producto = 'https://acortar.link/zPqL3t'
+    if activo_admin:
+        categorias = Categoria.objects.all().order_by('nombre_categoria')
 
-            cantidad_maxima = request.POST.get('cantidad_maxima')
-            cantidad_minima = request.POST.get('cantidad_minima')
-            precio_producto = request.POST.get('precio_producto')
-            
-            existencia_producto = request.POST.get('existencia_producto')
-            
-            tipo_producto = request.POST.get('tipo_producto')
-            
-            # Checkbox
-            activo = True if request.POST.get('producto_activo') else False
+        if request.method == 'POST':
+            try:
+                nombre_producto = request.POST.get('nombre_producto', '').strip()
+                id_categoria = request.POST.get('id_categoria')
+                descripcion_producto = request.POST.get('descripcion_producto', '').strip()
+                
+                imagen_producto = request.FILES.get('imagen_producto')
 
-            # Validación básica
-            if nombre_producto == '' or id_categoria == '' or tipo_producto == '':
-                messages.error(request, 'Debe completar todos los campos.')
+                cantidad_maxima = request.POST.get('cantidad_maxima')
+                cantidad_minima = request.POST.get('cantidad_minima')
+                precio_producto = request.POST.get('precio_producto')
+                
+                existencia_producto = request.POST.get('existencia_producto')
+                
+                tipo_producto = request.POST.get('tipo_producto')
+                
+                # Checkbox
+                activo = True if request.POST.get('producto_activo') else False
+
+                # Validación básica
+                if nombre_producto == '' or id_categoria == '' or tipo_producto == '':
+                    messages.error(request, 'Debe completar todos los campos.')
+                    return redirect('insertar_producto')
+
+                nuevo_producto = Producto(
+                    nombre_producto = nombre_producto,
+                    id_categoria_id = id_categoria,
+                    descripcion_producto = descripcion_producto,
+                    imagen_producto = imagen_producto,
+                    cantidad_maxima = cantidad_maxima,
+                    cantidad_minima = cantidad_minima,
+                    precio_producto = precio_producto,
+                    existencia_producto = existencia_producto,  # respetando el modelo
+                    tipo_producto = tipo_producto,
+                    producto_activo = activo
+                )
+                nuevo_producto.save()
+
+                messages.success(request, 'Producto registrado exitosamente.')
+                return redirect('listar_producto')
+
+            except Exception as e:
+                messages.error(request, f'Error al registrar el producto: {str(e)}')
                 return redirect('insertar_producto')
 
-            nuevo_producto = Producto(
-                nombre_producto = nombre_producto,
-                id_categoria_id = id_categoria,
-                descripcion_producto = descripcion_producto,
-                imagen_producto = imagen_producto,
-                cantidad_maxima = cantidad_maxima,
-                cantidad_minima = cantidad_minima,
-                precio_producto = precio_producto,
-                existencia_producto = existencia_producto,  # respetando el modelo
-                tipo_producto = tipo_producto,
-                producto_activo = activo
-            )
-            nuevo_producto.save()
-
-            messages.success(request, 'Producto registrado exitosamente.')
-            return redirect('listar_producto')
-
-        except Exception as e:
-            messages.error(request, f'Error al registrar el producto: {str(e)}')
-            return redirect('insertar_producto')
-
-    return render(request, 'insertar_producto.html', {'categorias': categorias})
+        return render(request, 'insertar_producto.html', {
+            'categorias': categorias,
+            'activo_admin': activo_admin
+            })
 
 
 TIPO_PRODUCTO = {
@@ -275,35 +360,35 @@ TIPO_PRODUCTO = {
 }
 
 def Vista_Listar_Producto(request):
-    productos = Producto.objects.select_related('id_categoria').all().order_by('-id_producto')
-    categorias = Categoria.objects.all().order_by('nombre_categoria')
+    activo_admin = request.session.get('admin_correo',None)
+    if activo_admin:
+        productos = Producto.objects.select_related('id_categoria').all().order_by('-id_producto')
+        categorias = Categoria.objects.all().order_by('nombre_categoria')
 
-    lista_productos = []
-    for p in productos:
-        lista_productos.append({
-            'id_producto': p.id_producto,
-            'nombre_producto': p.nombre_producto,
-            'nombre_categoria': p.id_categoria.nombre_categoria if p.id_categoria else '',
-            'id_categoria': p.id_categoria.id_categoria if p.id_categoria else '',
-            'tipo_producto': TIPO_PRODUCTO.get(p.tipo_producto, 'Desconocido'),
-            'tipo_producto_val': p.tipo_producto,
-            'descripcion_producto': p.descripcion_producto,
-            'cantidad_maxima': p.cantidad_maxima,
-            'cantidad_minima': p.cantidad_minima,
-            'precio_producto': p.precio_producto,
-            'existencia_producto': p.existencia_producto,
-            'producto_activo': p.producto_activo,
-            'imagen_producto': p.imagen_producto,  # ya es URL
+        lista_productos = []
+        for p in productos:
+            lista_productos.append({
+                'id_producto': p.id_producto,
+                'nombre_producto': p.nombre_producto,
+                'nombre_categoria': p.id_categoria.nombre_categoria if p.id_categoria else '',
+                'id_categoria': p.id_categoria.id_categoria if p.id_categoria else '',
+                'tipo_producto': TIPO_PRODUCTO.get(p.tipo_producto, 'Desconocido'),
+                'tipo_producto_val': p.tipo_producto,
+                'descripcion_producto': p.descripcion_producto,
+                'cantidad_maxima': p.cantidad_maxima,
+                'cantidad_minima': p.cantidad_minima,
+                'precio_producto': p.precio_producto,
+                'existencia_producto': p.existencia_producto,
+                'producto_activo': p.producto_activo,
+                'imagen_producto': p.imagen_producto.url,  # ya es URL
+            })
+
+        return render(request, 'listar_producto.html', {
+            'productos': lista_productos,
+            'categorias': categorias,
+            'activo_admin': activo_admin
         })
 
-    return render(request, 'listar_producto.html', {
-        'productos': lista_productos,
-        'categorias': categorias
-    })
-
-    
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
 
 def Vista_Editar_Producto(request):
     if request.method == 'POST':
@@ -417,36 +502,6 @@ def EditarPerfil(request):
         messages.error(request,'!Error!, Actualización No Realizada')
         return redirect('editar_perfil')
 
-
-
-    return redirect('ver_perfil')
-
-def Vista_Verificar_Categoria_Existente(request):
-    if request.method == 'POST':
-        nombre = request.POST.get('nombre_categoria')
-        id_categoria = request.POST.get('id_categoria')
-
-        existe = Categoria.objects.filter(nombre_categoria__iexact=nombre).exclude(id_categoria=id_categoria).exists()
-
-
-        return JsonResponse({'existe': existe})
-    return JsonResponse({'existe': False})
-
-# Vista para actualizar el nombre de la categoría
-def Vista_Actualizar_Categoria(request):
-    if request.method == 'POST':
-        id_categoria = request.POST.get('id_categoria')
-        nombre_categoria = request.POST.get('nombre_categoria')
-
-        try:
-            categoria = Categoria.objects.get(id_categoria=id_categoria)
-            categoria.nombre_categoria = nombre_categoria
-            categoria.save()
-            return JsonResponse({'ok': True})
-        except Categoria.DoesNotExist:
-            return JsonResponse({'ok': False})
-    return JsonResponse({'ok': False})
-
 def cambiar_estado_categoria(request):
     if request.method == 'POST':
         id_categoria = request.POST.get('id_categoria')
@@ -462,3 +517,42 @@ def cambiar_estado_categoria(request):
         messages.success(request, 'El estado de la categoría ha sido actualizado.')
         return redirect('listar_categoria')
 
+def Vista_Listar_Usuarios(request):
+    usuarios = Usuario.objects.all()
+    return render(request, 'listar_usuarios.html', {
+        'usuarios': usuarios
+    })
+
+def Vista_Actualizar_Categoria(request,id):
+    try:
+        categoria = Categoria.objects.get(id_categoria=id)
+        return render(request,'actualizarCategoria.html',{
+        'categoria': categoria
+        })
+    except Categoria.DoesNotExist:
+        return render('login')
+   
+
+def Actualizar_Categoria(request):
+    id_categoria = request.POST.get('id_categoria',None)
+    nombre_categoria = request.POST.get('nombre_categoria','').strip()
+
+    if not nombre_categoria:
+        messages.warning(request,'!Por favor No dejar campos en blanco!')
+        return redirect('actualizar_categoria',id=id_categoria)
+    
+    #Verificas Categoria Existente
+    existe = Categoria.objects.filter(nombre_categoria = nombre_categoria).exists()
+    if existe:
+        messages.warning(request,'!Categoria Ya Registrada!')
+        return redirect('actualizar_categoria',id=id_categoria)
+    
+    try: 
+        categoria = Categoria.objects.get(id_categoria = id_categoria)
+        categoria.nombre_categoria = nombre_categoria
+        categoria.save()
+        messages.success(request,'Categoria Actualizada')
+        return redirect('listar_categoria')
+    except Categoria.DoesNotExist:
+        messages.error(request,'!No se puedo actulizar!, Intente mas tarde!')
+        return redirect('actualizar_categoria',id=id_categoria)
