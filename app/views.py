@@ -301,9 +301,6 @@ def Vista_Listar_Producto(request):
         'categorias': categorias
     })
 
-    
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
 
 def Vista_Editar_Producto(request):
     if request.method == 'POST':
