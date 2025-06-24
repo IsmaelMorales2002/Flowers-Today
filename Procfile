@@ -1,1 +1,1 @@
-web: gunicorn dsi115-flowers.wsgi
+web: gunicorn flowers_today.wsgi
