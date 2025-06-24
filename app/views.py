@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib import messages
 from .models import *
+import json
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password,check_password
 
@@ -492,32 +493,6 @@ def EditarPerfil(request):
     except Usuario.DoesNotExist:
         messages.error(request,'!Error!, Actualización No Realizada')
         return redirect('editar_perfil')
-
-def Vista_Verificar_Categoria_Existente(request):
-    if request.method == 'POST':
-        nombre = request.POST.get('nombre_categoria')
-        id_categoria = request.POST.get('id_categoria')
-
-        existe = Categoria.objects.filter(nombre_categoria__iexact=nombre).exclude(id_categoria=id_categoria).exists()
-
-
-        return JsonResponse({'existe': existe})
-    return JsonResponse({'existe': False})
-
-# Vista para actualizar el nombre de la categoría
-def Vista_Actualizar_Categoria(request):
-    if request.method == 'POST':
-        id_categoria = request.POST.get('id_categoria')
-        nombre_categoria = request.POST.get('nombre_categoria')
-
-        try:
-            categoria = Categoria.objects.get(id_categoria=id_categoria)
-            categoria.nombre_categoria = nombre_categoria
-            categoria.save()
-            return JsonResponse({'ok': True})
-        except Categoria.DoesNotExist:
-            return JsonResponse({'ok': False})
-    return JsonResponse({'ok': False})
 
 def cambiar_estado_categoria(request):
     if request.method == 'POST':
