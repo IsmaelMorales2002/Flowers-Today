@@ -234,12 +234,19 @@ def Vista_Nueva_Password(request, token):
 # Funcion Vista_Listar_Categoria, Muestra la vista listar_categoria.html
 # Esta vista lista todas las categorias disponibles en la base de datos
 def Vista_Listar_Categoria(request):
-    try:
-        categorias = Categoria.objects.all().order_by('nombre_categoria')
-        return render(request, 'listar_categoria.html', {'categorias': categorias})
-    except Exception as e:
-        messages.error(request, f'Error al cargar las categorías: {str(e)}')
-        return render(request, 'listar_categoria.html', {'categorias': []})
+    #Seguridad De Ruta
+    activo_admin = request.session.get('admin_correo',None)
+    if activo_admin:
+        try:
+            categorias = Categoria.objects.all().order_by('nombre_categoria')
+            return render(request, 'listar_categoria.html', {
+                'categorias': categorias,
+                'activo_admin': activo_admin
+            })
+        except Exception as e:
+            messages.error(request, f'Error al cargar las categorías: {str(e)}')
+            return render(request, 'listar_categoria.html', {'categorias': []})
+    return redirect('login')
     
 # Funcion Vista_Insertar_Categoria, Muestra la vista insertar_categoria.html
 # Esta vista permite al usuario registrar una nueva categoria en la base de datos 
