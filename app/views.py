@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib import messages
 from .models import *
+import json
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password,check_password
 
@@ -493,32 +494,6 @@ def EditarPerfil(request):
         messages.error(request,'!Error!, Actualización No Realizada')
         return redirect('editar_perfil')
 
-def Vista_Verificar_Categoria_Existente(request):
-    if request.method == 'POST':
-        nombre = request.POST.get('nombre_categoria')
-        id_categoria = request.POST.get('id_categoria')
-
-        existe = Categoria.objects.filter(nombre_categoria__iexact=nombre).exclude(id_categoria=id_categoria).exists()
-
-
-        return JsonResponse({'existe': existe})
-    return JsonResponse({'existe': False})
-
-# Vista para actualizar el nombre de la categoría
-def Vista_Actualizar_Categoria(request):
-    if request.method == 'POST':
-        id_categoria = request.POST.get('id_categoria')
-        nombre_categoria = request.POST.get('nombre_categoria')
-
-        try:
-            categoria = Categoria.objects.get(id_categoria=id_categoria)
-            categoria.nombre_categoria = nombre_categoria
-            categoria.save()
-            return JsonResponse({'ok': True})
-        except Categoria.DoesNotExist:
-            return JsonResponse({'ok': False})
-    return JsonResponse({'ok': False})
-
 def cambiar_estado_categoria(request):
     if request.method == 'POST':
         id_categoria = request.POST.get('id_categoria')
@@ -534,3 +509,42 @@ def cambiar_estado_categoria(request):
         messages.success(request, 'El estado de la categoría ha sido actualizado.')
         return redirect('listar_categoria')
 
+def Vista_Listar_Usuarios(request):
+    usuarios = Usuario.objects.all()
+    return render(request, 'listar_usuarios.html', {
+        'usuarios': usuarios
+    })
+
+def Vista_Actualizar_Categoria(request,id):
+    try:
+        categoria = Categoria.objects.get(id_categoria=id)
+        return render(request,'actualizarCategoria.html',{
+        'categoria': categoria
+        })
+    except Categoria.DoesNotExist:
+        return render('login')
+   
+
+def Actualizar_Categoria(request):
+    id_categoria = request.POST.get('id_categoria',None)
+    nombre_categoria = request.POST.get('nombre_categoria','').strip()
+
+    if not nombre_categoria:
+        messages.warning(request,'!Por favor No dejar campos en blanco!')
+        return redirect('actualizar_categoria',id=id_categoria)
+    
+    #Verificas Categoria Existente
+    existe = Categoria.objects.filter(nombre_categoria = nombre_categoria).exists()
+    if existe:
+        messages.warning(request,'!Categoria Ya Registrada!')
+        return redirect('actualizar_categoria',id=id_categoria)
+    
+    try: 
+        categoria = Categoria.objects.get(id_categoria = id_categoria)
+        categoria.nombre_categoria = nombre_categoria
+        categoria.save()
+        messages.success(request,'Categoria Actualizada')
+        return redirect('listar_categoria')
+    except Categoria.DoesNotExist:
+        messages.error(request,'!No se puedo actulizar!, Intente mas tarde!')
+        return redirect('actualizar_categoria',id=id_categoria)

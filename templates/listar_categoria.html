@@ -29,9 +29,10 @@
             <td class="text-center">{{categoria.id_categoria}}</td>
             <td class="text-center">{{categoria.nombre_categoria}}</td>
             <td class="text-center">
-                <a href="#" class="btn btn-sm me-1 bg-dark text-white" title="Editar">
+                <a href="{% url 'actualizar_categoria' categoria.id_categoria %}" 
+                    class="btn btn-sm me-1 bg-dark text-white" title="Editar">
                     <i class="bi bi-pencil-square"></i>
-                 </a>
+                </a>
                 <a href="#" class="btn btn-sm btn-danger" title="Eliminar">
                     <i class="bi bi-trash-fill"></i>
                 </a>
@@ -43,6 +44,18 @@
     </table>
   </div>
 </div>
+
+<div>
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show mt-3" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+</div>
+
 
 <!-- DataTables -->
 <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
