@@ -44,15 +44,15 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle text-black" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="bi bi-person-circle me-1"></i>
-              {% if activo %}
-                {{request.session.usuario_nombre}} {{request.session.usuario_apellido}}
+              {% if activo_admin %}
+                {{request.session.admin_nombre}} {{request.session.admin_apellido}}
               {% else %}
                 Iniciar Sesión
               {% endif %}
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
-              {% if activo %}
-                <li><a class="dropdown-item" href="{% url 'ver_perfil' %}"><i class="bi bi-person me-1"></i> Perfil</a></li>
+              {% if activo_admin %}
+                <li><a class="dropdown-item" href="{% url 'ver_perfil_admin' %}"><i class="bi bi-person me-1"></i> Perfil</a></li>
                 <li><a class="dropdown-item" href="#"><i class="bi bi-bag-check me-1"></i> Solicitudes</a></li>
                 <li><a class="dropdown-item" href="#"><i class="bi bi-clock-history me-1"></i> Historial</a></li>
                 <li><a class="dropdown-item" href="#"><i class="bi bi-receipt me-1"></i> Comprobantes</a></li>
