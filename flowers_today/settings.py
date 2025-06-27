@@ -131,7 +131,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
-MEDIA_URL = 'http://3.140.248.123/media/'
+MEDIA_URL = 'https://3.140.248.123/media/'
 MEDIA_ROOT = '/home/ec2-user/uploads/'
 
 # Default primary key field type
