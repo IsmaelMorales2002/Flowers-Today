@@ -45,7 +45,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 4;
+    /* -webkit-line-clamp: 4; */
     -webkit-box-orient: vertical;
 }
 .card-producto .card-footer {
@@ -84,7 +84,7 @@
             {% for producto in item.productos %}
                 <div>
                     <div class="card card-producto">
-                        <img src="{{ producto.imagen_producto }}" alt="{{ producto.nombre_producto }}">
+                        <img src="{{ producto.imagen_producto.url }}" alt="{{ producto.nombre_producto }}">
                         <div class="card-body">
                             <h5 class="card-title">{{ producto.nombre_producto }}</h5>
                             <p class="card-text">{{ producto.descripcion_producto }}</p>

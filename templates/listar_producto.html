@@ -1,4 +1,4 @@
-{% extends 'menu.html' %}
+{% extends 'menuAdministrador.html' %}
 {% block title %} Gestionar Productos {% endblock %}
 
 {% block content %}
@@ -164,10 +164,6 @@
 
                             </td>
                         </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="7" class="text-center">No hay productos registrados.</td>
-                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -212,7 +208,6 @@
                 <div class="row gy-4">
                     <div class="col-12 col-md-4 text-center">
                         <img id="ver-imagen-producto" 
-                             src="https://cdn-icons-png.flaticon.com/512/6491/6491233.png" 
                              alt="Imagen Producto" 
                              class="rounded img-thumbnail mb-3" 
                              style="width: 250px; height: auto;">
@@ -440,15 +435,6 @@ $(document).ready(function() {
         dom: '<"d-flex justify-content-between align-items-center mb-3"lf>rt<"d-flex justify-content-between align-items-center mt-3"ip>'
     });
 
-    // MOSTRAR MODAL ÉXITO
-    {% if messages %}
-        {% for message in messages %}
-            {% if message.tags == 'success' %}
-                var myModal = new bootstrap.Modal(document.getElementById('modalExito'), {});
-                myModal.show();
-            {% endif %}
-        {% endfor %}
-    {% endif %}
 
     // VER PRODUCTO
     $(document).on('click', '.ver-producto-btn', function() {

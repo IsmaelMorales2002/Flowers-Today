@@ -24,13 +24,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-4r=#z$i+4jszj_ba9^54$4v@x1m-oe5y0#y#hjq_cdejhg)eua'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 # CAMBIAR EN PRODUCCION!
 ALLOWED_HOSTS = ['*']
 # CAMBIAR EN PRODUCCION!
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://55f8-179-51-3-208.ngrok-free.app'
+    'https://flowers-today-production.up.railway.app'
 ]
 
 # Application definition
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -81,11 +82,11 @@ WSGI_APPLICATION = 'flowers_today.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'flowers',
+        'NAME': 'railway',
         'USER': 'postgres',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'HOST': 'shortline.proxy.rlwy.net',
+        'PASSWORD': 'gThztsmrNyDdxRFpMRmeXFEQFzwTeyJp',
+        'PORT': '39417'
     }
 }
 
@@ -125,10 +126,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = '/home/ec2-user/uploads'
+
+MEDIA_URL = 'https://3.140.248.123/media/'
+MEDIA_ROOT = '/home/ec2-user/uploads/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
