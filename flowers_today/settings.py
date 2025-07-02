@@ -24,14 +24,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-4r=#z$i+4jszj_ba9^54$4v@x1m-oe5y0#y#hjq_cdejhg)eua'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 # CAMBIAR EN PRODUCCION!
 ALLOWED_HOSTS = ['*']
 # CAMBIAR EN PRODUCCION!
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://flowers-today-production.up.railway.app'
-]
+#TODO : CAMBIAR EN PRODUCCION
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://flowers-today-production.up.railway.app'
+# ]
 
 # Application definition
 
@@ -82,11 +83,11 @@ WSGI_APPLICATION = 'flowers_today.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
+        'NAME': 'flowers',
         'USER': 'postgres',
-        'HOST': 'shortline.proxy.rlwy.net',
-        'PASSWORD': 'gThztsmrNyDdxRFpMRmeXFEQFzwTeyJp',
-        'PORT': '39417'
+        'HOST': 'localhost',
+        'PASSWORD': 'root',
+        'PORT': '5432'
     }
 }
 
