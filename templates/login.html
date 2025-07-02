@@ -12,16 +12,22 @@
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card shadow p-4" style="max-width: 400px; width: 100%;  border-radius: 12px;">
             <h3 class="text-center mb-4 ">Iniciar sesión</h3>
-            <form method="post" action="{% url 'IniciarSesion' %}" id="form-iniciar-sesion">{% csrf_token %}
+            <form method="post" action="#" id="form-iniciar-sesion">{% csrf_token %}
                 <div class="mb-3">
                     <label for="email" class="form-label">Correo electrónico</label>
-                    <input type="email" value="{{correo}}" class="form-control" id="email" placeholder="Ingrese su correo" required name="txtCorreo">
+                    <input type="email" value="{{correo}}" class="form-control {% if 'correo' in campos_vacios %}is-invalid{% endif %}" id="email" placeholder="Ingrese su correo" required name="txtCorreo">
+                    {% if 'correo' in campos_vacios %}
+                    <div class="invalid-feedback">Este campo es obligatorio</div>
+                    {% endif %}
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Contraseña</label>
                     <div class="input-group">
-                        <input type="password" class="form-control" id="password" placeholder="Ingrese su contraseña" required name="txtPassword" maxlength="12" minlength="8" >
+                        <input type="password" class="form-control {% if 'password' in campos_vacios %}is-invalid{% endif %}" id="password" placeholder="Ingrese su contraseña" required name="txtPassword" maxlength="12" minlength="8" >
                         <button type="button" class="btn text-white" style="background-color: #6C2DC7;" id="togglePassword">Mostrar</button>
+                        {% if 'password' in campos_vacios %}
+                        <div class="invalid-feedback">Esten campo es obligatorio</div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="mb-3 form-check">
@@ -30,20 +36,10 @@
                 </div>
                 <button type="submit" id="btn-login" class="btn w-100 bg-dark text-white rounded-pill" style="background-color: #6C2DC7;">Iniciar sesión</button>
                 <div class="text-center mt-3">
-                    <a href="{% url 'registro' %}" id="btn" class="btn w-100 text-white rounded-pill mb-3" style="background-color: #6C2DC7;">Crear Cuenta</a>
-                    <a href="{% url 'recuperar_password' %}" class="text-decoration-none text-dark">¿Olvidaste Tu Contraseña?</a>
+                    <a href="{% url 'vista_registro' %}" id="btn" class="btn w-100 text-white rounded-pill mb-3" style="background-color: #6C2DC7;">Crear Cuenta</a>
+                    <a href="#" class="text-decoration-none text-dark">¿Olvidaste Tu Contraseña?</a>
                 </div>
             </form>
-            <div>
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show mt-3" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-            </div>
         </div>
     </div>
 
