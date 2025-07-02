@@ -10,6 +10,7 @@ urlpatterns = [
     #modificar despues
     path('',lambda request: redirect('login')),
     #Vistas
+    path('inicio/',Vista_Inicio_Cliente,name='inicio'),
     path('login/',Vista_Login,name='login'),
     path('crear_cuenta/',Vista_Crear_Cuenta,name='registro'),
     path('perfil/', Vista_Ver_Perfil, name='ver_perfil'),

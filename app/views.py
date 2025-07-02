@@ -12,6 +12,10 @@ def Vista_Login(request):
 def Vista_Crear_Cuenta(request):
     return render(request,'registro.html')
 
+#Funcion Vista_Inicio_Cliente, Muestra la vista de inicio.html
+def Vista_Inicio_Cliente(request):
+    return render(request,'inicio.html')
+
 """
 Funcion: Crear_Cuenta_Cliente
 Descripcion: 
