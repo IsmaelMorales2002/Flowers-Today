@@ -8,13 +8,15 @@ from app.cliente import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',lambda request: redirect('vista_login')),
+    path('',lambda request: redirect('vista_inicio_cliente')),
     #Vistas
     path('inicio/',Vista_Inicio_Cliente,name='vista_inicio_cliente'),
     path('login/',Vista_Login,name='vista_login'),
     path('registro/',Vista_Registro,name='vista_registro'),
+    path('recuperacion/',Vista_Recuperar_Password,name='vista_recuperar_password'),
     #Logica
     path('CreaCuentaCliente',Crear_Cuenta_Cliente,name='CrearCuentaCliente'),
+    path('IniciarSesion/',Iniciar_Sesion,name='IniciarSesion'),
     path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion')
     #Endpoints
 ]

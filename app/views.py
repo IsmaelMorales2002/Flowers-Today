@@ -30,6 +30,7 @@ def Iniciar_Sesion(request):
     correo = request.POST.get('txtCorreo','').strip()
     password = request.POST.get('txtPassword','').strip()
 
+    contexto = {}
     try: 
         usuario = Usuario.objects.get(correo_usuario = correo)
 
@@ -52,10 +53,14 @@ def Iniciar_Sesion(request):
                 request.session['id_usuario'] = usuario.id_usuario
                 request.session['activo_administrador'] = True
                 return redirect('vista_inicio_administrador')
-    
+        else:
+            contexto['error_credenciales'] = 'Credenciales Incorrectas'
+            contexto['correo'] = correo
+            return render(request,'login.html',contexto)
+
     except Usuario.DoesNotExist:
-        messages.error(request,'!Usuario No Encontrado!')
-        return redirect('vista_login')
+        contexto['error_usuario'] = 'Usuario No Encontrado'
+        return render(request,'login.html',contexto)
     
 # Cerrar_Sesion, logica para cerrar sesion
 def Cerrar_Sesion(request):
@@ -78,3 +83,7 @@ def Cerrar_Sesion(request):
             return redirect('vista_inicio_cliente')
     except Usuario.DoesNotExist:
         return redirect('vista_login')
+    
+# Vista_Recuperar_Password, muestra la vista recuperar_password.html
+def Vista_Recuperar_Password(request):
+    return render(request,'recuperar_password.html')
