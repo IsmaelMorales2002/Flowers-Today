@@ -87,3 +87,21 @@ def Cerrar_Sesion(request):
 # Vista_Recuperar_Password, muestra la vista recuperar_password.html
 def Vista_Recuperar_Password(request):
     return render(request,'recuperar_password.html')
+
+# Vista_Ver_Perfil_Cliente, muestra la vista perfilCliente.html
+def Vista_Ver_Perfil_Cliente(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo',False)
+    if activo:
+        try:
+            #Conocer informacion del cliente
+            cliente = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
+            return render(request,'perfilCliente.html',{
+                'activo': activo,
+                'usuario': cliente
+            })
+        except Usuario.DoesNotExist:
+            return redirect('vista_login')
+    else:
+        return redirect('vista_login')
+    
