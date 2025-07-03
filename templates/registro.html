@@ -12,9 +12,10 @@
   <div class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="card shadow p-4 w-100" style="max-width: 500px; border-radius: 12px;">
       <h3 class="text-center mb-2">Crear Cuenta</h3>
-      <form method="post" action="{% url 'CrearCuenta' %}" id="form-crear-cuenta">{% csrf_token %}
+      <form method="post" action="{% url 'CrearCuentaCliente' %}" id="form-crear-cuenta">{% csrf_token %}
         <div class="row g-3">
           <div class="col-md-6">
+            <input type="text" name="txtRol" value="C" hidden>
             <label for="nombre" class="form-label">Nombre</label>
             <input type="text" value="{{ nombre }}" name="txtNombreN" id="nombre"
               class="form-control {% if 'nombre' in campos_vacios %}is-invalid{% endif %}"
@@ -37,20 +38,26 @@
           <div class="col-12">
             <label for="telefono" class="form-label">Número De Contacto</label>
             <input type="text" value="{{ telefono }}" name="txtTelefonoN" id="telefono"
-              class="form-control {% if 'telefono' in campos_vacios %}is-invalid{% endif %}"
+              class="form-control {% if 'telefono' in campos_vacios %}is-invalid{% endif %} {% if error_telefono %}is-invalid{% endif %}"
               placeholder="Ingrese su número telefónico" inputmode="numeric" pattern="[0-9]+" maxlength="10" required>
             {% if 'telefono' in campos_vacios %}
               <div class="invalid-feedback">Este campo es obligatorio.</div>
+            {% endif %}
+             {% if error_telefono %}
+            <div class="invalid-feedback">Telefono Ya Registrado</div>
             {% endif %}
           </div>
 
           <div class="col-12">
             <label for="email" class="form-label">Correo electrónico</label>
             <input type="email" value="{{ correo }}" name="txtCorreoN" id="email"
-              class="form-control {% if 'correo' in campos_vacios %}is-invalid{% endif %}"
+              class="form-control {% if 'correo' in campos_vacios %}is-invalid{% endif %} {% if error_correo %}is-invalid{% endif %}"
               placeholder="Ingrese su correo electrónico" required>
             {% if 'correo' in campos_vacios %}
               <div class="invalid-feedback">Este campo es obligatorio.</div>
+            {% endif %}
+            {% if error_correo %}
+            <div class="invalid-feedback">Correo Ya Registrado</div>
             {% endif %}
           </div>
 
@@ -67,26 +74,19 @@
             </div>
         </div>
 
+          {% if error_interno %}
+            <input type="text" class="form-control is-invalid" hidden>
+            <div class="invalid-feedback mt-3 fs-4">!Error Interno, Cuenta no creada!</div>
+          {% endif %}
 
           <div class="col-12">
             <button type="submit" id="btn" class="btn w-100 bg-dark text-white rounded-pill">Registrarme</button>
           </div>
           <div class="col-12">
-            <a href="{% url 'login' %}" class="btn btn-danger w-100 rounded-pill">Cancelar</a>
+            <a href="{% url 'vista_login' %}" class="btn btn-danger w-100 rounded-pill">Cancelar</a>
           </div>
         </div>
       </form>
-
-      <div>
-        {% if messages %}
-          {% for message in messages %}
-            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show mt-3" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          {% endfor %}
-        {% endif %}
-      </div>
     </div>
   </div>
 
