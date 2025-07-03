@@ -19,7 +19,7 @@
                  style="width: 150px; height: 150px; object-fit: cover;">
                  <!-- Formulario -->
             <div class="mt-2">
-              <form method="POST" enctype="multipart/form-data" action="{% url 'EditarPerfil' %}" id="form-editar-perfil">
+              <form method="POST" enctype="multipart/form-data" action="#" id="form-editar-perfil">
               {% csrf_token %}
               <input type="file"
                      class="form-control form-control-sm mx-auto"
@@ -90,7 +90,7 @@
               <button type="submit" class="btn btn-primary w-100 w-md-auto" style="background-color: #6C2DC7; border: #6C2DC7;">
                 <i class="bi bi-save me-1"></i> Guardar Cambios
               </button>
-              <a href="{% url 'ver_perfil' %}" class="btn btn-danger w-100 w-md-auto">
+              <a href="{% url 'vista_perfil_cliente' %}" class="btn btn-danger w-100 w-md-auto">
                 <i class="bi bi-x-circle me-1"></i> Cancelar
               </a>
             </div>

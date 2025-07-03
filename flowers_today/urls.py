@@ -14,7 +14,8 @@ urlpatterns = [
     path('login/',Vista_Login,name='vista_login'),
     path('registro/',Vista_Registro,name='vista_registro'),
     path('recuperacion/',Vista_Recuperar_Password,name='vista_recuperar_password'),
-    path('perfil/',Vista_Ver_Perfil_Cliente,name='vista_perfil'),
+    path('perfil/',Vista_Ver_Perfil_Cliente,name='vista_perfil_cliente'),
+    path('editar_perfil/',Vista_Editar_Perfil_Cliente,name='vista_editar_perfil_cliente'),
     #Logica
     path('CreaCuentaCliente',Crear_Cuenta_Cliente,name='CrearCuentaCliente'),
     path('IniciarSesion/',Iniciar_Sesion,name='IniciarSesion'),

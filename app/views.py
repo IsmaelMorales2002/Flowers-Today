@@ -105,3 +105,19 @@ def Vista_Ver_Perfil_Cliente(request):
     else:
         return redirect('vista_login')
     
+# Vista_Editar_Perfil_Cliente, muestra la vista editar_perfilCliente
+def Vista_Editar_Perfil_Cliente(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo',False)
+    if activo:
+        try:
+            #Conocer informacion del cliente
+            cliente = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
+            return render(request,'editar_perfilCliente.html',{
+                'activo': activo,
+                'usuario': cliente
+            })
+        except Usuario.DoesNotExist:
+            return redirect('vista_login')
+    else:
+        return redirect('vista_login')
