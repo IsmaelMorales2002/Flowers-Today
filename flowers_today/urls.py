@@ -14,7 +14,8 @@ urlpatterns = [
     path('login/',Vista_Login,name='vista_login'),
     path('registro/',Vista_Registro,name='vista_registro'),
     #Logica
-    path('CreaCuentaCliente',Crear_Cuenta_Cliente,name='CrearCuentaCliente')
+    path('CreaCuentaCliente',Crear_Cuenta_Cliente,name='CrearCuentaCliente'),
+    path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion')
     #Endpoints
 ]
 

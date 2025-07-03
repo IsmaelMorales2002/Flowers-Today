@@ -69,12 +69,13 @@ def Crear_Cuenta_Cliente(request):
             usuario_activo = True
         )
 
-        # cliente.save()
+        cliente.save()
         #Session para guardar informacion del cliente
         request.session['nombre_cliente'] = cliente.nombre_usuario
         request.session['apellido_cliente'] = cliente.apellido_usuario
         request.session['correo_cliente'] = cliente.correo_usuario
-        request.session['id_cliente'] = cliente.id_usuario
+        request.session['id_usuario'] = cliente.id_usuario
+        request.session['activo'] = True
         return redirect('vista_inicio_cliente')
 
     except Exception:

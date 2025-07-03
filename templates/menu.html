@@ -63,7 +63,7 @@
             aria-expanded="false">
             <i class="bi bi-person-circle me-1"></i>
             {% if activo %}
-              {{request.session.usuario_nombre}} {{request.session.usuario_apellido}}
+              {{request.session.nombre_cliente}} {{request.session.apellido_cliente}}
             {% else %}
               Iniciar Sesion
             {% endif %}
@@ -77,7 +77,7 @@
             <li><a class="dropdown-item" href="#"><i class="bi bi-chat-dots me-1"></i> Comentarios</a></li>
             <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-1"></i> Configuración</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-1"></i> Cerrar Sesión</a></li>
+            <li><a class="dropdown-item text-danger" href="{% url 'CerrarSesion' %}"><i class="bi bi-box-arrow-right me-1"></i> Cerrar Sesión</a></li>
             {% else %}
             <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión</a></li>
             {% endif %}
