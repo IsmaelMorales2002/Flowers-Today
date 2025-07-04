@@ -12,10 +12,25 @@ def Vista_Inicio_Cliente(request):
         return render(request,'inicio.html',{
             'activo': activo
         })
-    else:
+    return render(request,'inicio.html',{
+            'activo': activo
+    })
+    
+def Vista_Inicio_Administrador(request):
+    #Proteccion de Ruta
+    activo = request.session.get('activo_administrador',False)
+    try:
+        #Validacion que es administrador
+        admin = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
+        if activo and admin.id_rol.nombre_rol == 'A':
+            return render(request,'inicioAdministrador.html',{
+                'activo': activo
+            })
         return render(request,'inicio.html',{
             'activo': activo
         })
+    except Usuario.DoesNotExist:
+        return redirect('vista_login')
 
 # Vista_Login, muestra la vista login.html
 def Vista_Login(request):
