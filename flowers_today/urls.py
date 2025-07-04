@@ -19,7 +19,8 @@ urlpatterns = [
     #Logica
     path('CreaCuentaCliente',Crear_Cuenta_Cliente,name='CrearCuentaCliente'),
     path('IniciarSesion/',Iniciar_Sesion,name='IniciarSesion'),
-    path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion')
+    path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion'),
+    path('EditarPerfilCliente/',Editar_Perfil_Cliente,name='EditarPerfilCliente'),
     #Endpoints
 ]
 

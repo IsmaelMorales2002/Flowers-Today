@@ -19,7 +19,7 @@
                  style="width: 150px; height: 150px; object-fit: cover;">
                  <!-- Formulario -->
             <div class="mt-2">
-              <form method="POST" enctype="multipart/form-data" action="#" id="form-editar-perfil">
+              <form method="POST" enctype="multipart/form-data" action="{% url 'EditarPerfilCliente' %}" id="form-editar-perfil">
               {% csrf_token %}
               <input type="file"
                      class="form-control form-control-sm mx-auto"
@@ -31,58 +31,57 @@
             </div>
           </div>
 
-
-            <!-- Alerta -->
-            {% if messages %}
-              <div class="mb-4">
-                {% for message in messages %}
-                  <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show text-center" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                {% endfor %}
-              </div>
-            {% endif %}
-
             <!-- Nombre -->
             <div class="mb-3">
               <label for="nombre_usuario" class="form-label">Nombre</label>
               <input type="text"
-                     class="form-control form-control-sm bg-dark text-white border-secondary"
+                     class="form-control form-control-sm bg-dark text-white border-secondary {% if 'nombre' in campos_vacios %}is-invalid{% endif %}"
                      id="nombre_usuario"
                      name="txtNombreA"
-                     value="{{ usuario.nombre_usuario }}"
+                     value="{% if 'nombre' in campos_vacios %}{{nombre}}{% elif 'nombre' not in campos_vacios %}{{nombre}}{% else %}{{usuario.nombre_usuario }}{% endif %}"
                      required>
+                    {% if 'nombre' in campos_vacios %}
+                    <div class="invalid-feedback">Este campo es obligatorio.</div>
+                    {% endif %}
             </div>
 
             <div class="mb-3">
               <label for="apellido_usuario" class="form-label">Apellido</label>
               <input type="text"
-                     class="form-control form-control-sm bg-dark text-white border-secondary"
+                     class="form-control form-control-sm bg-dark text-white border-secondary {% if 'apellido' in campos_vacios %}is-invalid{% endif %}"
                      id="apellido_usuario"
                      name="txtApellidoA"
-                     value="{{ usuario.apellido_usuario }}"
+                     value="{% if 'apellido' in campos_vacios %}{{apellido}}{% elif 'apellido' not in campos_vacios %}{{apellido}}{% else %}{{ usuario.apellido_usuario }}{% endif %}"
                      required>
+                    {% if 'apellido' in campos_vacios %}
+                    <div class="invalid-feedback">Este campo es obligatorio.</div>
+                    {% endif %}
             </div>
 
             <div class="mb-3">
               <label for="correo_usuario" class="form-label">Correo Electrónico</label>
               <input type="email"
-                     class="form-control form-control-sm bg-dark text-white border-secondary"
+                     class="form-control form-control-sm bg-dark text-white border-secondary {% if 'correo' in campos_vacios %}is-invalid{% endif %}"
                      id="correo_usuario"
                      name="txtCorreoA"
-                     value="{{ usuario.correo_usuario }}"
+                     value="{% if 'correo' in campos_vacios %}{{correo}}{% elif 'correo' not in campos_vacios %}{{correo}}{% else %}{{ usuario.correo_usuario }}{% endif %}"
                      required>
+                    {% if 'correo' in campos_vacios %}
+                    <div class="invalid-feedback">Este campo es obligatorio.</div>
+                    {% endif %}
             </div>
 
             <div class="mb-4">
               <label for="telefono_usuario" class="form-label">Teléfono</label>
               <input type="text"
-                     class="form-control form-control-sm bg-dark text-white border-secondary"
+                     class="form-control form-control-sm bg-dark text-white border-secondary {% if 'telefono' in campos_vacios %}is-invalid{% endif %}"
                      id="telefono_usuario"
                      name="txtTelefonoA"
-                     value="{{ usuario.telefono_usuario }}"
+                     value="{% if 'telefono' in campos_vacios %}{{telefono}}{% elif 'telefono' not in campos_vacios %}{{telefono}}{% else %}{{ usuario.telefono_usuario }}{% endif %}"
                      required>
+                    {% if 'telefono' in campos_vacios %}
+                    <div class="invalid-feedback">Este campo es obligatorio.</div>
+                    {% endif %}
             </div>
 
             <!-- Botones -->
@@ -101,29 +100,7 @@
   </div>
 </section>
 
-<!-- Script: preview imagen -->
-<script>
-document.getElementById('imagen_usuario').addEventListener('change', function () {
-  const file = this.files[0];
-  const preview = document.getElementById('preview-imagen');
-  const errorDiv = document.getElementById('error-imagen');
-  errorDiv.textContent = '';
+<script src="{% static 'js/imagen_previa.js' %}"></script>
+<script src="{% static 'js/campos_vacios.js' %}"></script>
 
-  if (file) {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'];
-    if (!allowedTypes.includes(file.type)) {
-      errorDiv.textContent = 'Solo se permiten imágenes JPG, PNG, GIF o WEBP.';
-      this.value = '';
-      preview.src = "https://acortar.link/xrxnFa";
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      preview.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-});
-</script>
 {% endblock %}

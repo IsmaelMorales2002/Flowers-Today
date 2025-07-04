@@ -9,10 +9,12 @@
     <div class="row gy-4 align-items-center">
         <!-- Imagen de perfil -->
         <div class="col-12 col-md-4 text-center mb-3">
-            <img src="{% if usuario.imagen_usuario %}{{ usuario.imagen_usuario.url }}{% else %}{% static 'img/perfil-default.webp' %}{% endif %}" 
-                 alt="Foto de Perfil" 
-                 class="rounded-circle img-thumbnail" 
-                 style="width: 200px; height: 200px;">
+            <img id="fotoPerfil"
+                src=""
+                data-img-final="{% if usuario.imagen_usuario %}{{ usuario.imagen_usuario.url }}{% else %}None{% endif %}"
+                alt="Foto de Perfil"
+                class="rounded-circle img-thumbnail"
+                style="width: 200px; height: 200px;">
         </div>
 
         <!-- Datos del usuario -->
@@ -60,5 +62,49 @@
         </div>
     </div>
 </section>
+
+<script>
+// Verificamos si ya existe la imagen y si cambió
+const img = document.getElementById('fotoPerfil');
+const urlFinal = img.getAttribute('data-img-final');
+
+const gifCarga = "{% static 'img/loading.gif' %}";
+const urlFallback = "{% static 'img/perfil-default.webp' %}";
+
+// Obtenemos la URL que estaba cacheada anteriormente
+const urlAnterior = localStorage.getItem('foto_perfil_url');
+
+// Si no hay URL (nunca ha subido imagen), o si la URL cambió
+if (!urlFinal || urlFinal.includes("None")) {
+    img.src = urlFallback;
+} else if (urlFinal !== urlAnterior) {
+    // Es nueva imagen (o primera vez), mostrar GIF
+    img.src = gifCarga;
+
+    // Verificar si ya está en el servidor
+    let intentos = 0;
+    const maxIntentos = 10;
+    const verificarCarga = setInterval(() => {
+        const tempImg = new Image();
+        tempImg.onload = function () {
+            clearInterval(verificarCarga);
+            img.src = urlFinal;
+            localStorage.setItem('foto_perfil_url', urlFinal); // Guardar nueva imagen
+        };
+        tempImg.onerror = function () {
+            intentos++;
+            if (intentos >= maxIntentos) {
+                clearInterval(verificarCarga);
+                img.src = urlFallback;
+            }
+        };
+        tempImg.src = urlFinal + '?t=' + new Date().getTime();
+    }, 2000);
+} else {
+    // Ya existía y es la misma → mostrarla directamente
+    img.src = urlFinal;
+}
+
+</script>
 
 {% endblock %}
