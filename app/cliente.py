@@ -33,8 +33,7 @@ def Crear_Cuenta_Cliente(request):
             'campos_vacios': campos_vacios
     }
 
-    if campos_vacios: 
-        messages.error(request,'!No dejar campos en blanco!')
+    if campos_vacios:
         return render(request,'registro.html',contexto)
     
     try: 
@@ -82,4 +81,59 @@ def Crear_Cuenta_Cliente(request):
         contexto.clear()
         contexto['error_interno'] = '!Error Interno!'
         return render(request,'registro.html',contexto)
+    
+# Editar_Perfil_Cliente, logica para editar una cuenta tipo cliente
+def Editar_Perfil_Cliente(request):
+    imagen = request.FILES.get('imagen_usuario')
+    nombre = request.POST.get('txtNombreA','').strip()
+    apellido = request.POST.get('txtApellidoA','').strip()
+    correo = request.POST.get('txtCorreoA','').strip()
+    telefono = request.POST.get('txtTelefonoA','').strip()
+
+    campos_vacios = []
+    if not nombre:
+        campos_vacios.append('nombre')
+    if not apellido:
+        campos_vacios.append('apellido')
+    if not telefono:
+        campos_vacios.append('telefono')
+    if not correo:
+        campos_vacios.append('correo')
+
+    contexto = {
+            'nombre': nombre,
+            'apellido': apellido,
+            'telefono': telefono,
+            'correo': correo,
+            'campos_vacios': campos_vacios
+    }
+
+    try:
+        #Obteniendo Cliente
+        cliente = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
+
+        if campos_vacios:
+                contexto['activo'] = True
+                contexto['usuario'] = cliente
+                return render(request,'editar_perfilCliente.html',contexto)
+    
+        #Actualziacion
+        cliente.nombre_usuario = nombre
+        cliente.apellido_usuario = apellido
+        cliente.telefono_usuario = telefono
+        cliente.correo_usuario = correo
+        if imagen:
+            cliente.imagen_usuario = imagen
+        cliente.save()
+        #Actualizacion de session
+        request.session['nombre_cliente'] = cliente.nombre_usuario
+        request.session['apellido_cliente'] = cliente.apellido_usuario
+        request.session['correo_cliente'] = cliente.correo_usuario
+        return redirect('vista_perfil_cliente')
+    except Usuario.DoesNotExist:
+        return redirect('vista_login')
+    
+
+
+
     
