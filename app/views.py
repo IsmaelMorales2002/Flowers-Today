@@ -12,10 +12,18 @@ def Vista_Inicio_Cliente(request):
         return render(request,'inicio.html',{
             'activo': activo
         })
-    else:
-        return render(request,'inicio.html',{
+    return render(request,'inicio.html',{
             'activo': activo
+    })
+    
+def Vista_Inicio_Administrador(request):
+    #Proteccion de Ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        return render(request,'inicioAdministrador.html',{
+                'activo': activo
         })
+    return redirect('vista_login')
 
 # Vista_Login, muestra la vista login.html
 def Vista_Login(request):
@@ -105,3 +113,29 @@ def Vista_Ver_Perfil_Cliente(request):
     else:
         return redirect('vista_login')
     
+# Vista_Editar_Perfil_Cliente, muestra la vista editar_perfilCliente
+def Vista_Editar_Perfil_Cliente(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo',False)
+    if activo:
+        try:
+            #Conocer informacion del cliente
+            cliente = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
+            return render(request,'editar_perfilCliente.html',{
+                'activo': activo,
+                'usuario': cliente
+            })
+        except Usuario.DoesNotExist:
+            return redirect('vista_login')
+    else:
+        return redirect('vista_login')
+
+# Vista_Clientes_Administracion, muestra la vista clientes_administracion
+def Vista_Clientes_Administracion(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        return render(request,'clientes_administracion.html',{
+            'activo' : activo
+        })
+    return redirect('vista_login')
