@@ -135,7 +135,13 @@ def Vista_Clientes_Administracion(request):
     #Proteccion de ruta
     activo = request.session.get('activo_administrador',False)
     if activo:
-        return render(request,'clientes_administracion.html',{
-            'activo' : activo
-        })
+        try:
+            usuarios = Usuario.objects.filter(id_rol__nombre_rol = 'C')
+            return render(request,'clientes_administracion.html',{
+                'activo' : activo,
+                'usuarios': usuarios
+            })
+        except Exception:
+            return redirect('vista_inicio_administrador')
+
     return redirect('vista_login')

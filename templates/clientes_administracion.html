@@ -27,15 +27,16 @@
             </tr>
         </thead>
         <tbody>
+            {% for usuario in usuarios %}
             <tr>
-                <td class="text-center">Ismael</td>
-                <td class="text-center">Morales</td>
+                <td class="text-center">{{usuario.nombre_usuario}}</td>
+                <td class="text-center">{{usuario.apellido_usuario}}</td>
                 <td class="text-center truncable">
                     <span class="correo-auto-truncado" title="{{ cliente.correo }}">
-                        ismaelmorales2002jev@gmail.com
+                        {{usuario.correo_usuario}}
                     </span>
                 </td>
-                <td class="text-center">73504364</td>
+                <td class="text-center">{{usuario.telefono_usuario}}</td>
                 <td class="text-center">
                     <a href="#"
                        class="btn btn-sm bg-dark text-white me-1"
@@ -49,6 +50,7 @@
                     </a>
                 </td>
             </tr>
+            {% endfor %}
         </tbody>
     </table>
 
