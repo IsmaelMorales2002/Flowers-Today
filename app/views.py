@@ -145,3 +145,13 @@ def Vista_Clientes_Administracion(request):
             return redirect('vista_inicio_administrador')
 
     return redirect('vista_login')
+
+# Vista_Crear_Cliente, muestra la vista crearCliente.html
+def Vista_Crear_Cliente(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        return render(request,'crearCliente.html',{
+            'activo':activo
+        })
+    return redirect('vista_login')
