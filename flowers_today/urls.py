@@ -19,6 +19,7 @@ urlpatterns = [
     #Vistas Administrador
     path('administracion/',Vista_Inicio_Administrador,name='vista_inicio_administrador'),
     path('clientes/',Vista_Clientes_Administracion,name='vista_clientes_administracion'),
+    path('crear_cuenta/',Vista_Crear_Cliente,name='vista_crear_cuenta'),
     #Logica
     path('CreaCuentaCliente',Crear_Cuenta_Cliente,name='CrearCuentaCliente'),
     path('IniciarSesion/',Iniciar_Sesion,name='IniciarSesion'),
