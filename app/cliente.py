@@ -12,6 +12,8 @@ def Crear_Cuenta_Cliente(request):
     correo = request.POST.get('txtCorreoN','').strip()
     password_plano = request.POST.get('txtPasswordN','').strip()
     tipo_rol = request.POST.get('txtRol')
+    vista = request.POST.get('txtVista')
+
 
     campos_vacios = []
     if not nombre:
@@ -34,6 +36,8 @@ def Crear_Cuenta_Cliente(request):
     }
 
     if campos_vacios:
+        if vista:
+            return render(request,'crearCliente.html',contexto)
         return render(request,'registro.html',contexto)
     
     try: 
@@ -43,12 +47,18 @@ def Crear_Cuenta_Cliente(request):
         if correoExistente and telefonoExistente:
             contexto['error_correo'] = 'Correo Ya Registrador'
             contexto['error_telefono'] = 'Telefono Ya Registrador'
+            if vista:
+                return render(request,'crearCliente.html',contexto)
             return render(request,'registro.html',contexto)
         elif correoExistente:
             contexto['error_correo'] = 'Correo Ya Registrador'
+            if vista:
+                return render(request,'crearCliente.html',contexto)
             return render(request,'registro.html',contexto)
         elif telefonoExistente: 
             contexto['error_telefono'] = 'Telefono Ya Registrador'
+            if vista:
+                return render(request,'crearCliente.html',contexto)
             return render(request,'registro.html',contexto)
             
 
@@ -75,6 +85,8 @@ def Crear_Cuenta_Cliente(request):
         request.session['correo_cliente'] = cliente.correo_usuario
         request.session['id_usuario'] = cliente.id_usuario
         request.session['activo'] = True
+        if vista:
+            return redirect('vista_clientes_administracion')
         return redirect('vista_inicio_cliente')
 
     except Exception:

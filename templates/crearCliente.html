@@ -1,56 +1,72 @@
 {% extends 'menuAdministrador.html' %}
+{% load static %}
 {% block title %} Crear Cuenta {% endblock %}
 
 {% block content %}
 <section class="container my-5 text-white">
     <h2 class="mb-4 text-center">Crear Cuenta Cliente</h2>
 
-    <form method="post" action="#" class="needs-validation" novalidate>
+    <form method="post" action="{% url 'CrearCuentaCliente' %}" id="form-crear-cuenta-cliente">
         {% csrf_token %}
         
         <div class="row gy-4">
             <!-- Fila 1: Nombre y Apellido -->
             <div class="col-12 col-md-6">
-                <input type="text" name="txtRolA" value="C" hidden>
+                <input type="text" name="txtRol" value="C" hidden>
+                <input type="text" name="txtVista" value="AD" hidden>
                 <label for="nombre" class="form-label">Nombre:</label>
-                <input type="text" class="form-control" id="nombre" name="txtNombreA" placeholder="Ingrese Su Nombre" required>
-                <div class="invalid-feedback">El nombre es obligatorio.</div>
+                <input type="text" value="{{nombre}}" class="form-control {% if 'nombre' in campos_vacios %}is-invalid{% endif %}" id="nombre" name="txtNombreN" placeholder="Ingrese Su Nombre" required>
+                {% if 'nombre' in campos_vacios %}
+                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                {% endif %}
             </div>
 
             <div class="col-12 col-md-6">
                 <label for="apellido" class="form-label">Apellido:</label>
-                <input type="text" class="form-control" id="apellido" name="txtApellidoA" placeholder="Ingrese Su Apellido" required>
-                <div class="invalid-feedback">El apellido es obligatorio.</div>
+                <input type="text" value="{{apellido}}" class="form-control {% if 'apellido' in campos_vacios %}is-invalid{% endif %}" id="apellido" name="txtApellidoN" placeholder="Ingrese Su Apellido" required>
+                {% if 'apellido' in campos_vacios %}
+                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                {% endif %}
             </div>
 
             <!-- Fila 2: Teléfono y Correo -->
             <div class="col-12 col-md-6">
                 <label for="telefono" class="form-label">Teléfono:</label>
-                <input type="tel" class="form-control" id="telefono" name="txtTelefonoA" placeholder="Ingrese Su Número Telefónico" required>
-                <div class="invalid-feedback">El teléfono es obligatorio.</div>
+                <input type="tel" value="{{telefono}}" class="form-control {% if 'telefono' in campos_vacios %}is-invalid{% endif %} {% if error_telefono %}is-invalid{% endif %}" id="telefono" name="txtTelefonoN" placeholder="Ingrese Su Número Telefónico" required>
+                {% if 'telefono' in campos_vacios %}
+                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                {% endif %}
+                {% if error_telefono %}
+                <div class="invalid-feedback">Telefono Ya Registrado</div>
+                {% endif %}
             </div>
 
             <div class="col-12 col-md-6">
                 <label for="correo" class="form-label">Correo electrónico:</label>
-                <input type="email" class="form-control" id="correo" name="txtCorreoA" placeholder="Ingrese Su Correo Electrónico" required>
-                <div class="invalid-feedback">Debe ingresar un correo válido.</div>
+                <input type="email" value="{{correo}}" class="form-control {% if 'correo' in campos_vacios %}is-invalid{% endif %} {% if error_correo %}is-invalid{% endif %}" id="correo" name="txtCorreoN" placeholder="Ingrese Su Correo Electrónico" required>
+                {% if 'correo' in campos_vacios %}
+                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                {% endif %}
+                {% if error_correo %}
+                <div class="invalid-feedback">Correo Ya Registrado</div>
+                {% endif %}
             </div>
 
             <!-- Fila 3: Contraseña + Botón Mostrar -->
             <div class="col-12 col-md-6">
                 <label for="contraseña" class="form-label">Contraseña:</label>
                 <div class="input-group">
-                    <input type="password" class="form-control" id="contraseña" name="txtPasswordA" placeholder="Ingrese Una Contraseña" required>
-                    <button type="button" class="btn text-white" style="background-color: #6C2DC7;" id="togglePassword">
-                        Mostrar
-                    </button>
-                    <div class="invalid-feedback">La contraseña es obligatoria.</div>
+                    <input type="password" class="form-control {% if 'password' in campos_vacios %}is-invalid{% endif %}" id="passwordCliente" name="txtPasswordN" placeholder="Ingrese Una Contraseña" maxlength="12" minlength="8" required>
+                    <button type="button" class="btn text-white" style="background-color: #6C2DC7;" id="togglePasswordCliente">Mostrar</button>
+                    {% if 'password' in campos_vacios %}
+                    <div class="invalid-feedback">Este campo es obligatorio.</div>
+                    {% endif %}
                 </div>
             </div>
 
             <!-- Botones -->
             <div class="d-flex flex-column flex-md-row justify-content-center gap-2 mt-4">
-                <button type="submit" class="btn" style="background-color: #6C2DC7; color: white; border: #6C2DC7;">Registrar Cuenta</button>
+                <button type="submit" id="btn-cliente" class="btn" style="background-color: #6C2DC7; color: white; border: #6C2DC7;">Registrar Cuenta</button>
                 <a href="{% url 'vista_clientes_administracion' %}" class="btn btn-danger">
                     <i class="bi bi-x-circle me-1"></i> Cancelar
                 </a>
@@ -59,17 +75,8 @@
     </form>
 </section>
 
-<!-- Script para mostrar/ocultar contraseña -->
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const togglePasswordBtn = document.getElementById("togglePassword");
-    const passwordInput = document.getElementById("contraseña");
-
-    togglePasswordBtn.addEventListener("click", function () {
-      const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-      passwordInput.setAttribute("type", type);
-      this.textContent = type === "password" ? "Mostrar" : "Ocultar";
-    });
-  });
-</script>
+<script src="{% static 'js/toggleCliente.js' %}"></script>
+<script src="{% static 'js/input_telefono.js' %}"></script>
+<script src="{% static 'js/carga_btn_cliente.js' %}"></script>
+<script src="{% static 'js/campos_vacios.js' %}"></script>
 {% endblock %}
