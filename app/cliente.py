@@ -79,14 +79,14 @@ def Crear_Cuenta_Cliente(request):
         )
 
         cliente.save()
+        if vista:
+            return redirect('vista_clientes_administracion')
         #Session para guardar informacion del cliente
         request.session['nombre_cliente'] = cliente.nombre_usuario
         request.session['apellido_cliente'] = cliente.apellido_usuario
         request.session['correo_cliente'] = cliente.correo_usuario
         request.session['id_usuario'] = cliente.id_usuario
         request.session['activo'] = True
-        if vista:
-            return redirect('vista_clientes_administracion')
         return redirect('vista_inicio_cliente')
 
     except Exception:
