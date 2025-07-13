@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 from django.shortcuts import redirect
 from app.views import *
 from app.cliente import *
+from app.administrador import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -19,12 +20,15 @@ urlpatterns = [
     #Vistas Administrador
     path('administracion/',Vista_Inicio_Administrador,name='vista_inicio_administrador'),
     path('clientes/',Vista_Clientes_Administracion,name='vista_clientes_administracion'),
+    path('administradores/',Vista_Administradores_Administracion,name='vista_administradores_administracion'),
     path('crear_cuenta/',Vista_Crear_Cliente,name='vista_crear_cuenta'),
+    path('crear_cuenta_admi/',Vista_Crear_Admi,name='vista_crear_cuenta_admi'),
     #Logica
     path('CreaCuentaCliente',Crear_Cuenta_Cliente,name='CrearCuentaCliente'),
     path('IniciarSesion/',Iniciar_Sesion,name='IniciarSesion'),
     path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion'),
     path('EditarPerfilCliente/',Editar_Perfil_Cliente,name='EditarPerfilCliente'),
+      path('CreaCuentaAdmi',Crear_Cuenta_Admi,name='CrearCuentaAdmi'),
     #Endpoints
 ]
 
