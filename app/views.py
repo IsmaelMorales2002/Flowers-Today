@@ -179,3 +179,21 @@ def Vista_Crear_Admi(request):
             'activo':activo
         })
     return redirect('vista_login')
+
+
+def Vista_Categoria_Administracion(request):
+     #Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        try:
+            usuarios = Usuario.objects.filter(id_rol__nombre_rol = 'A')
+            categorias = Categoria.objects.all()
+            return render(request,'categoria_administracion.html',{
+                'activo' : activo,
+                'usuarios': usuarios,
+                'categorias': categorias
+            })
+        except Exception:
+            return redirect('vista_inicio_administrador')
+
+    return redirect('vista_login')
