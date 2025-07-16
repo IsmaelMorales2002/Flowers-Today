@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
+from app.administrador import *
 from .models import *
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password,check_password
@@ -206,4 +207,19 @@ def Vista_Crear_Categoria(request):
         return render(request,'crearCategoria.html',{
             'activo':activo
         })
+    return redirect('vista_login')
+
+def Vista_Editar_Categoria(request, id_categoria):
+    activo = request.session.get('activo_administrador', False)
+    if activo:
+        try:
+            categoria = Categoria.objects.get(id_categoria=id_categoria)
+            contexto = {
+                'activo': activo,
+                'nombre': categoria.nombre_categoria,
+                'id_categoria': id_categoria
+            }
+            return render(request, 'editar_categoria.html', contexto)
+        except Categoria.DoesNotExist:
+            return redirect('vista_categoria_administracion')
     return redirect('vista_login')

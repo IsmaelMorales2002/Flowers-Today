@@ -13,7 +13,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="text-white">Gestionar Categorias</h2>
         <a href="{% url 'vista_crear_categoria' %}" class="btn btn-success">
-            <i class="bi bi-person-plus-fill me-1"></i> Crear Categoria
+            <i class="bi bi-plus-circle me-1"></i> Crear Categoria
         </a>
     </div>
 
@@ -48,9 +48,10 @@
                             data-estado="{{ categoria.estado_categoria }}">
                             <i class="bi bi-eye-fill"></i>
                         </button>
-                        <a href="#" class="btn btn-sm bg-dark text-white me-1" title="Editar">
+                        <a href="{% url 'vista_editar_categoria' categoria.id_categoria %}" class="btn btn-sm bg-dark text-white me-1" title="Editar">
                             <i class="bi bi-pencil-square"></i>
                         </a>
+
                         <a href="#" class="btn btn-sm btn-danger eliminar-usuario-btn" title="Eliminar">
                             <i class="bi bi-trash-fill"></i>
                         </a>

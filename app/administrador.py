@@ -3,6 +3,7 @@ from django.contrib import messages
 from .models import *
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password
+from django.shortcuts import get_object_or_404
 
 def Crear_Cuenta_Admi(request):
     nombre = request.POST.get('txtNombreN','').strip()
@@ -136,3 +137,43 @@ def Crear_Categoria(request):
   
         contexto['error_interno'] = '!Error Interno!'
         return render(request, 'crearCategoria.html', contexto)
+
+
+def Editar_Categoria(request, id_categoria):
+    if request.method == 'POST':
+        nombre = request.POST.get('txtNombreN', '').strip()
+        campos_vacios = []
+        error_nombre = False
+        error_longitud = False
+
+        if not nombre:
+            campos_vacios.append('nombre')
+        if len(nombre) > 25:
+            error_longitud = True
+
+        contexto = {
+            'nombre': nombre,
+            'campos_vacios': campos_vacios,
+            'error_nombre': False,
+            'error_longitud': error_longitud,
+            'id_categoria': id_categoria  # <- Esto es crucial
+        }
+
+        if campos_vacios or error_longitud:
+            return render(request, 'editar_categoria.html', contexto)
+
+        try:
+            # Verificar si ya existe otra categoria con ese nombre, excluyendo la actual
+            existe = Categoria.objects.filter(nombre_categoria__iexact=nombre).exclude(id_categoria=id_categoria).exists()
+            if existe:
+                contexto['error_nombre'] = True
+                return render(request, 'editar_categoria.html', contexto)
+
+            categoria = get_object_or_404(Categoria, id_categoria=id_categoria)
+            categoria.nombre_categoria = nombre
+            categoria.save()
+
+            return redirect('vista_categoria_administracion')
+        except Exception:
+            contexto['error_interno'] = '!Error interno!'
+            return render(request, 'editar_categoria.html', contexto)
