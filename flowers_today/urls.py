@@ -24,12 +24,14 @@ urlpatterns = [
     path('crear_cuenta/',Vista_Crear_Cliente,name='vista_crear_cuenta'),
     path('crear_cuenta_admi/',Vista_Crear_Admi,name='vista_crear_cuenta_admi'),
     path('categoria/',Vista_Categoria_Administracion,name='vista_categoria_administracion'),
+    path('crear_categoria/',Vista_Crear_Categoria,name='vista_crear_categoria'),
     #Logica
     path('CreaCuentaCliente',Crear_Cuenta_Cliente,name='CrearCuentaCliente'),
     path('IniciarSesion/',Iniciar_Sesion,name='IniciarSesion'),
     path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion'),
     path('EditarPerfilCliente/',Editar_Perfil_Cliente,name='EditarPerfilCliente'),
     path('CreaCuentaAdmi',Crear_Cuenta_Admi,name='CrearCuentaAdmi'),
+    path('CreaCategoria',Crear_Categoria,name='CrearCategoria'),
     #Endpoints
 ]
 

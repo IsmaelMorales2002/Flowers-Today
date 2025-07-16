@@ -1,0 +1,39 @@
+{% extends 'menuAdministrador.html' %}
+{% load static %}
+{% block title %} Crear Categoria {% endblock %}
+
+{% block content %}
+<section class="container my-5 text-white">
+    <h2 class="mb-4 text-center">Crear Categoria</h2>
+
+    <form method="post" action="{% url 'CrearCategoria' %}" id="form-crear-categoria">
+        {% csrf_token %}   
+        <div class="row gy-4">
+            <!-- Fila 1: Nombre y Apellido -->
+            <div class="col-12 col-md-6 mx-auto text-center ">
+                <label for="nombre" class="form-label">Nombre:</label>
+                <input type="text" value="{{nombre}}" maxlength="25"
+                class="form-control {% if 'nombre' in campos_vacios or error_nombre %}is-invalid{% endif %}" 
+                id="nombre" name="txtNombreN" placeholder="Ingrese Categoria" required>
+                <input type="text" name="txtVista" value="AD" hidden>
+                {% if 'nombre' in campos_vacios %}
+                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                {% endif %}
+                {% if error_nombre %}
+                <div class="invalid-feedback">Nombre Ya Registrado</div>
+                {% endif %}
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex flex-column flex-md-row justify-content-center gap-2 mt-4">
+                <button type="submit" id="btn-categoria" class="btn" style="background-color: #6C2DC7; color: white; border: #6C2DC7;">Registrar Categoria</button>
+                <a href="{% url 'vista_categoria_administracion' %}" class="btn btn-danger">
+                    <i class="bi bi-x-circle me-1"></i> Cancelar
+                </a>
+            </div>
+        </div>
+    </form>
+</section>
+
+<script src="{% static 'js/campos_vacios.js' %}"></script>
+{% endblock %}

@@ -197,3 +197,13 @@ def Vista_Categoria_Administracion(request):
             return redirect('vista_inicio_administrador')
 
     return redirect('vista_login')
+
+def Vista_Crear_Categoria(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    
+    if activo:
+        return render(request,'crearCategoria.html',{
+            'activo':activo
+        })
+    return redirect('vista_login')

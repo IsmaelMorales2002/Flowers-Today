@@ -41,7 +41,7 @@ def Crear_Cuenta_Admi(request):
     
     try: 
         #Verificacion de correo y telefono existente
-        correoExistente = Usuario.objects.filter(Q(correo_usuario = correo))
+        correoExistente = Usuario.objects.filter(Q(correo_usuario__iexact = correo)).exists()
         telefonoExistente = Usuario.objects.filter(Q(telefono_usuario = telefono))
         if correoExistente and telefonoExistente:
             contexto['error_correo'] = 'Correo Ya Registrador'
@@ -87,3 +87,52 @@ def Crear_Cuenta_Admi(request):
         contexto.clear()
         contexto['error_interno'] = '!Error Interno!'
         return render(request,'registro.html',contexto)
+    
+    
+    
+    
+    
+def Crear_Categoria(request):
+    nombre = request.POST.get('txtNombreN', '').strip()
+    vista = request.POST.get('txtVista')
+
+    campos_vacios = []
+    if not nombre:
+        campos_vacios.append('nombre')
+
+    contexto = {
+        'nombre': nombre,
+        'campos_vacios': campos_vacios
+    }
+
+    if campos_vacios:
+        if vista:
+            return render(request, 'crearCategoria.html', contexto)
+        return render(request, 'registro.html', contexto)
+    
+    
+
+    try:
+       
+        nombreExiste = Categoria.objects.filter(nombre_categoria__iexact=nombre).exists()
+        if nombreExiste:
+            contexto['error_nombre'] = 'Nombre Ya Registrado'
+            if vista:
+                return render(request, 'crearCategoria.html', contexto)
+            return render(request, 'registro.html', contexto)
+
+        # Crear nueva categoría
+        categoria = Categoria(
+            nombre_categoria=nombre,
+            estado_categoria=True
+        )
+        categoria.save()
+
+        if vista:
+            return redirect('vista_categoria_administracion')
+        return redirect('vista_inicio_cliente')
+
+    except Exception:
+  
+        contexto['error_interno'] = '!Error Interno!'
+        return render(request, 'crearCategoria.html', contexto)
