@@ -177,3 +177,22 @@ def Editar_Categoria(request, id_categoria):
         except Exception:
             contexto['error_interno'] = '!Error interno!'
             return render(request, 'editar_categoria.html', contexto)
+
+
+
+def cambiar_estado_categoria(request):
+    if request.method == 'POST':
+        id_categoria = request.POST.get('id_categoria')
+        accion = request.POST.get('accion')
+
+        try:
+            categoria = Categoria.objects.get(id_categoria=id_categoria)
+            if accion == 'desactivar':
+                categoria.estado_categoria = False
+            elif accion == 'activar':
+                categoria.estado_categoria = True
+            categoria.save()
+        except Categoria.DoesNotExist:
+            pass
+
+    return redirect('vista_categoria_administracion')  # Ajusta a tu vista real

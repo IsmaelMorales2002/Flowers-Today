@@ -160,9 +160,13 @@ def Vista_Crear_Cliente(request):
 def Vista_Administradores_Administracion(request):
    #Proteccion de ruta
     activo = request.session.get('activo_administrador',False)
+    print("ID actual:", request.session.get('id_usuario'))
+
     if activo:
         try:
-            usuarios = Usuario.objects.filter(id_rol__nombre_rol = 'A')
+            id_actual = request.session.get('id_usuario')  # ID del usuario logueado
+            usuarios = Usuario.objects.filter(id_rol__nombre_rol='A').exclude(id_usuario=id_actual)
+
             return render(request,'admi_administracion.html',{
                 'activo' : activo,
                 'usuarios': usuarios

@@ -37,6 +37,8 @@ urlpatterns = [
     path('CreaCuentaAdmi',Crear_Cuenta_Admi,name='CrearCuentaAdmi'),
     path('CreaCategoria',Crear_Categoria,name='CrearCategoria'),
     path('editar-categoria/guardar/<int:id_categoria>/', Editar_Categoria, name='editar_categoria'),
+    path('categoria/cambiar-estado/', cambiar_estado_categoria, name='cambiar_estado_categoria'),
+
 
 
 
