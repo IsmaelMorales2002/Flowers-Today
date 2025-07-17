@@ -160,7 +160,6 @@ def Vista_Crear_Cliente(request):
 def Vista_Administradores_Administracion(request):
    #Proteccion de ruta
     activo = request.session.get('activo_administrador',False)
-    print("ID actual:", request.session.get('id_usuario'))
 
     if activo:
         try:
