@@ -1,5 +1,8 @@
+from django.core.mail import EmailMessage
+from django.urls import reverse
+from django.template.loader import render_to_string
+from django.conf import settings
 from django.shortcuts import render,redirect
-from django.contrib import messages
 from app.administrador import *
 from .models import *
 from django.db.models import Q
@@ -226,3 +229,33 @@ def Vista_Editar_Categoria(request, id_categoria):
         except Categoria.DoesNotExist:
             return redirect('vista_categoria_administracion')
     return redirect('vista_inicio_cliente')
+
+#Vista de actualizar clave
+def Vista_Actualizar_Clave(request):
+    return render(request,'nueva_password.html')
+
+#Logica Para enviar correos de recuperacion de clave 
+def Correo_Recuperacion(request):
+    correo_destinatario = request.POST.get('txtCorreoUsuario')
+    contexto = {}
+    if correo_destinatario:
+        contexto['correo'] = correo_destinatario
+        existe = Usuario.objects.filter(correo_usuario=correo_destinatario).exists()
+        if existe:
+            asunto = 'Recuperación de Contraseña'
+            enlace_recuperacion = request.build_absolute_uri(reverse('vista_credencial'))
+            mensaje = render_to_string('recuperacion.html',{'enlace_recuperacion':enlace_recuperacion})
+            correo_remitente = settings.DEFAULT_FROM_EMAIL
+            email = EmailMessage(
+                asunto,
+                mensaje,
+                correo_remitente,
+                [correo_destinatario],
+            )
+            email.content_subtype = 'html'
+            email.send()
+            contexto['enviado'] = 'Correo Enviado'
+            return render(request,'recuperar_password.html',contexto)
+        else:
+            contexto['error_usuario'] = 'Usuario No Encontrado'
+            return render(request,'recuperar_password.html',contexto)
