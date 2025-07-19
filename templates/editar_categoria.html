@@ -1,0 +1,67 @@
+{% extends 'menuAdministrador.html' %}
+{% load static %}
+{% block title %} Editar Categoria {% endblock %}
+
+{% block content %}
+<section class="container my-5 text-white">
+    <h2 class="mb-4 text-center">Editar Categoría</h2>
+
+    <form method="post" action="{% url 'editar_categoria' id_categoria %}" id="form-editar-categoria">
+
+        {% csrf_token %}
+        <div class="row gy-4">
+            <div class="col-12 col-md-6 mx-auto text-center">
+                <label for="nombre" class="form-label">Nombre:</label>
+                <input type="text" id="nombre" name="txtNombreN" maxlength="25" value="{{ nombre }}"
+                    class="form-control {% if 'nombre' in campos_vacios or error_nombre or error_longitud %}is-invalid{% endif %}"
+                    placeholder="Ingrese nuevo nombre" required>
+
+                {% if 'nombre' in campos_vacios %}
+                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                {% endif %}
+                {% if error_nombre %}
+                <div class="invalid-feedback">Nombre ya registrado.</div>
+                {% endif %}
+                {% if error_longitud %}
+                <div class="invalid-feedback">Máximo 25 caracteres permitidos.</div>
+                {% endif %}
+            </div>
+
+            <div class="d-flex flex-column flex-md-row justify-content-center gap-2 mt-4">
+                <button type="button" class="btn" style="background-color: #6C2DC7; color: white;" data-bs-toggle="modal" data-bs-target="#confirmarModal">
+                    Guardar Cambios
+                </button>
+
+                <a href="{% url 'vista_categoria_administracion' %}" class="btn btn-danger">
+                    <i class="bi bi-x-circle me-1"></i> Cancelar
+                </a>
+            </div>
+        </div>
+    </form>
+    <!-- Modal de confirmación -->
+<div class="modal fade" id="confirmarModal" tabindex="-1" aria-labelledby="confirmarModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-dark">
+
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="modalVerCategoriaLabel">Confirmar Cambios</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+            aria-label="Cerrar"></button>
+    </div>
+
+      <div class="modal-body">
+        ¿Está seguro de guardar los cambios en la categoría?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+        <!-- Este botón envía el formulario -->
+        <button type="button"  class="btn btn-danger"  style="background-color: #6C2DC7; color: white; border: #6C2DC7;" onclick="document.getElementById('form-editar-categoria').submit();">
+          Sí, guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</section>
+{% endblock %}
