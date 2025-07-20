@@ -227,3 +227,22 @@ def Vista_Editar_Categoria(request, id_categoria):
         except Categoria.DoesNotExist:
             return redirect('vista_categoria_administracion')
     return redirect('vista_login')
+
+def vista_comentario(request):
+    activo = request.session.get('activo', False)
+    if activo:
+        try:
+            nombre = request.session.get('nombre_cliente', '')
+            apellido = request.session.get('apellido_cliente', '')
+            comentarios = Comentario.objects.select_related('id_usuario').order_by('-fecha_comentario')[:9]  # solo los 10 más recientes
+
+            contexto = {
+                'activo': activo,
+                'nombre': nombre,
+                'apellido': apellido,
+                'comentarios': comentarios,
+            }
+            return render(request, 'comentario_formulario.html', contexto)
+        except KeyError:
+            return redirect('vista_login')
+    return redirect('vista_login')
