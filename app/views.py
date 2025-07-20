@@ -1,5 +1,8 @@
+from django.core.mail import EmailMessage
+from django.urls import reverse
+from django.template.loader import render_to_string
+from django.conf import settings
 from django.shortcuts import render,redirect
-from django.contrib import messages
 from app.administrador import *
 from .models import *
 from django.db.models import Q
@@ -24,7 +27,7 @@ def Vista_Inicio_Administrador(request):
         return render(request,'inicioAdministrador.html',{
                 'activo': activo
         })
-    return redirect('vista_login')
+    return redirect('vista_inicio_cliente')
 
 # Vista_Login, muestra la vista login.html
 def Vista_Login(request):
@@ -110,9 +113,9 @@ def Vista_Ver_Perfil_Cliente(request):
                 'usuario': cliente
             })
         except Usuario.DoesNotExist:
-            return redirect('vista_login')
+            return redirect('vista_inicio_cliente')
     else:
-        return redirect('vista_login')
+        return redirect('vista_inicio_cliente')
     
 # Vista_Editar_Perfil_Cliente, muestra la vista editar_perfilCliente
 def Vista_Editar_Perfil_Cliente(request):
@@ -127,9 +130,9 @@ def Vista_Editar_Perfil_Cliente(request):
                 'usuario': cliente
             })
         except Usuario.DoesNotExist:
-            return redirect('vista_login')
+            return redirect('vista_inicio_cliente')
     else:
-        return redirect('vista_login')
+        return redirect('vista_inicio_cliente')
 
 # Vista_Clientes_Administracion, muestra la vista clientes_administracion
 def Vista_Clientes_Administracion(request):
@@ -145,7 +148,7 @@ def Vista_Clientes_Administracion(request):
         except Exception:
             return redirect('vista_inicio_administrador')
 
-    return redirect('vista_login')
+    return redirect('vista_inicio_cliente')
 
 # Vista_Crear_Cliente, muestra la vista crearCliente.html
 def Vista_Crear_Cliente(request):
@@ -155,12 +158,11 @@ def Vista_Crear_Cliente(request):
         return render(request,'crearCliente.html',{
             'activo':activo
         })
-    return redirect('vista_login')
+    return redirect('vista_inicio_cliente')
 
 def Vista_Administradores_Administracion(request):
    #Proteccion de ruta
     activo = request.session.get('activo_administrador',False)
-    print("ID actual:", request.session.get('id_usuario'))
 
     if activo:
         try:
@@ -174,7 +176,7 @@ def Vista_Administradores_Administracion(request):
         except Exception:
             return redirect('vista_inicio_administrador')
 
-    return redirect('vista_login')
+    return redirect('vista_inicio_cliente')
 
 def Vista_Crear_Admi(request):
     #Proteccion de ruta
@@ -183,7 +185,7 @@ def Vista_Crear_Admi(request):
         return render(request,'crearAdmi.html',{
             'activo':activo
         })
-    return redirect('vista_login')
+    return redirect('vista_inicio_cliente')
 
 
 def Vista_Categoria_Administracion(request):
@@ -201,7 +203,7 @@ def Vista_Categoria_Administracion(request):
         except Exception:
             return redirect('vista_inicio_administrador')
 
-    return redirect('vista_login')
+    return redirect('vista_inicio_cliente')
 
 def Vista_Crear_Categoria(request):
     #Proteccion de ruta
@@ -211,7 +213,7 @@ def Vista_Crear_Categoria(request):
         return render(request,'crearCategoria.html',{
             'activo':activo
         })
-    return redirect('vista_login')
+    return redirect('vista_inicio_cliente')
 
 def Vista_Editar_Categoria(request, id_categoria):
     activo = request.session.get('activo_administrador', False)
@@ -226,6 +228,7 @@ def Vista_Editar_Categoria(request, id_categoria):
             return render(request, 'editar_categoria.html', contexto)
         except Categoria.DoesNotExist:
             return redirect('vista_categoria_administracion')
+
     return redirect('vista_login')
 
 def vista_comentario(request):
@@ -246,3 +249,36 @@ def vista_comentario(request):
         except KeyError:
             return redirect('vista_login')
     return redirect('vista_login')
+
+    return redirect('vista_inicio_cliente')
+
+#Vista de actualizar clave
+def Vista_Actualizar_Clave(request):
+    return render(request,'nueva_password.html')
+
+#Logica Para enviar correos de recuperacion de clave 
+def Correo_Recuperacion(request):
+    correo_destinatario = request.POST.get('txtCorreoUsuario')
+    contexto = {}
+    if correo_destinatario:
+        contexto['correo'] = correo_destinatario
+        existe = Usuario.objects.filter(correo_usuario=correo_destinatario).exists()
+        if existe:
+            asunto = 'Recuperación de Contraseña'
+            enlace_recuperacion = request.build_absolute_uri(reverse('vista_credencial'))
+            mensaje = render_to_string('recuperacion.html',{'enlace_recuperacion':enlace_recuperacion})
+            correo_remitente = settings.DEFAULT_FROM_EMAIL
+            email = EmailMessage(
+                asunto,
+                mensaje,
+                correo_remitente,
+                [correo_destinatario],
+            )
+            email.content_subtype = 'html'
+            email.send()
+            contexto['enviado'] = 'Correo Enviado'
+            return render(request,'recuperar_password.html',contexto)
+        else:
+            contexto['error_usuario'] = 'Usuario No Encontrado'
+            return render(request,'recuperar_password.html',contexto)
+

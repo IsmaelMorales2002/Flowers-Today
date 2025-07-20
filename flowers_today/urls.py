@@ -17,8 +17,12 @@ urlpatterns = [
     path('recuperacion/',Vista_Recuperar_Password,name='vista_recuperar_password'),
     path('perfil/',Vista_Ver_Perfil_Cliente,name='vista_perfil_cliente'),
     path('editar_perfil/',Vista_Editar_Perfil_Cliente,name='vista_editar_perfil_cliente'),
+
     path('comentario/', vista_comentario, name='vista_comentario'),
     path('comentario/guardar/', guardar_comentario, name='guardar_comentario'),
+
+    path('actualizar_credencial/',Vista_Actualizar_Clave,name='vista_credencial'),
+
     #Vistas Administrador
     path('administracion/',Vista_Inicio_Administrador,name='vista_inicio_administrador'),
     path('clientes/',Vista_Clientes_Administracion,name='vista_clientes_administracion'),
@@ -40,7 +44,7 @@ urlpatterns = [
     path('CreaCategoria',Crear_Categoria,name='CrearCategoria'),
     path('editar-categoria/guardar/<int:id_categoria>/', Editar_Categoria, name='editar_categoria'),
     path('categoria/cambiar-estado/', cambiar_estado_categoria, name='cambiar_estado_categoria'),
-
+    path('CorreoRecuperacion/',Correo_Recuperacion,name='CorreoRecuperacion'),
 
 
 
