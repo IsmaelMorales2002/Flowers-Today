@@ -1,0 +1,204 @@
+{% extends 'menu.html' %}
+{% load static %}
+{% block title %}Comentario{% endblock %}
+
+{% block content %}
+<!-- Enlace al archivo CSS -->
+<link rel="stylesheet" href="{% static 'css/comentarios.css' %}">
+
+<!-- Formulario de Comentarios -->
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card comment-form-card border-0">
+                <div class="card-header comment-form-header text-center py-4">
+                    <h3 class="mb-0 fw-bold">
+                        <i class="bi bi-chat-dots me-2"></i>
+                        Comparte tu experiencia
+                    </h3>
+                    <p class="mb-0 mt-2">Tu opinión nos ayuda a florecer cada día</p>
+                </div>
+
+                <div class="card-body p-4" style="background: white;">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-comment alert-dismissible fade show">
+                                <i class="bi bi-check-circle me-2"></i>{{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form action="{% url 'guardar_comentario' %}" method="POST" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Campo Título -->
+                        <div class="mb-4">
+                            <label for="titulo" class="form-label form-label-comment d-flex align-items-center">
+                                <i class="bi bi-bookmark me-2"></i>
+                                Título del Comentario
+                            </label>
+                            <div class="input-group input-group-comment">
+                                <span class="input-group-text">
+                                    <i class="bi bi-pencil"></i>
+                                </span>
+                                <input type="text" 
+                                       class="form-control form-control-comment" 
+                                       id="titulo" 
+                                       name="titulo" 
+                                       required 
+                                       maxlength="50"
+                                       placeholder="Escribe un título llamativo...">
+                            </div>
+                            
+                        </div>
+
+                        <!-- Campo Comentario -->
+                        <div class="mb-4">
+                            <label for="comentario" class="form-label form-label-comment d-flex align-items-center">
+                                <i class="bi bi-chat-text me-2"></i>
+                                Contenido del Comentario
+                            </label>
+                            <textarea class="form-control textarea-comment" 
+                                      id="comentario" 
+                                      name="comentario" 
+                                      rows="5" 
+                                      maxlength="200" 
+                                      required
+                                      placeholder="Cuéntanos sobre tu experiencia con nuestras flores y servicios..."></textarea>
+                           
+                        </div>
+
+                        <!-- Botón de envío -->
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-lg btn-comment-submit">
+                                <i class="bi bi-send me-2"></i>
+                                Enviar mi Comentario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Línea decorativa -->
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="text-center">
+                <div class="d-flex align-items-center justify-content-center">
+                    <div class="decorative-separator"></div>
+                    <div class="separator-icon mx-3">
+                        <i class="bi bi-flower2"></i>
+                    </div>
+                    <div class="decorative-separator"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Comentarios recientes -->
+{% if comentarios %}
+<div class="container mb-5">
+    <div class="text-center mb-5">
+        <div class="section-title-wrapper">
+            <div class="section-title">
+                <h2 class="fw-bold mb-0 d-flex align-items-center justify-content-center ">
+                    <i class="bi bi-wechat">  </i>
+                    Comentarios Recientes
+                </h2>
+            </div>
+        </div>
+        
+        <p class="lead text-muted">
+            Descubre lo que dicen nuestros clientes sobre nuestras flores y servicios
+        </p>
+        
+        <div class="d-flex align-items-center justify-content-center mt-4">
+            <div class="small-separator"></div>
+            <div class="small-separator-icon">
+                <i class="bi bi-flower2"></i>
+            </div>
+            <div class="small-separator"></div>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        {% for comentario in comentarios %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card comment-card position-relative">
+                <div class="comment-card-decoration"></div>
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="mb-3">
+                        <div class="comment-quote-icon">
+                            <i class="bi bi-quote"></i>
+                        </div>
+                    </div>
+                    <h5 class="comment-title">
+                        {{ comentario.titulo_comentario }}
+                    </h5>
+                    <p class="comment-text">
+                        "{{ comentario.comentario }}"
+                    </p>
+                </div>
+                <div class="card-footer comment-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <div>
+                                <small class="user-name">
+                                    {{ comentario.id_usuario.nombre_usuario }} {{ comentario.id_usuario.apellido_usuario }}
+                                </small>
+                            </div>
+                        </div>
+                        <small class="comment-date">
+                            <i class="bi bi-calendar3"></i>
+                            {{ comentario.fecha_comentario }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-comments text-center">
+                <div class="empty-comments-icon">
+                    <i class="bi bi-chat-dots"></i>
+                </div>
+                <h4>No hay comentarios aún</h4>
+                <p>¡Sé el primero en compartir tu experiencia!</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- CTA -->
+<div class="cta-section">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h3 class="cta-title">
+                    ¿Tienes alguna pregunta?
+                </h3>
+                <p class="cta-description lead">
+                    Nuestro equipo está aquí para ayudarte con cualquier consulta sobre nuestras flores y servicios.
+                </p>
+                <a href="https://wa.me/50378787878" target="_blank" class="btn btn-lg btn-cta">
+                    <i class="bi bi-telephone me-2"></i>
+                    Contáctanos
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Carga del JS -->
+<script src="{% static 'js/validar_comentario.js' %}"></script>
+{% endblock %}

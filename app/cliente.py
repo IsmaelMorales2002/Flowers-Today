@@ -3,6 +3,7 @@ from django.contrib import messages
 from .models import *
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
 
 # Crear_Cuenta_Cliente, logica para crear cuenta tipo cliente
 def Crear_Cuenta_Cliente(request):
@@ -148,4 +149,31 @@ def Editar_Perfil_Cliente(request):
 
 
 
-    
+
+def guardar_comentario(request):
+    if request.method == 'POST':
+        id_cliente = request.session.get('id_usuario', None)
+
+
+        if id_cliente is None:
+            messages.error(request, 'Debes iniciar sesión para comentar.')
+            return redirect('vista_login')
+
+        titulo = request.POST.get('titulo')
+        comentario = request.POST.get('comentario')
+        fecha = timezone.now().date()
+
+        try:
+            id_usuario = Usuario.objects.get(id_usuario=id_cliente)
+
+            Comentario.objects.create(
+                id_usuario=id_usuario,
+                titulo_comentario=titulo,
+                comentario=comentario,
+                fecha_comentario=fecha
+            )
+            messages.success(request, '¡Comentario enviado exitosamente!')
+        except Usuario.DoesNotExist:
+            messages.error(request, 'Usuario no válido.')
+
+    return redirect('vista_comentario')
