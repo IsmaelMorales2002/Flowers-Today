@@ -99,6 +99,33 @@
         </div>
     </div>
     </div>
+
+    {% if messages %}
+<!-- Modal de éxito personalizado -->
+<div class="modal fade" id="modalExito" tabindex="-1" aria-labelledby="modalExitoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-dark" >
+      <div class="modal-header bg-dark text-white" >
+        <h5 class="modal-title" id="modalExitoLabel"><i class="bi bi-check-circle-fill me-2"></i>Administrador creado</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        {% for message in messages %}
+        <p class="mb-0">{{ message }}</p>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn text-white" style="background-color: #6C2DC7;" data-bs-dismiss="modal">
+          <i class="bi bi-check-lg me-1"></i>Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+
+
 </div>
  
 <!--DataTables-->
@@ -109,5 +136,7 @@
 <script src="https://cdn.datatables.net/responsive/3.0.5/js/responsive.bootstrap5.js"></script>
 <script src="{% static 'js/dataTableAdmi.js'%}"></script>
 <script src="{% static 'js/modal_ver_perfil_admi.js'%}"></script>
+<script src="{% static 'js/modal_exito.js' %}"></script>
+
 
 {% endblock %}

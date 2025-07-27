@@ -150,10 +150,11 @@ def Editar_Perfil_Cliente(request):
 
 
 
+from datetime import datetime, timedelta, timezone as dt_timezone
+
 def guardar_comentario(request):
     if request.method == 'POST':
         id_cliente = request.session.get('id_usuario', None)
-
 
         if id_cliente is None:
             messages.error(request, 'Debes iniciar sesión para comentar.')
@@ -161,7 +162,10 @@ def guardar_comentario(request):
 
         titulo = request.POST.get('titulo')
         comentario = request.POST.get('comentario')
-        fecha = timezone.now().date()
+
+        # Zona horaria manual UTC-6 (El Salvador)
+        utc_minus_6 = dt_timezone(timedelta(hours=-6))
+        fecha = datetime.now(utc_minus_6).date()  # Solo la fecha (porque es DateField)
 
         try:
             id_usuario = Usuario.objects.get(id_usuario=id_cliente)
