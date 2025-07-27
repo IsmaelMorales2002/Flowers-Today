@@ -79,6 +79,8 @@ def Crear_Cuenta_Admi(request):
         )
 
         admi.save()
+        messages.success(request, '¡Administrador creado exitosamente!')
+
        
         if vista:
             return redirect('vista_administradores_administracion')
