@@ -20,15 +20,6 @@
                 </div>
 
                 <div class="card-body p-4" style="background: white;">
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-comment alert-dismissible fade show">
-                                <i class="bi bi-check-circle me-2"></i>{{ message }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-
                     <form action="{% url 'guardar_comentario' %}" method="POST" class="needs-validation" novalidate>
                         {% csrf_token %}
                         
@@ -50,7 +41,6 @@
                                        maxlength="50"
                                        placeholder="Escribe un título llamativo...">
                             </div>
-                            
                         </div>
 
                         <!-- Campo Comentario -->
@@ -66,7 +56,6 @@
                                       maxlength="200" 
                                       required
                                       placeholder="Cuéntanos sobre tu experiencia con nuestras flores y servicios..."></textarea>
-                           
                         </div>
 
                         <!-- Botón de envío -->
@@ -199,6 +188,35 @@
     </div>
 </div>
 
-<!-- Carga del JS -->
+<!-- Modal de Éxito Reutilizable -->
+<div class="modal fade" id="modalExito" tabindex="-1" aria-labelledby="modalExitoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-color: #6C2DC7;">
+      <div class="modal-header  text-white" style="background: #6C2DC7;">
+        <h5 class="modal-title" id="modalExitoLabel">
+          <i class="bi bi-check-circle-fill me-2"></i>¡Éxito!
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        ¡Comentario enviado con éxito!
+      </div>
+      <div class="modal-footer">
+        <a href="#" id="btnAceptarModal" class="btn" style="background: #6C2DC7; color: white;">Aceptar</a>
+        <div id="urlComentario" data-url="{% url 'vista_comentario' %}"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mostrar modal si hay mensaje -->
+{% if messages %}
+    {% for message in messages %}
+        <div id="mensajeExito" data-mensaje="{{ message }}"></div>
+    {% endfor %}
+{% endif %}
+
+
+<!-- JS -->
 <script src="{% static 'js/validar_comentario.js' %}"></script>
 {% endblock %}
