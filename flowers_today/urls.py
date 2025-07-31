@@ -32,6 +32,8 @@ urlpatterns = [
     path('categoria/',Vista_Categoria_Administracion,name='vista_categoria_administracion'),
     path('crear_categoria/',Vista_Crear_Categoria,name='vista_crear_categoria'),
     path('editar-categoria/<int:id_categoria>/', Vista_Editar_Categoria, name='vista_editar_categoria'),
+    path('administradores/editar/vista/<int:id>/', Vista_Editar_Admi, name='vista_editar_admi'),
+
 
 
  
@@ -45,6 +47,10 @@ urlpatterns = [
     path('editar-categoria/guardar/<int:id_categoria>/', Editar_Categoria, name='editar_categoria'),
     path('categoria/cambiar-estado/', cambiar_estado_categoria, name='cambiar_estado_categoria'),
     path('CorreoRecuperacion/',Correo_Recuperacion,name='CorreoRecuperacion'),
+    path('administradores/editar/<int:id>/', Editar_Cuenta_Admi, name='EditarCuentaAdmi'),
+   path('administradores/cambiar-estado/', cambiar_estado_administrador, name='cambiar_estado_administrador'),
+
+
 
 
 
