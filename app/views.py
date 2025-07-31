@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.urls import reverse
 from django.template.loader import render_to_string
@@ -276,8 +277,8 @@ def Correo_Recuperacion(request):
             )
             email.content_subtype = 'html'
             email.send()
-            contexto['enviado'] = 'Correo Enviado'
-            return render(request,'recuperar_password.html',contexto)
+            messages.success(request,'!Enviado!')
+            return redirect('vista_recuperar_password')
         else:
             contexto['error_usuario'] = 'Usuario No Encontrado'
             return render(request,'recuperar_password.html',contexto)
