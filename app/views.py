@@ -276,7 +276,7 @@ def Correo_Recuperacion(request):
                 [correo_destinatario],
             )
             email.content_subtype = 'html'
-            email.send()
+            # email.send()
             messages.success(request,'!Enviado!')
             return redirect('vista_recuperar_password')
         else:
