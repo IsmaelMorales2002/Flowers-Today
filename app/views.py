@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.urls import reverse
 from django.template.loader import render_to_string
@@ -275,10 +276,26 @@ def Correo_Recuperacion(request):
                 [correo_destinatario],
             )
             email.content_subtype = 'html'
-            email.send()
-            contexto['enviado'] = 'Correo Enviado'
-            return render(request,'recuperar_password.html',contexto)
+            # email.send()
+            messages.success(request,'!Enviado!')
+            return redirect('vista_recuperar_password')
         else:
             contexto['error_usuario'] = 'Usuario No Encontrado'
             return render(request,'recuperar_password.html',contexto)
+
+def Vista_Editar_Admi(request, id):
+    # Protección de ruta
+    activo = request.session.get('activo_administrador', False)
+
+    if activo:
+        try:
+            administrador = Usuario.objects.get(id_usuario=id)
+            return render(request, 'editarAdmi.html', {
+                'administrador': administrador,
+                'activo': activo
+            })
+        except Usuario.DoesNotExist:
+            return redirect('vista_administradores_administracion')  # si no existe, vuelve al listado
+    return redirect('vista_inicio_cliente')
+
 

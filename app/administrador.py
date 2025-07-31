@@ -198,3 +198,92 @@ def cambiar_estado_categoria(request):
             pass
 
     return redirect('vista_categoria_administracion')  # Ajusta a tu vista real
+
+
+
+def Editar_Cuenta_Admi(request, id):
+    # Protección de ruta: verificar sesión de administrador activo
+    activo = request.session.get('activo_administrador', False)
+    if not activo:
+        return redirect('vista_inicio_cliente')  # o a donde quieras redirigir si no está activo
+
+    try:
+        administrador = Usuario.objects.get(id_usuario=id)
+    except Usuario.DoesNotExist:
+        return redirect('vista_administradores_administracion')
+
+    if request.method == 'POST':
+        nombre = request.POST.get('txtNombre', '').strip()
+        apellido = request.POST.get('txtApellido', '').strip()
+        telefono = request.POST.get('txtTelefono', '').strip()
+        correo = request.POST.get('txtCorreo', '').strip()
+        rol = request.POST.get('txtRol', '').strip()
+
+        campos_vacios = []
+        if not nombre: campos_vacios.append('nombre')
+        if not apellido: campos_vacios.append('apellido')
+        if not telefono: campos_vacios.append('telefono')
+        if not correo: campos_vacios.append('correo')
+        if not rol: campos_vacios.append('rol')
+
+        contexto = {
+            'administrador': administrador,
+            'campos_vacios': campos_vacios,
+            'nombre': nombre,
+            'apellido': apellido,
+            'telefono': telefono,
+            'correo': correo,
+            'rol': rol,
+            'activo': activo,  # para el template si usas este dato
+        }
+
+        if campos_vacios:
+            return render(request, 'editarAdmi.html', contexto)
+
+        if Usuario.objects.filter(correo_usuario=correo).exclude(id_usuario=id).exists():
+            contexto['error_correo'] = 'El correo ya está en uso.'
+            return render(request, 'editarAdmi.html', contexto)
+
+        if Usuario.objects.filter(telefono_usuario=telefono).exclude(id_usuario=id).exists():
+            contexto['error_telefono'] = 'El teléfono ya está en uso.'
+            return render(request, 'editarAdmi.html', contexto)
+
+        try:
+            nuevo_rol = Rol.objects.get(nombre_rol=rol)
+        except Rol.DoesNotExist:
+            contexto['error_rol'] = 'El rol seleccionado no es válido.'
+            return render(request, 'editarAdmi.html', contexto)
+
+        administrador.nombre_usuario = nombre
+        administrador.apellido_usuario = apellido
+        administrador.correo_usuario = correo
+        administrador.telefono_usuario = telefono
+        administrador.id_rol = nuevo_rol
+        administrador.save()
+
+        messages.success(request, '¡Administrador modificado exitosamente!')
+        return redirect('vista_administradores_administracion')
+
+    # Si no es POST, mostrar datos actuales con validación de sesión
+    return render(request, 'editarAdmi.html', {
+        'administrador': administrador,
+        'activo': activo
+    })
+
+
+def cambiar_estado_administrador(request):
+    if request.method == 'POST':
+        id_usuario = request.POST.get('id_usuario')
+        accion = request.POST.get('accion')
+
+        try:
+            administrador = Usuario.objects.get(id_usuario=id_usuario)
+            if accion == 'desactivar':
+                administrador.usuario_activo = False
+            elif accion == 'activar':
+                administrador.usuario_activo = True
+            administrador.save()
+        except Usuario.DoesNotExist:
+            pass
+
+    return redirect('vista_administradores_administracion')
