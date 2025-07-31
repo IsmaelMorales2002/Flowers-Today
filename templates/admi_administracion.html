@@ -149,6 +149,31 @@
 
   </div>
 
+
+
+  <!-- Modal de Éxito -->
+<div class="modal fade" id="modalCreadoExito" tabindex="-1" aria-labelledby="modalCreadoExitoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title text-white">
+          <i class="bi bi-info-circle me-2"></i>
+          <span>Administrador creado</span>
+        </h5>
+
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body text-dark">
+        <p class="fs-5 mb-0 ">Administrador creado exitosamente.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn text-white" style="background-color:#6C2DC7;"  data-bs-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
   <!--DataTables-->
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
@@ -158,5 +183,13 @@
   <script src="{% static 'js/dataTableAdmi.js'%}"></script>
   <script src="{% static 'js/modal_ver_perfil_admi.js'%}"></script>
   <script src="{% static 'js/modal_borrar_activar_admi.js' %}"></script>
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'success' and 'Administrador creado exitosamente' in message.message %}
+      <script src="{% static 'js/modal_creado_exito.js' %}"></script>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
 
 {% endblock %}
