@@ -261,7 +261,7 @@ def Editar_Cuenta_Admi(request, id):
         administrador.id_rol = nuevo_rol
         administrador.save()
 
-        messages.success(request, '¡Administrador modificado exitosamente!')
+        messages.success(request, 'editado')
         return redirect('vista_administradores_administracion')
 
     # Si no es POST, mostrar datos actuales con validación de sesión
