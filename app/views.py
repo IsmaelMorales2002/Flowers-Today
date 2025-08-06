@@ -8,6 +8,10 @@ from app.administrador import *
 from .models import *
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password,check_password
+#Generacion de Tokens
+from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from .token import token_generator
 
 # Vista_Inicio, muestra la vista inicio.html
 def Vista_Inicio_Cliente(request):
@@ -261,27 +265,42 @@ def Vista_Actualizar_Clave(request):
 def Correo_Recuperacion(request):
     correo_destinatario = request.POST.get('txtCorreoUsuario')
     contexto = {}
+
     if correo_destinatario:
         contexto['correo'] = correo_destinatario
-        existe = Usuario.objects.filter(correo_usuario=correo_destinatario).exists()
-        if existe:
-            asunto = 'Recuperación de Contraseña'
-            enlace_recuperacion = request.build_absolute_uri(reverse('vista_credencial'))
-            mensaje = render_to_string('recuperacion.html',{'enlace_recuperacion':enlace_recuperacion})
-            correo_remitente = settings.DEFAULT_FROM_EMAIL
-            email = EmailMessage(
-                asunto,
-                mensaje,
-                correo_remitente,
-                [correo_destinatario],
-            )
-            email.content_subtype = 'html'
-            # email.send()
-            messages.success(request,'!Enviado!')
-            return redirect('vista_recuperar_password')
-        else:
+        try: 
+            usuario = Usuario.objects.get(correo_usuario=correo_destinatario)
+        except Usuario.DoesNotExist:
             contexto['error_usuario'] = 'Usuario No Encontrado'
             return render(request,'recuperar_password.html',contexto)
+        
+        # Generar UID y Tokem
+        uid = urlsafe_base64_encode(force_bytes(usuario.id_usuario))
+        token = token_generator.make_token(usuario)
+
+        # Enlace de recuperacion
+        enlace_recuperacion = request.build_absolute_uri(
+            reverse('vista_credencial',kwargs={'uidb64':uid, 'token': token})
+        )
+
+        # Renderizar Plantilla HTML
+        mensaje = render_to_string('recuperacion.html',{
+            'enlace_recuperacion': enlace_recuperacion
+        })
+
+        # Enviar Correo
+        email = EmailMessage(
+            'Recuperación de Contraseña',
+            mensaje,
+            settings.DEFAULT_FROM_EMAIL,
+            [correo_destinatario]
+        )
+        email.content_subtype = 'html'
+        email.send()
+        messages.success(request,'!Enviado!')
+        return redirect('vista_recuperar_password')
+    
+    return render(request,'recuperar_password.html',contexto)
 
 def Vista_Editar_Admi(request, id):
     # Protección de ruta
