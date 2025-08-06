@@ -255,11 +255,18 @@ def vista_comentario(request):
             return redirect('vista_login')
     return redirect('vista_login')
 
-    return redirect('vista_inicio_cliente')
-
 #Vista de actualizar clave
-def Vista_Actualizar_Clave(request):
-    return render(request,'nueva_password.html')
+def Vista_Actualizar_Clave(request,uidb64,token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        usuario = Usuario.objects.get(id_usuario=uid)
+    except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
+        usuario = None
+
+    if usuario is not None and token_generator.check_token(usuario,token):
+        return render(request,'nueva_password.html')
+    else:
+        return render(request,'token_invalido.html')
 
 #Logica Para enviar correos de recuperacion de clave 
 def Correo_Recuperacion(request):
