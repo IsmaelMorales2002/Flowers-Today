@@ -278,14 +278,14 @@ def Actualizar_Clave(request,uidb64,token):
         usuario = Usuario.objects.get(id_usuario=uid)
     except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
         usuario = None
-        return redirect('vista_inicio_cliente')
+        return redirect('vista_login')
 
     if usuario and token_generator.check_token(usuario,token):
         nueva_pass = request.POST.get('txtPasswordNueva').strip()
         usuario.password_usuario = make_password(nueva_pass)
         usuario.save()
         messages.success(request,"Contraseña Actualizada")
-        return redirect('vista_inicio_cliente')
+        return redirect('vista_login')
 
 #Logica Para enviar correos de recuperacion de clave 
 def Correo_Recuperacion(request):
