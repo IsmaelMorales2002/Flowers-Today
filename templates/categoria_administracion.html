@@ -48,31 +48,24 @@
                             data-estado="{{ categoria.estado_categoria }}">
                             <i class="bi bi-eye-fill"></i>
                         </button>
-                        <a href="{% url 'vista_editar_categoria' categoria.id_categoria %}" class="btn btn-sm bg-dark text-white me-1" title="Editar">
+                        <a href="{% url 'vista_editar_categoria' categoria.id_categoria %}"
+                            class="btn btn-sm bg-dark text-white me-1" title="Editar">
                             <i class="bi bi-pencil-square"></i>
                         </a>
 
                         {% if categoria.estado_categoria %}
-                            <a href="#" class="btn btn-sm btn-danger btn-toggle-estado" 
-                            title="Desactivar"
-                            data-id="{{ categoria.id_categoria }}"
-                            data-nombre="{{ categoria.nombre_categoria }}"
-                            data-estado="desactivar"
-                            data-bs-toggle="modal"
-                            data-bs-target="#modalToggleEstado">
+                        <a href="#" class="btn btn-sm btn-danger btn-toggle-estado" title="Desactivar"
+                            data-id="{{ categoria.id_categoria }}" data-nombre="{{ categoria.nombre_categoria }}"
+                            data-estado="desactivar" data-bs-toggle="modal" data-bs-target="#modalToggleEstado">
                             <i class="bi bi-trash-fill"></i>
-                            </a>
-                            {% else %}
-                            <a href="#" class="btn btn-sm btn-success btn-toggle-estado"
-                            title="Activar"
-                            data-id="{{ categoria.id_categoria }}"
-                            data-nombre="{{ categoria.nombre_categoria }}"
-                            data-estado="activar"
-                            data-bs-toggle="modal"
-                            data-bs-target="#modalToggleEstado">
+                        </a>
+                        {% else %}
+                        <a href="#" class="btn btn-sm btn-success btn-toggle-estado" title="Activar"
+                            data-id="{{ categoria.id_categoria }}" data-nombre="{{ categoria.nombre_categoria }}"
+                            data-estado="activar" data-bs-toggle="modal" data-bs-target="#modalToggleEstado">
                             <i class="bi bi-arrow-repeat"></i>
-                            </a>
-                         {% endif %}
+                        </a>
+                        {% endif %}
 
                     </td>
                 </tr>
@@ -106,31 +99,81 @@
             </div>
         </div>
     </div>
-   <!-- Modal Confirmar Activar/Desactivar -->
-<div class="modal fade" id="modalToggleEstado" tabindex="-1" aria-labelledby="modalToggleEstadoLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <form method="POST" action="{% url 'cambiar_estado_categoria' %}">
-        {% csrf_token %}
-        <div class="modal-header bg-dark text-white">
-          <h5 class="modal-title" id="modalToggleEstadoLabel">Confirmar acción</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body">
-          <p id="modal-mensaje-estado" class="fs-5"></p>
-          <div id="modal-nota-estado" class=" mt-3"></div>
+    <!-- Modal Confirmar Activar/Desactivar -->
+    <div class="modal fade" id="modalToggleEstado" tabindex="-1" aria-labelledby="modalToggleEstadoLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form method="POST" action="{% url 'cambiar_estado_categoria' %}">
+                    {% csrf_token %}
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title" id="modalToggleEstadoLabel">Confirmar acción</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="modal-mensaje-estado" class="fs-5"></p>
+                        <div id="modal-nota-estado" class=" mt-3"></div>
 
-          <input type="hidden" name="id_categoria" id="modal-id-categoria">
-          <input type="hidden" name="accion" id="modal-accion-categoria">
+                        <input type="hidden" name="id_categoria" id="modal-id-categoria">
+                        <input type="hidden" name="accion" id="modal-accion-categoria">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn text-white" id="modal-btn-accion"
+                            style="background-color: #6C2DC7;">Confirmar</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn text-white" id="modal-btn-accion" style="background-color: #6C2DC7;">Confirmar</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-        </div>
-      </form>
     </div>
-  </div>
-</div>
+    <!-- Modal de Éxito - Creación de Categoria -->
+    <div class="modal fade" id="modalCreadoExitoCategoria" tabindex="-1"
+        aria-labelledby="modalCreadoExitoCategoriaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title text-white">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <span>Categoría creada</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body text-dark">
+                    <p class="fs-5 mb-0 ">Categoría creada exitosamente.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn text-white" style="background-color:#6C2DC7;"
+                        data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Éxito - Edición de Categoria -->
+    <div class="modal fade" id="modalEditadoExitoCategoria" tabindex="-1"
+        aria-labelledby="modalEditadoExitoCategoriaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title text-white">
+                        <i class="bi bi-pencil-square me-2 "></i>
+                        <span>Categoría actualizada</span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body text-dark">
+                    <p class="fs-5 mb-0">Los datos de la categoría han sido actualizados exitosamente.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn text-white" style="background-color:#6C2DC7;"
+                        data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
@@ -143,4 +186,16 @@
     <script src="{% static 'js/dataTableCategoria.js'%}"></script>
     <script src="{% static 'js/modal_ver_categoria.js'%}"></script>
     <script src="{% static 'js/modal_borrar_activar_categoria.js'%}"></script>
+    {% if messages %}
+<script id="mensajes-json" type="application/json">
+[
+  {% for message in messages %}
+    {"message": "{{ message.message|escapejs }}", "tags": "{{ message.tags }}"}{% if not forloop.last %},{% endif %}
+  {% endfor %}
+]
+</script>
+<script src="{% static 'js/modal_exito_categoria.js' %}"></script>
+{% endif %}
+
+
     {% endblock %}

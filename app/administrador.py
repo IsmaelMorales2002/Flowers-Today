@@ -130,6 +130,7 @@ def Crear_Categoria(request):
             estado_categoria=True
         )
         categoria.save()
+        messages.success(request, 'Categoría creada exitosamente')
 
         if vista:
             return redirect('vista_categoria_administracion')
@@ -174,6 +175,7 @@ def Editar_Categoria(request, id_categoria):
             categoria = get_object_or_404(Categoria, id_categoria=id_categoria)
             categoria.nombre_categoria = nombre
             categoria.save()
+            messages.success(request, 'categoria_editada')
 
             return redirect('vista_categoria_administracion')
         except Exception:

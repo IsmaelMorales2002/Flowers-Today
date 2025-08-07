@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Token Inválido</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="alert alert-danger text-center shadow-sm">
+                    <h4 class="alert-heading">¡Enlace no válido!</h4>
+                    <p>El enlace de recuperación de contraseña es inválido o ha expirado.</p>
+                    <hr>
+                    <p class="mb-0">Por favor, vuelve a solicitar un nuevo correo de recuperación.</p>
+                </div>
+                <div class="text-center mt-4">
+                    <a href="{% url 'vista_inicio_cliente' %}" class="btn bg-dark text-white">Volver al inicio</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

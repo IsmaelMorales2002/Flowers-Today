@@ -17,11 +17,9 @@ urlpatterns = [
     path('recuperacion/',Vista_Recuperar_Password,name='vista_recuperar_password'),
     path('perfil/',Vista_Ver_Perfil_Cliente,name='vista_perfil_cliente'),
     path('editar_perfil/',Vista_Editar_Perfil_Cliente,name='vista_editar_perfil_cliente'),
-
     path('comentario/', vista_comentario, name='vista_comentario'),
     path('comentario/guardar/', guardar_comentario, name='guardar_comentario'),
-
-    path('actualizar_credencial/',Vista_Actualizar_Clave,name='vista_credencial'),
+    path('actualizar_credencial/<uidb64>/<token>/',Vista_Actualizar_Clave,name='vista_credencial'),
 
     #Vistas Administrador
     path('administracion/',Vista_Inicio_Administrador,name='vista_inicio_administrador'),
@@ -48,11 +46,8 @@ urlpatterns = [
     path('categoria/cambiar-estado/', cambiar_estado_categoria, name='cambiar_estado_categoria'),
     path('CorreoRecuperacion/',Correo_Recuperacion,name='CorreoRecuperacion'),
     path('administradores/editar/<int:id>/', Editar_Cuenta_Admi, name='EditarCuentaAdmi'),
-   path('administradores/cambiar-estado/', cambiar_estado_administrador, name='cambiar_estado_administrador'),
-
-
-
-
+    path('administradores/cambiar-estado/', cambiar_estado_administrador, name='cambiar_estado_administrador'),
+    path('ActualizarClave/<uidb64>/<token>/',Actualizar_Clave,name='ActualizarClave'),
 
     #Endpoints
 ]

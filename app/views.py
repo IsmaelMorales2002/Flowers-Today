@@ -8,6 +8,10 @@ from app.administrador import *
 from .models import *
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password,check_password
+#Generacion de Tokens
+from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from .token import token_generator
 
 # Vista_Inicio, muestra la vista inicio.html
 def Vista_Inicio_Cliente(request):
@@ -251,37 +255,78 @@ def vista_comentario(request):
             return redirect('vista_login')
     return redirect('vista_login')
 
-    return redirect('vista_inicio_cliente')
-
 #Vista de actualizar clave
-def Vista_Actualizar_Clave(request):
-    return render(request,'nueva_password.html')
+def Vista_Actualizar_Clave(request,uidb64,token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        usuario = Usuario.objects.get(id_usuario=uid)
+    except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
+        usuario = None
+
+    if usuario is not None and token_generator.check_token(usuario,token):
+        return render(request,'nueva_password.html',{
+            'uidb64': uidb64, 
+            'token': token
+        })
+    else:
+        return render(request,'token_invalido.html')
+    
+#Logica para actualizar contraseña
+def Actualizar_Clave(request,uidb64,token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        usuario = Usuario.objects.get(id_usuario=uid)
+    except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
+        usuario = None
+        return redirect('vista_login')
+
+    if usuario and token_generator.check_token(usuario,token):
+        nueva_pass = request.POST.get('txtPasswordNueva').strip()
+        usuario.password_usuario = make_password(nueva_pass)
+        usuario.save()
+        messages.success(request,"Contraseña Actualizada")
+        return redirect('vista_login')
 
 #Logica Para enviar correos de recuperacion de clave 
 def Correo_Recuperacion(request):
-    correo_destinatario = request.POST.get('txtCorreoUsuario')
+    correo_destinatario = request.POST.get('txtCorreoUsuario').strip()
     contexto = {}
+
     if correo_destinatario:
         contexto['correo'] = correo_destinatario
-        existe = Usuario.objects.filter(correo_usuario=correo_destinatario).exists()
-        if existe:
-            asunto = 'Recuperación de Contraseña'
-            enlace_recuperacion = request.build_absolute_uri(reverse('vista_credencial'))
-            mensaje = render_to_string('recuperacion.html',{'enlace_recuperacion':enlace_recuperacion})
-            correo_remitente = settings.DEFAULT_FROM_EMAIL
-            email = EmailMessage(
-                asunto,
-                mensaje,
-                correo_remitente,
-                [correo_destinatario],
-            )
-            email.content_subtype = 'html'
-            # email.send()
-            messages.success(request,'!Enviado!')
-            return redirect('vista_recuperar_password')
-        else:
+        try: 
+            usuario = Usuario.objects.get(correo_usuario=correo_destinatario)
+        except Usuario.DoesNotExist:
             contexto['error_usuario'] = 'Usuario No Encontrado'
             return render(request,'recuperar_password.html',contexto)
+        
+        # Generar UID y Tokem
+        uid = urlsafe_base64_encode(force_bytes(usuario.id_usuario))
+        token = token_generator.make_token(usuario)
+
+        # Enlace de recuperacion
+        enlace_recuperacion = request.build_absolute_uri(
+            reverse('vista_credencial',kwargs={'uidb64':uid, 'token': token})
+        )
+
+        # Renderizar Plantilla HTML
+        mensaje = render_to_string('recuperacion.html',{
+            'enlace_recuperacion': enlace_recuperacion
+        })
+
+        # Enviar Correo
+        email = EmailMessage(
+            'Recuperación de Contraseña',
+            mensaje,
+            settings.DEFAULT_FROM_EMAIL,
+            [correo_destinatario]
+        )
+        email.content_subtype = 'html'
+        email.send()
+        messages.success(request,'!Enviado!')
+        return redirect('vista_recuperar_password')
+    
+    return render(request,'recuperar_password.html',contexto)
 
 def Vista_Editar_Admi(request, id):
     # Protección de ruta
