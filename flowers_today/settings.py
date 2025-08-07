@@ -150,6 +150,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #Eliminar datos de sesión cuando se cierra el navegador (Opcional)
 #SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+#Sesion Para Token de Recuperacion
+PASSWORD_RESET_TIMEOUT = 300
+
 #Configuracion de envio de correo
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 

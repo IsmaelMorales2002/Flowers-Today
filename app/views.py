@@ -264,13 +264,32 @@ def Vista_Actualizar_Clave(request,uidb64,token):
         usuario = None
 
     if usuario is not None and token_generator.check_token(usuario,token):
-        return render(request,'nueva_password.html')
+        return render(request,'nueva_password.html',{
+            'uidb64': uidb64, 
+            'token': token
+        })
     else:
         return render(request,'token_invalido.html')
+    
+#Logica para actualizar contraseña
+def Actualizar_Clave(request,uidb64,token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        usuario = Usuario.objects.get(id_usuario=uid)
+    except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
+        usuario = None
+        return redirect('vista_inicio_cliente')
+
+    if usuario and token_generator.check_token(usuario,token):
+        nueva_pass = request.POST.get('txtPasswordNueva').strip()
+        usuario.password_usuario = make_password(nueva_pass)
+        usuario.save()
+        messages.success(request,"Contraseña Actualizada")
+        return redirect('vista_inicio_cliente')
 
 #Logica Para enviar correos de recuperacion de clave 
 def Correo_Recuperacion(request):
-    correo_destinatario = request.POST.get('txtCorreoUsuario')
+    correo_destinatario = request.POST.get('txtCorreoUsuario').strip()
     contexto = {}
 
     if correo_destinatario:
