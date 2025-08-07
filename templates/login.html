@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar Sesión</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body class="bg-dark text-white">
 
@@ -49,9 +50,41 @@
         </div>
     </div>
 
+     {% if messages %}
+      {% for message in messages %}
+      <!-- Modal de Éxito -->
+      <div class="modal fade" id="modalClaveActualizada" tabindex="-1" aria-labelledby="modalClaveActualizadaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0">
+            <div class="modal-header bg-dark text-white">
+              <h5 class="modal-title text-white">
+                <i class="bi bi-pencil-square me-2"></i>
+                <span>Contraseña Actualizada</span>
+              </h5>
+
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body text-dark">
+              <p class="fs-5 mb-0 ">Contraseña Actualizada Exitosamente.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn text-white" style="background-color:#6C2DC7;"  data-bs-dismiss="modal">Aceptar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% endif %}
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{% static 'js/carga_btn_login.js' %}"></script>
   <script src="{% static 'js/toggle.js' %}"></script>
   <script src="{% static 'js/campos_vacios.js' %}"></script>
+
+   {% if messages %}
+    {% for message in messages %}
+        <script src="{% static 'js/password_actualizada.js' %}"></script>
+    {% endfor %}
+  {% endif %}
 </body>
 </html>
