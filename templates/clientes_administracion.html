@@ -23,6 +23,7 @@
           <th class="text-center">Cliente</th>
           <th class="text-center">Correo</th>
           <th class="text-center">Teléfono</th>
+          <th class="text-center">Estado</th>
           <th class="text-center">Acciones</th>
         </tr>
       </thead>
@@ -44,6 +45,11 @@
             </span>
           </td>
           <td class="text-center align-middle">{{ usuario.telefono_usuario }}</td>
+          <td class="text-center align-middle">
+            <span class="badge {% if usuario.usuario_activo %}bg-success{% else %}bg-danger{% endif %}">
+              {% if usuario.usuario_activo %}Activo{% else %}Inactivo{% endif %}
+            </span>
+          </td>
           <td class="text-center align-middle">
             <button type="button" 
                     class="btn btn-sm text-white me-1 btn-ver-cliente" 
