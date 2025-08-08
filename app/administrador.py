@@ -272,6 +272,68 @@ def Editar_Cuenta_Admi(request, id):
         'activo': activo
     })
 
+# Editar_Cuenta_Cliente, logica para editar cuenta de cliente desde el administrador
+def Editar_Cuenta_Cliente(request,id):
+    # Proteccion de ruta
+    activo = request.session.get('activo_administrador', False)
+    if not activo:
+        return redirect('vista_inicio_cliente')
+    
+    try:
+        cliente = Usuario.objects.get(id_usuario = id)
+    except Usuario.DoesNotExist:
+        return redirect('vista_clientes_administracion')
+    
+    nombre = request.POST.get('txtNombreCA', '').strip()
+    apellido = request.POST.get('txtApellidoCA', '').strip()
+    telefono = request.POST.get('txtTelefonoCA', '').strip()
+    correo = request.POST.get('txtCorreoCA', '').strip()
+    rol = request.POST.get('txtRolCA', '').strip()
+
+    campos_vacios = []
+    if not nombre: campos_vacios.append('nombre')
+    if not apellido: campos_vacios.append('apellido')
+    if not telefono: campos_vacios.append('telefono')
+    if not correo: campos_vacios.append('correo')
+    if not rol: campos_vacios.append('rol')
+
+    contexto = {
+        'cliente': cliente,
+        'campos_vacios': campos_vacios,
+        'nombre': nombre,
+        'apellido': apellido,
+        'telefono': telefono,
+        'correo': correo,
+        'rol': rol,
+    }
+
+    if campos_vacios:
+            return render(request, 'editarCliente.html', contexto)
+    
+    if Usuario.objects.filter(correo_usuario=correo).exclude(id_usuario=id).exists():
+        contexto['error_correo'] = 'El correo ya está en uso.'
+        return render(request,'editarCliente.html',contexto)
+    
+    if Usuario.objects.filter(telefono_usuario=telefono).exclude(id_usuario=id).exists():
+        contexto['error_telefono'] = 'El teléfono ya está en uso.'
+        return render(request,'editarCliente.html',contexto)
+    
+    try:
+        nuevo_rol = Rol.objects.get(nombre_rol = rol)
+    except Rol.DoesNotExist:
+        contexto['error_rol'] = 'El rol seleccionado no es válido'
+        return render(request,'editarCliente.html',contexto)
+    
+    cliente.nombre_usuario = nombre
+    cliente.apellido_usuario = apellido
+    cliente.correo_usuario = correo
+    cliente.telefono_usuario = telefono
+    cliente.id_rol = nuevo_rol
+    cliente.save()
+
+    messages.success(request,'editado')
+    return redirect('vista_clientes_administracion')
+
 
 def cambiar_estado_administrador(request):
     if request.method == 'POST':

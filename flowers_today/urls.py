@@ -31,6 +31,7 @@ urlpatterns = [
     path('crear_categoria/',Vista_Crear_Categoria,name='vista_crear_categoria'),
     path('editar-categoria/<int:id_categoria>/', Vista_Editar_Categoria, name='vista_editar_categoria'),
     path('administradores/editar/vista/<int:id>/', Vista_Editar_Admi, name='vista_editar_admi'),
+    path('clientes/editar/vista/<int:id>/',Vista_Editar_Cliente_Admin,name='vista_editar_cliente_admin'),
 
 
 
@@ -48,6 +49,7 @@ urlpatterns = [
     path('administradores/editar/<int:id>/', Editar_Cuenta_Admi, name='EditarCuentaAdmi'),
     path('administradores/cambiar-estado/', cambiar_estado_administrador, name='cambiar_estado_administrador'),
     path('ActualizarClave/<uidb64>/<token>/',Actualizar_Clave,name='ActualizarClave'),
+    path('clientes/editar/<int:id>',Editar_Cuenta_Cliente,name='EditarCuentaCliente'),
 
     #Endpoints
 ]

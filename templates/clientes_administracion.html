@@ -64,7 +64,7 @@
                     data-imagen="{% if usuario.imagen_usuario %}{{ usuario.imagen_usuario.url }}{% else %}{% static 'img/perfil-default.webp' %}{% endif %}">
               <i class="bi bi-eye-fill"></i>
             </button>
-            <a href="#" class="btn btn-sm bg-dark text-white me-1" title="Editar">
+            <a href="{% url 'vista_editar_cliente_admin' usuario.id_usuario %}" class="btn btn-sm bg-dark text-white me-1" title="Editar">
               <i class="bi bi-pencil-square"></i>
             </a>
             <a href="#" class="btn btn-sm btn-danger eliminar-usuario-btn" title="Eliminar">
@@ -107,6 +107,28 @@
     </div>
 </div>
 
+<!-- Modal de Éxito - Edición de Cliente -->
+<div class="modal fade" id="modalEditadoExitoC" tabindex="-1" aria-labelledby="modalEditadoExitoCLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title text-white">
+          <i class="bi bi-pencil-square me-2 "></i>
+          <span>Cliente actualizado</span>
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body text-dark">
+        <p class="fs-5 mb-0">Los datos del cliente han sido actualizados exitosamente.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn text-white" style="background-color:#6C2DC7;" data-bs-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <!--DataTables-->
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
@@ -115,4 +137,12 @@
 <script src="https://cdn.datatables.net/responsive/3.0.5/js/responsive.bootstrap5.js"></script>
 <script src="{% static 'js/dataTableClientes.js'%}"></script>
 <script src="{% static 'js/modal_ver_perfil_cliente.js'%}"></script>
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'success' and message.message == 'editado' %}
+      <script src="{% static 'js/modal_editado_cliente.js' %}"></script>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
 {% endblock %}
