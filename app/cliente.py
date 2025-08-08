@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone as dt_timezone
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from .models import *
@@ -145,12 +146,6 @@ def Editar_Perfil_Cliente(request):
         return redirect('vista_perfil_cliente')
     except Usuario.DoesNotExist:
         return redirect('vista_login')
-    
-
-
-
-
-from datetime import datetime, timedelta, timezone as dt_timezone
 
 def guardar_comentario(request):
     if request.method == 'POST':

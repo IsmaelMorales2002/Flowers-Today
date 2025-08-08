@@ -343,4 +343,19 @@ def Vista_Editar_Admi(request, id):
             return redirect('vista_administradores_administracion')  # si no existe, vuelve al listado
     return redirect('vista_inicio_cliente')
 
+#Vista Editar Cliente desde Administracion
+def Vista_Editar_Cliente_Admin(request,id):
+    # Protección de ruta
+    activo = request.session.get('activo_administrador', False)
+
+    if activo:
+        try:
+            cliente = Usuario.objects.get(id_usuario = id)
+            return render(request,'editarCliente.html',{
+                'cliente': cliente,
+                'activo': activo
+            })
+        except Usuario.DoesNotExist:
+            return redirect('vista_clientes_administracion')
+    return redirect('vista_inicio_cliente')
 
