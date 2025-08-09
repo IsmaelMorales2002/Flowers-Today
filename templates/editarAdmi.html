@@ -97,33 +97,7 @@
 </section>
 
 {% if messages %}
-<!-- Modal de Éxito -->
-<div class="modal fade" id="modalExito" tabindex="-1" aria-labelledby="modalExitoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-dark">
-            <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title"><i class="bi bi-check-circle-fill me-2"></i>Administrador modificado</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                {% for message in messages %}
-                <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn text-white" style="background-color:#6C2DC7;"
-                    data-bs-dismiss="modal">Aceptar</button>
-            </div>
-        </div>
-    </div>
+
 </div>
 {% endif %}
 {% endblock %}
-
-{% if messages %}
-<script>
-    const modalExito = new bootstrap.Modal(document.getElementById('modalExito'));
-    modalExito.show();
-</script>
-{% endif %}

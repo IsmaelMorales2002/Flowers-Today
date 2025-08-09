@@ -359,3 +359,22 @@ def Vista_Editar_Cliente_Admin(request,id):
             return redirect('vista_clientes_administracion')
     return redirect('vista_inicio_cliente')
 
+
+def vista_comentario_administracion(request):
+    activo = request.session.get('activo_administrador', False)
+    if activo:
+        try:
+            nombre = request.session.get('nombre_administrador', '')
+            apellido = request.session.get('apellido_administrador', '')
+            comentarios = Comentario.objects.select_related('id_usuario').order_by('-fecha_comentario')
+
+            contexto = {
+                'activo': activo,
+                'nombre': nombre,
+                'apellido': apellido,
+                'comentarios': comentarios,
+            }
+            return render(request, 'comentarios_administracion.html', contexto)
+        except KeyError:
+            return redirect('vista_inicio_cliente')
+    return redirect('vista_inicio_cliente')
