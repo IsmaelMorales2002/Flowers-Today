@@ -352,6 +352,7 @@ def cambiar_estado_administrador(request):
 
     return redirect('vista_administradores_administracion')
 
+#Logica para cambiar estado de cuenta cliente
 def cambiar_estado_Cliente(request):
     id_usuario = request.POST.get('id_usuario')
     accion = request.POST.get('accion')
