@@ -99,6 +99,13 @@ class Servicio(models.Model):
         return f'ID: {self.id_servicio}, Usuario: {self.id_usuario.correo_usuario}, Fecha: {self.fecha_servicio}'
     
 class Producto(models.Model):
+
+    tipo_producto_choides = [
+        (1,'Arreglo Flores'),
+        (2, 'Arreglo Personalizado'),
+        (3, 'Arreglo Mixto')
+    ]
+
     id_producto = models.AutoField(primary_key=True,verbose_name='ID')
     id_categoria = models.ForeignKey(Categoria,on_delete=models.RESTRICT)
     nombre_producto = models.CharField(max_length=50,verbose_name='Nombre')
@@ -108,7 +115,7 @@ class Producto(models.Model):
     cantidad_minima = models.IntegerField(verbose_name='Cantidad Minima')
     precio_producto = models.DecimalField(max_digits=8,decimal_places=2)
     existencia_producto = models.IntegerField(verbose_name='Existencia')
-    tipo_producto = models.IntegerField(verbose_name='Tipo Producto')
+    tipo_producto = models.IntegerField(choices=tipo_producto_choides,verbose_name='Tipo Producto')
     producto_activo = models.BooleanField(verbose_name='Producto Activo')
 
     class Meta:

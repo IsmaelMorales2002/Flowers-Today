@@ -378,3 +378,14 @@ def vista_comentario_administracion(request):
         except KeyError:
             return redirect('vista_inicio_cliente')
     return redirect('vista_inicio_cliente')
+
+# Vista_Productos
+def Vista_Productos(request):
+    # Protección de ruta
+    activo = request.session.get('activo_administrador', False)
+    if activo:
+        productos = Producto.objects.all()
+        return render(request,'productos_administracion.html',{
+            'productos' : productos,
+            'activo': activo
+        })
