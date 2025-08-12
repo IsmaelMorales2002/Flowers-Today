@@ -351,3 +351,17 @@ def cambiar_estado_administrador(request):
             pass
 
     return redirect('vista_administradores_administracion')
+
+def cambiar_estado_Cliente(request):
+    id_usuario = request.POST.get('id_usuario')
+    accion = request.POST.get('accion')
+    try:
+        cliente = Usuario.objects.get(id_usuario=id_usuario)
+        if accion == 'desactivar':
+            cliente.usuario_activo = False
+        elif accion == 'activar':
+            cliente.usuario_activo = True
+        cliente.save()
+        return redirect('vista_clientes_administracion')
+    except Usuario.DoesNotExist:
+        pass

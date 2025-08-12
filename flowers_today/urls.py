@@ -49,6 +49,7 @@ urlpatterns = [
     path('CorreoRecuperacion/',Correo_Recuperacion,name='CorreoRecuperacion'),
     path('administradores/editar/<int:id>/', Editar_Cuenta_Admi, name='EditarCuentaAdmi'),
     path('administradores/cambiar-estado/', cambiar_estado_administrador, name='cambiar_estado_administrador'),
+    path('clientes/cambiar-estado/', cambiar_estado_Cliente, name='cambiar_estado_cliente'),
     path('ActualizarClave/<uidb64>/<token>/',Actualizar_Clave,name='ActualizarClave'),
     path('clientes/editar/<int:id>',Editar_Cuenta_Cliente,name='EditarCuentaCliente'),
 
