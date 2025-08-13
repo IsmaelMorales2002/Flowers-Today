@@ -389,3 +389,15 @@ def Vista_Productos(request):
             'productos' : productos,
             'activo': activo
         })
+    return redirect('vista_inicio_cliente')
+    
+# Vista_Agregar_Producto
+def Vista_Agregar_Producto(request):
+    # Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        return render(request,'agregar_producto.html',{
+            'activo': activo
+        })
+    return redirect('vista_inicio_cliente')
+

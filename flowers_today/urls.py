@@ -34,6 +34,7 @@ urlpatterns = [
     path('administradores/editar/vista/<int:id>/', Vista_Editar_Admi, name='vista_editar_admi'),
     path('clientes/editar/vista/<int:id>/',Vista_Editar_Cliente_Admin,name='vista_editar_cliente_admin'),
     path('productos/',Vista_Productos,name='vista_productos_administracion'),
+    path('agregar-producto/',Vista_Agregar_Producto,name='vista_agregar_producto'),
 
 
 
