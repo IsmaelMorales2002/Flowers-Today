@@ -396,8 +396,10 @@ def Vista_Agregar_Producto(request):
     # Proteccion de ruta
     activo = request.session.get('activo_administrador',False)
     if activo:
+        categorias = Categoria.objects.all()
         return render(request,'agregar_producto.html',{
-            'activo': activo
+            'activo': activo,
+            'categorias': categorias
         })
     return redirect('vista_inicio_cliente')
 
