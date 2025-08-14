@@ -82,6 +82,8 @@ def Crear_Cuenta_Cliente(request):
 
         cliente.save()
         if vista:
+            #Vista Administraccion
+            messages.success(request,'creado')
             return redirect('vista_clientes_administracion')
         #Session para guardar informacion del cliente
         request.session['nombre_cliente'] = cliente.nombre_usuario
