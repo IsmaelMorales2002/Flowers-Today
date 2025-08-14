@@ -17,7 +17,7 @@
   </div>
 
   <div class="table-responsive bg-white p-3 rounded shadow mb-2">
-    <table id="tabla-usuarios" class="table table-striped table-bordered bg-white text-dark responsive">
+    <table id="tabla-producto" class="table table-striped table-bordered bg-white text-dark responsive">
       <thead class="table-light">
         <tr>
           <th class="text-center">Nombre</th>
@@ -50,16 +50,20 @@
           </td>
           <td class="text-center align-middle">
             <button type="button" 
-                    class="btn btn-sm text-white me-1 btn-ver-cliente" 
-                    title="Ver Perfil" 
+                    class="btn btn-sm text-white me-1 btn-ver-producto" 
+                    title="Ver Producto" 
                     style="background: #6C2DC7;"
                     data-bs-toggle="modal"
-                    data-bs-target="#modalVerCliente"
-                    data-nombre="{{ usuario.nombre_usuario }} {{ usuario.apellido_usuario }}"
-                    data-correo="{{ usuario.correo_usuario }}"
-                    data-telefono="{{ usuario.telefono_usuario }}"
-                    data-estado="{{usuario.usuario_activo}}"
-                    data-imagen="{% if usuario.imagen_usuario %}{{ usuario.imagen_usuario.url }}{% else %}{% static 'img/perfil-default.webp' %}{% endif %}">
+                    data-bs-target="#modalVerProducto"
+                    data-nombre="{{producto.nombre_producto}}"
+                    data-descripcion="{{producto.descripcion_producto}}"
+                    data-categoria="{{producto.id_categoria.nombre_categoria}}"
+                    data-cantidad-maxima="{{producto.cantidad_maxima}}"
+                    data-cantidad-minima="{{producto.cantidad_minima}}"
+                    data-precio="{{producto.cantidad_minima}}"
+                    data-tipo="{{producto.get_tipo_producto_display}}"
+                    data-estado="{{producto.producto_activo}}"
+                    data-imagen="{% if producto.imagen_producto %}{{ producto.imagen_producto.url }}{% else %}{% static 'img/producto-default.png' %}{% endif %}">
               <i class="bi bi-eye-fill"></i>
             </button>
             <a href="#" class="btn btn-sm bg-dark text-white me-1" title="Editar">
@@ -113,36 +117,55 @@
         </div>
       </div>
 
-    <!-- Modal Ver Cliente -->
-    <div class="modal fade" id="modalVerCliente" tabindex="-1" aria-labelledby="modalVerClienteLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-        <div class="modal-header bg-dark text-white">
-            <h5 class="modal-title" id="modalVerClienteLabel">Información del Cliente</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-    <div class="modal-body">
-    <div class="row align-items-center">
-    <!-- Columna de la imagen -->
-    <div class="col-md-4 text-center mb-3 mb-md-0">
-      <img id="modal-imagen" src="" alt="Foto del Cliente" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
-    </div>
-          <!-- Columna de la información -->
-          <div class="col-md-8">
-            <h5 id="modal-nombre" class="mb-3"></h5>
-            <p class="mb-1"><strong>Correo:</strong> <span id="modal-correo"></span></p>
-            <p class="mb-1"><strong>Teléfono:</strong> <span id="modal-telefono"></span></p>
-            <p class="mb-0"><strong>Estado:</strong> <span id="modal-estado" class="fw-bold"></span></p>
+
+      <!-- Modal Ver Producto -->
+<div class="modal fade" id="modalVerProducto" tabindex="-1" aria-labelledby="modalVerProductoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      
+      <!-- Encabezado -->
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="modalVerProductoLabel">Información del Producto</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      
+      <!-- Cuerpo -->
+      <div class="modal-body">
+        <div class="row align-items-center">
+          
+          <!-- Columna imagen -->
+          <div class="col-md-4 text-center mb-3 mb-md-0">
+            <img id="modal-imagen-producto" src="" alt="Imagen del Producto" 
+                 class="rounded shadow" 
+                 style="width: 200px; height: 200px; object-fit: cover;">
           </div>
+          
+          <!-- Columna información -->
+          <div class="col-md-8">
+            <p class="mb-1"><strong>Categoría:</strong> <span id="modal-categoria"></span></p>
+            <p class="mb-1"><strong>Nombre:</strong> <span id="modal-nombre-producto"></span></p>
+            <p class="mb-1"><strong>Descripción:</strong> <span id="modal-descripcion"></span></p>
+            <p class="mb-1"><strong>Cantidad Máxima:</strong> <span id="modal-cantidad-maxima"></span></p>
+            <p class="mb-1"><strong>Cantidad Mínima:</strong> <span id="modal-cantidad-minima"></span></p>
+            <p class="mb-1"><strong>Precio:</strong> $<span id="modal-precio"></span></p>
+            <p class="mb-1"><strong>Tipo de Producto:</strong> <span id="modal-tipo-producto"></span></p>
+            <p class="mb-0"><strong>Estado:</strong> <span id="modal-estado-producto" class="fw-bold"></span></p>
+          </div>
+
         </div>
       </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-        </div>
-        </div>
+      
+      <!-- Pie -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+           Cerrar
+        </button>
+      </div>
     </div>
-    </div>
+  </div>
 </div>
+
+
 
 <!-- Modal de Éxito - Edición de Cliente -->
 <div class="modal fade" id="modalEditadoExitoC" tabindex="-1" aria-labelledby="modalEditadoExitoCLabel" aria-hidden="true">
@@ -198,8 +221,8 @@
 <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
 <script src="https://cdn.datatables.net/responsive/3.0.5/js/dataTables.responsive.js"></script>
 <script src="https://cdn.datatables.net/responsive/3.0.5/js/responsive.bootstrap5.js"></script>
-<script src="{% static 'js/dataTableClientes.js'%}"></script>
-<script src="{% static 'js/modal_ver_perfil_cliente.js'%}"></script>
+<script src="{% static 'js/dataTableProducto.js'%}"></script>
+<script src="{% static 'js/modal_ver_producto.js'%}"></script>
 <script src="{% static 'js/modal_borrar_activar_cliente.js'%}"></script>
 {% if messages %}
   {% for message in messages %}
