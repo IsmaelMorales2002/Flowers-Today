@@ -4,6 +4,7 @@ from .models import *
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import get_object_or_404
+from decimal import Decimal
 
 def Crear_Cuenta_Admi(request):
     nombre = request.POST.get('txtNombreN','').strip()
@@ -366,3 +367,74 @@ def cambiar_estado_Cliente(request):
         return redirect('vista_clientes_administracion')
     except Usuario.DoesNotExist:
         pass
+
+#Logica para crear producto
+def Crear_Producto(request):
+    nombre_producto = request.POST.get('nombre_producto','').strip()
+    descripcion_producto = request.POST.get('descripcion_producto','').strip()
+    cantidad_maxima = request.POST.get('cantidad_maxima','').strip()
+    cantidad_minima = request.POST.get('cantidad_minima','').strip()
+    precio_producto = request.POST.get('precio_producto','').strip()
+    existencia_producto = request.POST.get('existencia_producto','').strip()
+    tipo_producto = request.POST.get('tipo_producto','').strip()
+    producto_activo = request.POST.get('producto_activo','').strip()
+    id_categoria = request.POST.get('id_categoria','').strip()
+    imagen_producto = request.FILES.get('imagen_producto')
+
+    campos_vacios = []
+    if not nombre_producto: campos_vacios.append('nombre_producto')
+    if not descripcion_producto: campos_vacios.append('descripcion_producto')
+    if not cantidad_maxima: campos_vacios.append('cantidad_maxima')
+    if not cantidad_minima: campos_vacios.append('cantidad_minima')
+    if not precio_producto: campos_vacios.append('precio_producto')
+    if not existencia_producto: campos_vacios.append('existencia_producto')
+    if not tipo_producto: campos_vacios.append('tipo_producto')
+    if not producto_activo: campos_vacios.append('producto_activo')
+    if not id_categoria: campos_vacios.append('id_categoria')
+
+    categorias = Categoria.objects.all()
+    contexto = {
+        'nombre_producto': nombre_producto,
+        'descripcion_producto': descripcion_producto,
+        'cantidad_maxima': cantidad_maxima,
+        'cantidad_minima': cantidad_minima,
+        'precio_producto': precio_producto,
+        'existencia_producto': existencia_producto,
+        'tipo_producto': tipo_producto,
+        'producto_activo': producto_activo,
+        'id_categoria': id_categoria,
+        'categorias': categorias,
+        'campos_vacios': campos_vacios
+    }
+
+    if campos_vacios:
+        return render(request,'agregar_producto.html',contexto)
+    
+    if Producto.objects.filter(nombre_producto=nombre_producto).exists():
+        contexto['error_nombre'] = 'Ya existe un producto con este nombre'
+        return render(request,'agregar_producto.html',contexto)
+    
+    try:
+        categoria = Categoria.objects.get(id_categoria = id_categoria)
+        ## Conversiones de texto a decimales o entero
+        cantMx = int(cantidad_maxima)
+        cantMn = int(cantidad_minima)
+        precio = Decimal(precio_producto)
+        existencia = int(existencia_producto)
+        producto = Producto(
+            id_categoria = categoria,
+            nombre_producto = nombre_producto,
+            descripcion_producto = descripcion_producto,
+            imagen_producto = imagen_producto,
+            cantidad_maxima = cantMx,
+            cantidad_minima = cantMn,
+            precio_producto = precio,
+            existencia_producto = existencia,
+            tipo_producto = tipo_producto,
+            producto_activo = producto_activo
+        )
+        producto.save()
+        return redirect('vista_productos_administracion')
+    except Categoria.DoesNotExist:
+        messages.error(request,'!Error, No se pudo registrar el producto!')
+        return redirect('vista_productos_administracion')

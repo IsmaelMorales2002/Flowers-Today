@@ -6,7 +6,7 @@
 <section class="container my-5 text-white">
     <h2 class="mb-4 text-center">Agregar Nuevo Producto</h2>
 
-    <form method="post" enctype="multipart/form-data" action="#" id="form-insertar-producto">
+    <form method="post" enctype="multipart/form-data" action="{% url 'CrearProducto' %}" id="form-insertar-producto">
         {% csrf_token %}
         <div class="row gy-4">
             <!-- Columna Izquierda: Imagen -->
@@ -37,47 +37,69 @@
                 <!-- Nombre -->
                 <div class="mb-3">
                     <label for="nombre_producto" class="form-label">Nombre del Producto:</label>
-                    <input type="text" class="form-control" id="nombre_producto" name="nombre_producto" required>
+                    <input type="text" value="{{ nombre_producto|default:'' }}"  class="form-control {% if 'nombre_producto' in campos_vacios %}is-invalid{% endif %} {% if error_nombre %}is-invalid{% endif %}" id="nombre_producto" name="nombre_producto" required>
+                    {% if 'nombre_producto' in campos_vacios %}
+                    <div class="invalid-feedback">Este campo es obligatorio</div>
+                    {% endif %}
+                    {% if error_nombre %}
+                    <div class="invalid-feedback">Ya existe un producto con este nombre</div>
+                    {% endif %}
+                    
                 </div>
 
                 <!-- Categoría + Tipo -->
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="id_categoria" class="form-label">Categoría:</label>
-                        <select class="form-select" id="id_categoria" name="id_categoria" required>
+                        <select class="form-select {% if 'id_categoria' in campos_vacios %}is-invalid{% endif %}" id="id_categoria" name="id_categoria" required>
                             <option value="">Seleccione Categoría</option>
                             {% for categoria in categorias %}
                                 <option value="{{ categoria.id_categoria }}">{{ categoria.nombre_categoria }}</option>
                             {% endfor %}
                         </select>
+                        {% if 'id_categoria' in campos_vacios %}
+                        <div class="invalid-feedback">Debe seleccionar un tipo de producto</div>
+                        {% endif %}
                     </div>
 
                     <div class="col-md-6">
                         <label for="tipo_producto" class="form-label">Tipo:</label>
-                        <select class="form-select" id="tipo_producto" name="tipo_producto" required>
+                        <select class="form-select {% if 'tipo_producto' in campos_vacios %}is-invalid{% endif %}" id="tipo_producto" name="tipo_producto" required>
                             <option value="">Seleccione Tipo</option>
                             <option value="1">Arreglo Flores</option>
                             <option value="2">Arreglo Personalizado</option>
                             <option value="3">Arreglo Mixto</option>
                         </select>
+                        {% if 'tipo_producto' in campos_vacios %}
+                        <div class="invalid-feedback">Debe seleccionar un tipo de producto</div>
+                        {% endif %}
                     </div>
                 </div>
 
                 <!-- Descripción -->
                 <div class="mb-3">
                     <label for="descripcion_producto" class="form-label">Descripción:</label>
-                    <textarea class="form-control" id="descripcion_producto" name="descripcion_producto" rows="2" maxlength="100" required></textarea>
+                    <textarea class="form-control {% if 'descripcion_producto' in campos_vacios %}is-invalid{% endif %}" id="descripcion_producto" name="descripcion_producto" rows="2" maxlength="100" required></textarea>
+                    {% if 'descripcion_producto' in campos_vacios %}
+                    <div class="invalid-feedback">Este campo es obligatorio</div>
+                    {% endif %}
                 </div>
 
                 <!-- Cantidad Máxima + Cantidad Mínima -->
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="cantidad_maxima" class="form-label">Cantidad Máxima:</label>
-                        <input type="number" class="form-control" id="cantidad_maxima" name="cantidad_maxima" min="1" required>
+                        <input value="{{ cantidad_maxima|default:'' }}"  type="number" class="form-control {% if 'cantidad_maxima' in campos_vacios %}is-invalid{% endif %}" id="cantidad_maxima" name="cantidad_maxima" min="1" required>
+                        {% if 'cantidad_maxima' in campos_vacios %}
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        {% endif %}
                     </div>
                     <div class="col-md-6">
                         <label for="cantidad_minima" class="form-label">Cantidad Mínima:</label>
-                        <input type="number" class="form-control" id="cantidad_minima" name="cantidad_minima" min="0" required>
+                        <input value="{{ cantidad_minima|default:'' }}"  type="number" class="form-control {% if 'cantidad_minima' in campos_vacios %}is-invalid{% endif %}" id="cantidad_minima" name="cantidad_minima" min="0" required>
+                        {% if 'cantidad_minima' in campos_vacios %}
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -85,11 +107,17 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <label for="precio_producto" class="form-label">Precio:</label>
-                        <input type="number" class="form-control" id="precio_producto" name="precio_producto" step="0.01" min="0" required>
+                        <input type="number" class="form-control {% if 'precio_producto' in campos_vacios %}is-invalid{% endif %}" id="precio_producto" name="precio_producto" step="0.01" min="0" required>
+                        {% if 'precio_producto' in campos_vacios %}
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        {% endif %}
                     </div>
                     <div class="col-md-6">
                         <label for="existencia_producto" class="form-label">Existencia Actual:</label>
-                        <input type="number" class="form-control" id="existencia_producto" name="existencia_producto" min="0" required>
+                        <input type="number" class="form-control {% if 'existencia_producto' in campos_vacios %}is-invalid{% endif %}" id="existencia_producto" name="existencia_producto" min="0" required>
+                        {% if 'existencia_producto' in campos_vacios %}
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        {% endif %}
                     </div>
                 </div>
 
