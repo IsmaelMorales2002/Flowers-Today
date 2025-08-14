@@ -434,6 +434,7 @@ def Crear_Producto(request):
             producto_activo = producto_activo
         )
         producto.save()
+        messages.success(request,'creado')
         return redirect('vista_productos_administracion')
     except Categoria.DoesNotExist:
         messages.error(request,'!Error, No se pudo registrar el producto!')
