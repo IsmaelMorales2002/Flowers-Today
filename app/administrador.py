@@ -1,3 +1,5 @@
+from collections import defaultdict
+from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from .models import *
@@ -353,6 +355,7 @@ def cambiar_estado_administrador(request):
 
     return redirect('vista_administradores_administracion')
 
+
 #Logica para cambiar estado de cuenta cliente
 def cambiar_estado_Cliente(request):
     id_usuario = request.POST.get('id_usuario')
@@ -439,3 +442,16 @@ def Crear_Producto(request):
     except Categoria.DoesNotExist:
         messages.error(request,'!Error, No se pudo registrar el producto!')
         return redirect('vista_productos_administracion')
+
+def listar_pedidos():
+    return Comprobante_Pago.objects.all()
+
+def cambiar_estado_pedido(request):
+    id_comprobante = request.POST.get('id_comprobante')
+    comprobante = get_object_or_404(Comprobante_Pago, id_comprobante=id_comprobante)
+    
+    # Cambiar estado a 'Pa' (pagado)
+    comprobante.estado_comprobante = 'Pa'
+    comprobante.save()
+    
+

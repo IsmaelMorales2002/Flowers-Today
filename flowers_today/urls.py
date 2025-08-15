@@ -20,7 +20,6 @@ urlpatterns = [
     path('comentario/', vista_comentario, name='vista_comentario'),
     path('comentario/guardar/', guardar_comentario, name='guardar_comentario'),
     path('actualizar_credencial/<uidb64>/<token>/',Vista_Actualizar_Clave,name='vista_credencial'),
-    path('comentario/administracion/', vista_comentario_administracion, name='vista_comentario_administracion'),
 
     #Vistas Administrador
     path('administracion/',Vista_Inicio_Administrador,name='vista_inicio_administrador'),
@@ -33,8 +32,12 @@ urlpatterns = [
     path('editar-categoria/<int:id_categoria>/', Vista_Editar_Categoria, name='vista_editar_categoria'),
     path('administradores/editar/vista/<int:id>/', Vista_Editar_Admi, name='vista_editar_admi'),
     path('clientes/editar/vista/<int:id>/',Vista_Editar_Cliente_Admin,name='vista_editar_cliente_admin'),
+
     path('productos/',Vista_Productos,name='vista_productos_administracion'),
     path('agregar-producto/',Vista_Agregar_Producto,name='vista_agregar_producto'),
+
+    path('comentario/administracion/', vista_comentario_administracion, name='vista_comentario_administracion'),
+    path('pedidos/administracion/', vista_pedidos_administracion, name='vista_pedidos_administracion'),
 
 
 

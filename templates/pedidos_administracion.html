@@ -1,0 +1,133 @@
+{% extends 'menuAdministrador.html' %}
+{% load static %}
+{% block title %}
+Administradores
+{% endblock %}
+{% block content %}
+<!--DataTables-->
+<link
+  rel="stylesheet"
+  href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdn.datatables.net/responsive/3.0.5/css/responsive.bootstrap5.css"
+/>
+
+<link rel="stylesheet" href="{% static 'css/tablaCliente.css'%}" />
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-white">Gestión de Pedidos</h2>
+  </div>
+
+  <div class="table-responsive bg-white p-3 rounded shadow mb-2">
+    <table
+      id="tabla-pedidos"
+      class="table table-striped table-bordered bg-white text-dark responsive text-center"
+    >
+      <thead class="table-light">
+        <tr>
+          <th class="text-center">Cliente</th>
+          <th class="text-center">Fecha Compra</th>
+          <th class="text-center">Total</th>
+          <th class="text-center">Estado Comprobante</th>
+          <th class="text-center">Estado de la entrega</th>
+          <th class="text-center">Comprobante</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pedido in pedidos %}
+        <tr>
+          <td>{{ pedido.id_compra.id_usuario.nombre_usuario }} {{ pedido.id_compra.id_usuario.apellido_usuario }}</td>
+          <td>{{ pedido.fecha_comprobante|date:"d/m/Y" }}</td>
+          <td>${{ pedido.id_compra.total_compra }}</td>
+          <td>
+            {% if pedido.estado_comprobante == 'Pe' %}
+              Pendiente
+            {% elif pedido.estado_comprobante == 'Pa' %}
+              Pagado
+            {% else %}
+              {{ pedido.estado_comprobante }}
+            {% endif %}
+          </td>
+          <td>
+            {% if pedido.estado_comprobante == 'Pe' %}
+            <!-- Formulario separado -->
+            <form id="form-entrega-{{ pedido.id_comprobante }}" method="POST" style="display: inline">
+              {% csrf_token %}
+              <input type="hidden" name="id_comprobante" value="{{ pedido.id_comprobante }}" />
+              <input type="hidden" name="cambiar_estado" value="1" />
+              <button
+                type="button"
+                class="btn btn-success btn-sm btn-confirmar-entrega"
+                data-id="{{ pedido.id_comprobante }}"
+              >
+                Marcar como Entregado
+              </button>
+            </form>
+            {% else %}
+              <span class="text-success">Entregado</span>
+            {% endif %}
+          </td>
+          <td>
+            <a
+              href="?pdf={{ pedido.id_comprobante }}"
+              target="_blank"
+              class="btn btn-sm"
+              style="background-color: #6C2DC7; color: white;"
+            >
+              Obtener PDF
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6">No hay pedidos registrados.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal Confirmación (Mismo estilo que modal de éxito) -->
+  <div class="modal fade" id="modalConfirmarEntrega" tabindex="-1" aria-labelledby="modalConfirmarEntregaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title text-white" id="modalConfirmarEntregaLabel">
+            <i class="bi bi-info-circle me-2"></i>
+            Confirmar Entrega
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body text-dark">
+          <p class="fs-5 mb-0">¿Está seguro que desea marcar este producto como <strong>Entregado</strong>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="btnConfirmarEntrega" class="btn text-white" style="background-color:#6C2DC7;">
+            Sí, marcar
+          </button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--DataTables-->
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+  <script src="https://cdn.datatables.net/responsive/3.0.5/js/dataTables.responsive.js"></script>
+  <script src="https://cdn.datatables.net/responsive/3.0.5/js/responsive.bootstrap5.js"></script>
+  <script src="{% static 'js/dataTablePedido.js'%}"></script>
+
+  <!-- Bootstrap JS (por si no está cargado en layout) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- JS de confirmación -->
+  <script src="{% static 'js/confirmarEntrega.js' %}"></script>
+
+{% endblock %}
+</div>
