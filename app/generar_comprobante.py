@@ -140,7 +140,7 @@ def generar_comprobante_pdf(id_comprobante):
         p.drawString(350, y_pos - 25, f"Fecha: {comprobante.fecha_comprobante.strftime('%d/%m/%Y')}")
 
         # Estado
-        estado_texto = 'PAGADO' if comprobante.estado_comprobante == 'Pa' else 'PENDIENTE DE PAGO'
+        estado_texto = 'ENTREGADO' if comprobante.estado_comprobante == 'Pa' else 'PENDIENTE DE ENTREGAR'
         estado_color = texto_verde if comprobante.estado_comprobante == 'Pa' else texto_rojo
         p.setFont("Helvetica-Bold", 11)
         p.setFillColor(estado_color)
