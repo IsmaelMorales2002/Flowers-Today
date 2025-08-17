@@ -5,287 +5,94 @@
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+<link rel="stylesheet" href="{% static 'css/carrusel.css' %}">
 
 <div class="container my-5">
-<!-- MENSAJE DE BIENVENIDA -->
-{% if activo %}
-<div class="welcome-banner logged-in">
-  <div class="container">
-    <div class="welcome-content">
-      <div class="welcome-icon">
-        <i class="bi bi-heart-fill"></i>
-      </div>
-      <div class="welcome-text">
-        <p>Florece donde la vida te plante, y embellece al mundo con tu esencia.</p>
-        <h4>¡Hola, {{request.session.nombre_cliente}}! Bienvenido</h4>
-        <p>Nos alegra tenerte de vuelta. Descubre nuestras nuevas creaciones florales especialmente para ti.</p>
+  <!-- MENSAJE DE BIENVENIDA -->
+  {% if activo %}
+  <div class="welcome-banner logged-in">
+    <div class="container">
+      <div class="welcome-content">
+        <div class="welcome-icon">
+          <i class="bi bi-heart-fill"></i>
+        </div>
+        <div class="welcome-text">
+          <p>Florece donde la vida te plante, y embellece al mundo con tu esencia.</p>
+          <h4>¡Hola, {{request.session.nombre_cliente}}! Bienvenido</h4>
+          <p>Nos alegra tenerte de vuelta. Descubre nuestras nuevas creaciones florales especialmente para ti.</p>
+        </div>
       </div>
     </div>
   </div>
+  {% else %}
+  <div class="welcome-banner guest">
+    <div class="container">
+      <div class="welcome-content">
+        <div class="welcome-icon">
+          <i class="bi bi-flower2"></i>
+        </div>
+        <div class="welcome-text">
+          <p>Cuando las palabras faltan, un ramo habla por ti.</p>
+          <h4>Bienvenido a Flowers Today</h4>
+          <p>Nuestras flores son mensajeras de tus emociones más profundas. ¡Descubre la belleza de la naturaleza con nosotros! 💐</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- PRODUCTOS POR CATEGORÍA -->
+  {% for categoria in categorias %}
+    <h3 class="text-white mb-4 text-center">{{ categoria.nombre_categoria }}</h3>
+
+    <div class="carousel-wrapper my-4">
+      <!-- Flecha izquierda -->
+      <button class="btn btn-light shadow carousel-btn left"
+              onclick="scrollCarousel('carousel-{{ forloop.counter }}', -1)">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+
+      <!-- Contenedor de productos -->
+      <div id="carousel-{{ forloop.counter }}" class="carousel-container d-flex overflow-x-auto">
+        {% for producto in productos %}
+          {% if producto.id_categoria.nombre_categoria == categoria.nombre_categoria %}
+            <!-- Tarjeta con clase uniform-card -->
+            <div class="card uniform-card text-center shadow me-3 flex-shrink-0">
+              <img src="https://3.140.248.123/media/{{ producto.imagen_producto }}" 
+                   class="card-img-top producto-img" 
+                   alt="{{ producto.nombre_producto }}">
+              <div class="card-body bg-white">
+                <h5 class="card-title">{{ producto.nombre_producto }}</h5>
+                <p class="card-text">{{ producto.descripcion_producto }}</p>
+                <p class="fw-bold">Precio: ${{ producto.precio_producto }}</p>
+                <div class="carrito-control d-flex justify-content-center">
+                  <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
+                    style="background-color: #6C2DC7; color: white;">
+                    Agregar al Carrito
+                  </button>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <!-- Flecha derecha -->
+      <button class="btn btn-light shadow carousel-btn right"
+              onclick="scrollCarousel('carousel-{{ forloop.counter }}', 1)">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  {% endfor %}
 </div>
-{% else %}
-<div class="welcome-banner guest">
-  <div class="container">
-    <div class="welcome-content">
-      <div class="welcome-icon">
-        <i class="bi bi-flower2"></i>
-      </div>
-      <div class="welcome-text">
-        <p>Cuando las palabras faltan, un ramo habla por ti.</p>
-        <h4>Bienvenido a Flowers Today</h4>
-        <p>Nuestras flores son mensajeras de tus emociones más profundas. ¡Descubre la belleza de la naturaleza con nosotros! 💐</p>
-      </div>
-    </div>
-  </div>
-</div>
-{% endif %}
 
-  <h3 class="text-white mb-4 text-center">Ramos Clásicos</h3>
-  <div class="row justify-content-center">
-    
-    <!-- Tarjeta 1 -->
-    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div class="card h-100 text-center shadow">
-        <img src="https://floresfinas.oss-us-east-1.aliyuncs.com/floreriaclick/fc7/arreglo-floral-net2605-1.webp"
-          class="card-img-top producto-img" alt="Arreglo 1">
-        <div class="card-body d-flex flex-column bg-white px-3">
-          <h5 class="card-title mt-2">Arreglo Floral 1</h5>
-          <p class="card-text">Un toque clásico de amor con rosas y margaritas frescas.</p>
-          <p class="fw-bold">Precio: $24.99</p>
-          <div class="carrito-control d-flex justify-content-center mt-auto">
-            <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
-              style="background-color: #6C2DC7; color: white;">
-              Agregar al Carrito
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tarjeta 2 -->
-    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div class="card h-100 text-center shadow">
-        <img src="https://floristeriatamira.com/wp-content/uploads/2024/11/WhatsApp-Image-2024-11-07-at-11.39.12-AM.jpeg"
-          class="card-img-top producto-img" alt="Ramo Blush">
-        <div class="card-body d-flex flex-column bg-white px-3">
-          <h5 class="card-title mt-2">Ramo Blush</h5>
-          <p class="card-text">Un toque clásico de amor con rosas.</p>
-          <p class="fw-bold">Precio: $15.00</p>
-          <div class="carrito-control d-flex justify-content-center mt-auto">
-            <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
-              style="background-color: #6C2DC7; color: white;">
-              Agregar al Carrito
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
- <!-- Tarjeta  -->
-    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div class="card h-100 text-center shadow">
-        <img src="https://floristeriaaless.com/wp-content/uploads/2025/03/IMG-20250302-WA0005.jpg"
-          class="card-img-top producto-img" alt="Arreglo 1">
-        <div class="card-body d-flex flex-column bg-white px-3">
-          <h5 class="card-title mt-2">Arreglo 1</h5>
-          <p class="card-text">Arreglo especial flores amarillas II</p>
-          <p class="fw-bold">Precio: $35.00</p>
-          <div class="carrito-control d-flex justify-content-center mt-auto">
-            <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
-              style="background-color: #6C2DC7; color: white;">
-              Agregar al Carrito
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tarjeta  -->
-    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div class="card h-100 text-center shadow">
-        <img src="https://floristeriaaless.com/wp-content/uploads/2025/06/IMG-20250625-WA0033.jpg"
-          class="card-img-top producto-img" alt="Arreglo primaveral Julio 2025">
-        <div class="card-body d-flex flex-column bg-white px-3">
-          <h5 class="card-title mt-2">Arreglo primaveral Julio 2025</h5>
-          <p class="card-text">Arreglo de rosas y girasoles, estilo primaveral, incluye base de madera</p>
-          <p class="fw-bold">Precio: $45.00</p>
-          <div class="carrito-control d-flex justify-content-center mt-auto">
-            <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
-              style="background-color: #6C2DC7; color: white;">
-              Agregar al Carrito
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tarjeta  -->
-    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div class="card h-100 text-center shadow">
-        <img src="https://floristeriaaless.com/wp-content/uploads/2018/10/IMG-20181018-WA0007.jpg"
-          class="card-img-top producto-img" alt="Arreglo con globo y chocolates">
-        <div class="card-body d-flex flex-column bg-white px-3">
-          <h5 class="card-title mt-2">Arreglo con globo y chocolates</h5>
-          <p class="card-text">Arreglo mediano con una docena de rosas de color personalizable, incluye globo y chocolate de acuerdo a ocasión</p>
-          <p class="fw-bold">Precio: $60.00</p>
-          <div class="carrito-control d-flex justify-content-center mt-auto">
-            <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
-              style="background-color: #6C2DC7; color: white;">
-              Agregar al Carrito
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tarjeta  -->
-    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div class="card h-100 text-center shadow">
-        <img src="https://floristeriaaless.com/wp-content/uploads/2021/06/WhatsApp-Image-2021-06-04-at-16.34.14.jpeg"
-          class="card-img-top producto-img" alt="[Caballero] Arreglo de girasoles con Michelob">
-        <div class="card-body d-flex flex-column bg-white px-3">
-          <h5 class="card-title mt-2">[Caballero] Arreglo de girasoles con Michelob</h5>
-          <p class="card-text">Arreglos de girasoles sobre base de madera especial, incluye 2 cervezas Michelob ultra, 2 chocolates en barra y globo personalizado.</p>
-          <p class="fw-bold">Precio: $45.00</p>
-          <div class="carrito-control d-flex justify-content-center mt-auto">
-            <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
-              style="background-color: #6C2DC7; color: white;">
-              Agregar al Carrito
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Agrega más tarjetas aquí si deseas -->
-
-  </div>
-
-  <h3 class="text-white mb-4 text-center">Ramos Clásicos</h3>
-  <div class="row justify-content-center">
-    
-    <!-- Tarjeta 1 -->
-    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div class="card h-100 text-center shadow">
-        <img src="https://floresfinas.oss-us-east-1.aliyuncs.com/floreriaclick/fc7/arreglo-floral-net2605-1.webp"
-          class="card-img-top producto-img" alt="Arreglo 1">
-        <div class="card-body d-flex flex-column bg-white px-3">
-          <h5 class="card-title mt-2">Arreglo Floral 1</h5>
-          <p class="card-text">Un toque clásico de amor con rosas y margaritas frescas.</p>
-          <p class="fw-bold">Precio: $24.99</p>
-          <div class="carrito-control d-flex justify-content-center mt-auto">
-            <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
-              style="background-color: #6C2DC7; color: white;">
-              Agregar al Carrito
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tarjeta 2 -->
-    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div class="card h-100 text-center shadow">
-        <img src="https://floristeriatamira.com/wp-content/uploads/2024/11/WhatsApp-Image-2024-11-07-at-11.39.12-AM.jpeg"
-          class="card-img-top producto-img" alt="Ramo Blush">
-        <div class="card-body d-flex flex-column bg-white px-3">
-          <h5 class="card-title mt-2">Ramo Blush</h5>
-          <p class="card-text">Un toque clásico de amor con rosas.</p>
-          <p class="fw-bold">Precio: $15.00</p>
-          <div class="carrito-control d-flex justify-content-center mt-auto">
-            <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
-              style="background-color: #6C2DC7; color: white;">
-              Agregar al Carrito
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
- <!-- Tarjeta  -->
-    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div class="card h-100 text-center shadow">
-        <img src="https://floristeriaaless.com/wp-content/uploads/2025/03/IMG-20250302-WA0005.jpg"
-          class="card-img-top producto-img" alt="Arreglo 1">
-        <div class="card-body d-flex flex-column bg-white px-3">
-          <h5 class="card-title mt-2">Arreglo 1</h5>
-          <p class="card-text">Arreglo especial flores amarillas II</p>
-          <p class="fw-bold">Precio: $35.00</p>
-          <div class="carrito-control d-flex justify-content-center mt-auto">
-            <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
-              style="background-color: #6C2DC7; color: white;">
-              Agregar al Carrito
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tarjeta  -->
-    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div class="card h-100 text-center shadow">
-        <img src="https://floristeriaaless.com/wp-content/uploads/2025/06/IMG-20250625-WA0033.jpg"
-          class="card-img-top producto-img" alt="Arreglo primaveral Julio 2025">
-        <div class="card-body d-flex flex-column bg-white px-3">
-          <h5 class="card-title mt-2">Arreglo primaveral Julio 2025</h5>
-          <p class="card-text">Arreglo de rosas y girasoles, estilo primaveral, incluye base de madera</p>
-          <p class="fw-bold">Precio: $45.00</p>
-          <div class="carrito-control d-flex justify-content-center mt-auto">
-            <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
-              style="background-color: #6C2DC7; color: white;">
-              Agregar al Carrito
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tarjeta  -->
-    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div class="card h-100 text-center shadow">
-        <img src="https://floristeriaaless.com/wp-content/uploads/2018/10/IMG-20181018-WA0007.jpg"
-          class="card-img-top producto-img" alt="Arreglo con globo y chocolates">
-        <div class="card-body d-flex flex-column bg-white px-3">
-          <h5 class="card-title mt-2">Arreglo con globo y chocolates</h5>
-          <p class="card-text">Arreglo mediano con una docena de rosas de color personalizable, incluye globo y chocolate de acuerdo a ocasión</p>
-          <p class="fw-bold">Precio: $60.00</p>
-          <div class="carrito-control d-flex justify-content-center mt-auto">
-            <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
-              style="background-color: #6C2DC7; color: white;">
-              Agregar al Carrito
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tarjeta  -->
-    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div class="card h-100 text-center shadow">
-        <img src="https://floristeriaaless.com/wp-content/uploads/2021/06/WhatsApp-Image-2021-06-04-at-16.34.14.jpeg"
-          class="card-img-top producto-img" alt="[Caballero] Arreglo de girasoles con Michelob">
-        <div class="card-body d-flex flex-column bg-white px-3">
-          <h5 class="card-title mt-2">[Caballero] Arreglo de girasoles con Michelob</h5>
-          <p class="card-text">Arreglos de girasoles sobre base de madera especial, incluye 2 cervezas Michelob ultra, 2 chocolates en barra y globo personalizado.</p>
-          <p class="fw-bold">Precio: $45.00</p>
-          <div class="carrito-control d-flex justify-content-center mt-auto">
-            <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
-              style="background-color: #6C2DC7; color: white;">
-              Agregar al Carrito
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Agrega más tarjetas aquí si deseas -->
-
-  </div>
-</div>
 {% endblock %}
 
 {% block footer %}
-{% include 'footer.html' %}
+  {% include 'footer.html' %}
 {% endblock %}
 
 {% block scripts %}
 <script src="{% static 'js/carrito.js' %}"></script>
+<script src="{% static 'js/carrusel.js' %}"></script>
 {% endblock %}
