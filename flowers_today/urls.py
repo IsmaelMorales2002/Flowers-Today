@@ -35,7 +35,7 @@ urlpatterns = [
 
     path('productos/',Vista_Productos,name='vista_productos_administracion'),
     path('agregar-producto/',Vista_Agregar_Producto,name='vista_agregar_producto'),
-
+    path('editar-producto/<int:id>',Vista_Actualizar_Producto,name='vista_actualizar_producto'),
     path('comentario/administracion/', vista_comentario_administracion, name='vista_comentario_administracion'),
     path('pedidos/administracion/', vista_pedidos_administracion, name='vista_pedidos_administracion'),
 

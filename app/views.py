@@ -413,6 +413,20 @@ def Vista_Agregar_Producto(request):
         })
     return redirect('vista_inicio_cliente')
 
+# Vista_Actualizar_Producto
+def Vista_Actualizar_Producto(request,id):
+    # Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        producto = Producto.objects.get(id_producto=id)
+        categorias = Categoria.objects.all()
+        return render(request,'editar_producto.html',{
+            'activo': activo,
+            'producto': producto,
+            'categorias': categorias
+        })
+    return redirect('vista_inicio_cliente')
+
 
 
 def vista_pedidos_administracion(request):
