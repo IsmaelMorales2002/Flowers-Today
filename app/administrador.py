@@ -380,7 +380,7 @@ def Crear_Producto(request):
     precio_producto = request.POST.get('precio_producto','').strip()
     existencia_producto = request.POST.get('existencia_producto','').strip()
     tipo_producto = request.POST.get('tipo_producto','').strip()
-    producto_activo = request.POST.get('producto_activo','').strip()
+    producto_activo = request.POST.get('producto_activo')
     id_categoria = request.POST.get('id_categoria','').strip()
     imagen_producto = request.FILES.get('imagen_producto')
 
@@ -392,7 +392,6 @@ def Crear_Producto(request):
     if not precio_producto: campos_vacios.append('precio_producto')
     if not existencia_producto: campos_vacios.append('existencia_producto')
     if not tipo_producto: campos_vacios.append('tipo_producto')
-    if not producto_activo: campos_vacios.append('producto_activo')
     if not id_categoria: campos_vacios.append('id_categoria')
 
     categorias = Categoria.objects.all()
@@ -404,14 +403,17 @@ def Crear_Producto(request):
         'precio_producto': precio_producto,
         'existencia_producto': existencia_producto,
         'tipo_producto': tipo_producto,
-        'producto_activo': producto_activo,
         'id_categoria': id_categoria,
         'categorias': categorias,
         'campos_vacios': campos_vacios
     }
 
     if campos_vacios:
-        return render(request,'agregar_producto.html',contexto)
+        if producto_activo == 'on':
+            contexto['producto_activo'] = True
+        else:
+            contexto['inactivo'] = True
+            return render(request,'agregar_producto.html',contexto)
     
     if Producto.objects.filter(nombre_producto=nombre_producto).exists():
         contexto['error_nombre'] = 'Ya existe un producto con este nombre'
@@ -424,6 +426,7 @@ def Crear_Producto(request):
         cantMn = int(cantidad_minima)
         precio = Decimal(precio_producto)
         existencia = int(existencia_producto)
+        activo = True if producto_activo == 'on' else False
         producto = Producto(
             id_categoria = categoria,
             nombre_producto = nombre_producto,
@@ -434,7 +437,7 @@ def Crear_Producto(request):
             precio_producto = precio,
             existencia_producto = existencia,
             tipo_producto = tipo_producto,
-            producto_activo = producto_activo
+            producto_activo = activo
         )
         producto.save()
         messages.success(request,'creado')
