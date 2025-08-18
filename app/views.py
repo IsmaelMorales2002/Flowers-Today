@@ -12,18 +12,27 @@ from django.contrib.auth.hashers import make_password,check_password
 from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from .token import token_generator
+from app.generar_comprobante import *
 
 # Vista_Inicio, muestra la vista inicio.html
 def Vista_Inicio_Cliente(request):
-    #Proteccion de Ruta
-    activo = request.session.get('activo',False)
-    if activo:
-        return render(request,'inicio.html',{
-            'activo': activo
-        })
-    return render(request,'inicio.html',{
-            'activo': activo
+    # Solo productos activos
+    productos = Producto.objects.filter(producto_activo=True)
+    
+    # Solo categorías activas que tienen productos activos relacionados
+    categorias = Categoria.objects.filter(
+        estado_categoria=True,
+        producto__producto_activo=True  # relación inversa hacia productos
+    ).distinct()
+    
+    activo = request.session.get('activo', False)
+    
+    return render(request, 'inicio.html', {
+        'activo': activo,
+        'productos': productos,
+        'categorias': categorias
     })
+
     
 def Vista_Inicio_Administrador(request):
     #Proteccion de Ruta
@@ -379,6 +388,7 @@ def vista_comentario_administracion(request):
             return redirect('vista_inicio_cliente')
     return redirect('vista_inicio_cliente')
 
+
 # Vista_Productos
 def Vista_Productos(request):
     # Protección de ruta
@@ -403,3 +413,28 @@ def Vista_Agregar_Producto(request):
         })
     return redirect('vista_inicio_cliente')
 
+
+
+def vista_pedidos_administracion(request):
+    activo = request.session.get('activo_administrador', False)
+    if not activo:
+        return redirect('vista_inicio_cliente')
+
+    nombre = request.session.get('nombre_administrador', '')
+    apellido = request.session.get('apellido_administrador', '')
+
+    if request.method == 'POST' and 'cambiar_estado' in request.POST:
+        cambiar_estado_pedido(request)
+        return redirect('vista_pedidos_administracion')
+
+    if request.GET.get('pdf'):
+        return generar_comprobante_pdf(request.GET.get('pdf'))
+
+    pedidos = listar_pedidos()
+
+    return render(request, 'pedidos_administracion.html', {
+        'activo': activo,
+        'nombre': nombre,
+        'apellido': apellido,
+        'pedidos': pedidos,
+    })
