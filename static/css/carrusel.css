@@ -1,0 +1,147 @@
+/* Ocultar scroll bar */
+.carousel-container::-webkit-scrollbar {
+  display: none;
+}
+.carousel-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  align-items: stretch;
+}
+
+/* RESPONSIVE: Desktop (pantallas grandes) */
+@media (min-width: 768px) {
+  .carousel-wrapper {
+    position: relative;
+    margin: 0 60px; /* Espacio para las flechas a los lados */
+  }
+
+  .carousel-btn {
+    display: block; /* Mostrar flechas en desktop */
+    z-index: 5;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    background-color: #444;
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .carousel-btn:hover {
+    background-color: #6C2DC7;
+  }
+
+  .carousel-btn.left {
+    position: absolute;
+    top: 50%;
+    left: -60px;
+    transform: translateY(-50%);
+  }
+
+  .carousel-btn.right {
+    position: absolute;
+    top: 50%;
+    right: -60px;
+    transform: translateY(-50%);
+  }
+}
+
+/* RESPONSIVE: Móvil (pantallas pequeñas) */
+@media (max-width: 767px) {
+  .carousel-wrapper {
+    position: relative;
+    margin: 0; /* Sin margen en móvil */
+    padding: 0 15px; /* Padding interno para separar del borde */
+  }
+
+  .carousel-btn {
+    display: none; /* Ocultar flechas en móvil */
+  }
+
+  .carousel-container {
+    padding: 0 5px; /* Pequeño padding para que no se peguen al borde */
+    gap: 10px; /* Espacio entre tarjetas */
+  }
+
+  /* Ajustar tarjetas para móvil */
+  .uniform-card {
+    width: 280px; /* Ancho fijo más grande para móvil */
+    min-width: 280px;
+  }
+
+  /* Scroll más suave en móvil */
+  .carousel-container {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* RESPONSIVE: Tablets */
+@media (min-width: 576px) and (max-width: 767px) {
+  .uniform-card {
+    width: 240px;
+    min-width: 240px;
+  }
+}
+
+/* Tarjetas con altura uniforme (para todos los dispositivos) */
+.uniform-card {
+  height: 420px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0; /* Importante: evita que se compriman */
+}
+
+.uniform-card .card-img-top {
+  height: 200px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.uniform-card .card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.uniform-card .card-title {
+  height: 2.5rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  margin-bottom: 0.5rem;
+}
+
+.uniform-card .card-text {
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  margin-bottom: 0.5rem;
+}
+
+.uniform-card .fw-bold {
+  margin-bottom: 1rem;
+}
+
+.uniform-card .carrito-control {
+  margin-top: auto;
+}
+
+/* Indicador visual para scroll en móvil (opcional) */
+@media (max-width: 767px) {
+  .carousel-wrapper::after {
+    content: "← Desliza para ver más →";
+    display: block;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 10px;
+    font-style: italic;
+  }
+}

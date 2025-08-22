@@ -16,15 +16,23 @@ from app.generar_comprobante import *
 
 # Vista_Inicio, muestra la vista inicio.html
 def Vista_Inicio_Cliente(request):
-    #Proteccion de Ruta
-    activo = request.session.get('activo',False)
-    if activo:
-        return render(request,'inicio.html',{
-            'activo': activo
-        })
-    return render(request,'inicio.html',{
-            'activo': activo
+    # Solo productos activos
+    productos = Producto.objects.filter(producto_activo=True)
+    
+    # Solo categorías activas que tienen productos activos relacionados
+    categorias = Categoria.objects.filter(
+        estado_categoria=True,
+        producto__producto_activo=True  # relación inversa hacia productos
+    ).distinct()
+    
+    activo = request.session.get('activo', False)
+    
+    return render(request, 'inicio.html', {
+        'activo': activo,
+        'productos': productos,
+        'categorias': categorias
     })
+
     
 def Vista_Inicio_Administrador(request):
     #Proteccion de Ruta
@@ -401,6 +409,20 @@ def Vista_Agregar_Producto(request):
         categorias = Categoria.objects.all()
         return render(request,'agregar_producto.html',{
             'activo': activo,
+            'categorias': categorias
+        })
+    return redirect('vista_inicio_cliente')
+
+# Vista_Actualizar_Producto
+def Vista_Actualizar_Producto(request,id):
+    # Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        producto = Producto.objects.get(id_producto=id)
+        categorias = Categoria.objects.all()
+        return render(request,'editar_producto.html',{
+            'activo': activo,
+            'producto': producto,
             'categorias': categorias
         })
     return redirect('vista_inicio_cliente')
