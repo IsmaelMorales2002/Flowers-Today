@@ -32,12 +32,12 @@ urlpatterns = [
     path('editar-categoria/<int:id_categoria>/', Vista_Editar_Categoria, name='vista_editar_categoria'),
     path('administradores/editar/vista/<int:id>/', Vista_Editar_Admi, name='vista_editar_admi'),
     path('clientes/editar/vista/<int:id>/',Vista_Editar_Cliente_Admin,name='vista_editar_cliente_admin'),
-
     path('productos/',Vista_Productos,name='vista_productos_administracion'),
     path('agregar-producto/',Vista_Agregar_Producto,name='vista_agregar_producto'),
     path('editar-producto/<int:id>',Vista_Actualizar_Producto,name='vista_actualizar_producto'),
     path('comentario/administracion/', vista_comentario_administracion, name='vista_comentario_administracion'),
     path('pedidos/administracion/', vista_pedidos_administracion, name='vista_pedidos_administracion'),
+    path('carrito/',vista_carrito,name='vista_carrito'),
 
 
 
