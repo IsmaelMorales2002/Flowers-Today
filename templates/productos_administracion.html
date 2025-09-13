@@ -71,21 +71,21 @@
             </a>
 
             {% if producto.producto_activo %}
-            <a href="#" class="btn btn-sm btn-danger btn-toggle-estado-cliente" title="Desactivar"
-              data-id="{{usuario.id_usuario}}"
-              data-nombre="{{usuario.nombre_usuario}} {{usuario.apellido_usuario}}"
+            <a href="#" class="btn btn-sm btn-danger btn-toggle-estado-producto" title="Desactivar"
+              data-id="{{producto.id_producto}}"
+              data-nombre="{{producto.nombre_producto}}"
               data-estado="desactivar"
               data-bs-toggle="modal"
-              data-bs-target="#modalEstadoCliente">
+              data-bs-target="#modalEstadoProducto">
               <i class="bi bi-trash-fill"></i>
             </a>
             {% else %}
-            <a href="#" class="btn btn-sm btn-success btn-toggle-estado-cliente" title="Activar"
-              data-id="{{usuario.id_usuario}}"
-              data-nombre="{{usuario.nombre_usuario}} {{usuario.apellido_usuario}}"
+            <a href="#" class="btn btn-sm btn-success btn-toggle-estado-producto" title="Activar"
+              data-id="{{producto.id_producto}}"
+              data-nombre="{{producto.nombre_producto}}"
               data-estado="activar"
               data-bs-toggle="modal"
-              data-bs-target="#modalEstadoCliente">
+              data-bs-target="#modalEstadoProducto">
               <i class="bi bi-arrow-repeat"></i>
             </a>
             {% endif %}
@@ -190,10 +190,10 @@
 </div>
 
    <!-- Modal Confirmar Activar/Desactivar -->
-<div class="modal fade" id="modalEstadoCliente" tabindex="-1" aria-labelledby="modalEstadoClienteLabel" aria-hidden="true">
+<div class="modal fade" id="modalEstadoProducto" tabindex="-1" aria-labelledby="modalEstadoProductoLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form method="POST" action="{% url 'cambiar_estado_cliente' %}">
+      <form method="POST" action="{% url 'cambiar_estado_producto' %}">
         {% csrf_token %}
         <div class="modal-header bg-dark text-white">
           <h5 class="modal-title" id="modalEstadoClienteLabel">Confirmar acción</h5>
@@ -203,8 +203,8 @@
           <p id="modal-mensaje-estado" class="fs-5"></p>
           <div id="modal-nota-estado" class="mt-3"></div>
 
-          <input type="hidden" name="id_usuario" id="modal-id-usuario" value="">
-          <input type="hidden" name="accion" id="modal-accion-usuario" value="">
+          <input type="hidden" name="id_producto" id="modal-id-producto" value="">
+          <input type="hidden" name="accion" id="modal-accion-producto" value="">
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn text-white" id="modal-btn-accion" style="background-color: #6C2DC7;">Confirmar</button>
@@ -224,7 +224,7 @@
 <script src="https://cdn.datatables.net/responsive/3.0.5/js/responsive.bootstrap5.js"></script>
 <script src="{% static 'js/dataTableProducto.js'%}"></script>
 <script src="{% static 'js/modal_ver_producto.js'%}"></script>
-<script src="{% static 'js/modal_borrar_activar_cliente.js'%}"></script>
+<script src="{% static 'js/modal_estado_producto.js'%}"></script>
 {% if messages %}
   {% for message in messages %}
     {% if message.tags == 'success' and message.message == 'editado' %}

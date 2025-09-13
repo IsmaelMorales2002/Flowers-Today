@@ -371,6 +371,21 @@ def cambiar_estado_Cliente(request):
     except Usuario.DoesNotExist:
         pass
 
+#Logica para cambiar estado producto
+def Cambiar_Estado_Producto(request):
+    id_producto = request.POST.get('id_producto','')
+    accion = request.POST.get('accion')
+    try:
+        producto = Producto.objects.get(id_producto = id_producto)
+        if accion == 'desactivar':
+            producto.producto_activo = False
+        elif accion == 'activar':
+            producto.producto_activo = True
+        producto.save()
+        return redirect('vista_productos_administracion')
+    except Producto.DoesNotExist:
+        pass
+
 #Logica para crear producto
 def Crear_Producto(request):
     nombre_producto = request.POST.get('nombre_producto','').strip()
