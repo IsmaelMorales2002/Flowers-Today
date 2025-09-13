@@ -409,11 +409,7 @@ def Crear_Producto(request):
     }
 
     if campos_vacios:
-        if producto_activo == 'on':
-            contexto['producto_activo'] = True
-        else:
-            contexto['inactivo'] = True
-            return render(request,'agregar_producto.html',contexto)
+        return render(request,'agregar_producto.html',contexto)
     
     if Producto.objects.filter(nombre_producto=nombre_producto).exists():
         contexto['error_nombre'] = 'Ya existe un producto con este nombre'
@@ -457,4 +453,75 @@ def cambiar_estado_pedido(request):
     comprobante.estado_comprobante = 'Pa'
     comprobante.save()
     
+#Logica Para Editar Producto
+def Editar_Producto(request,id):
+    nombre_producto = request.POST.get('nombre_producto','').strip()
+    descripcion_producto = request.POST.get('descripcion_producto','').strip()
+    cantidad_maxima = request.POST.get('cantidad_maxima','').strip()
+    cantidad_minima = request.POST.get('cantidad_minima','').strip()
+    precio_producto = request.POST.get('precio_producto','').strip()
+    existencia_producto = request.POST.get('existencia_producto','').strip()
+    tipo_producto = request.POST.get('tipo_producto','').strip()
+    producto_activo = request.POST.get('producto_activo')
+    id_categoria = request.POST.get('id_categoria','').strip()
+    imagen_producto = request.FILES.get('imagen_producto')
+
+    #Verificacion de producto existente
+    try:
+        producto = Producto.objects.get(id_producto = id)
+    except Producto.DoesNotExist:
+        return redirect('vista_productos_administracion')
+
+    campos_vacios = []
+    if not nombre_producto: campos_vacios.append('nombre_producto')
+    if not descripcion_producto: campos_vacios.append('descripcion_producto')
+    if not cantidad_maxima: campos_vacios.append('cantidad_maxima')
+    if not cantidad_minima: campos_vacios.append('cantidad_minima')
+    if not precio_producto: campos_vacios.append('precio_producto')
+    if not existencia_producto: campos_vacios.append('existencia_producto')
+    if not tipo_producto: campos_vacios.append('tipo_producto')
+    if not id_categoria: campos_vacios.append('id_categoria')
+
+    categorias = Categoria.objects.all()
+    contexto = {
+        'producto': producto,
+        'nombre_producto': nombre_producto,
+        'descripcion_producto': descripcion_producto,
+        'cantidad_maxima': cantidad_maxima,
+        'cantidad_minima': cantidad_minima,
+        'precio_producto': precio_producto,
+        'existencia_producto': existencia_producto,
+        'tipo_producto': tipo_producto,
+        'id_categoria': id_categoria,
+        'categorias': categorias,
+        'campos_vacios': campos_vacios
+    }
+
+    if campos_vacios:
+        return render(request,'editar_producto.html',contexto)
+    
+    # Verificacion de nombre
+    if Producto.objects.filter(nombre_producto=nombre_producto).exclude(id_producto = id).exists():
+        contexto['error_nombre'] = 'Nombre Ya Registrado'
+        return render(request,'editar_producto.html',contexto)
+    
+    categoria = Categoria.objects.get(id_categoria = id_categoria)
+    activo = True if producto_activo == 'on' else False
+    #Actualziacion De Datos
+    producto.nombre_producto = nombre_producto
+    producto.id_categoria = categoria
+    producto.tipo_producto = tipo_producto
+    producto.descripcion_producto = descripcion_producto
+    producto.cantidad_maxima = cantidad_maxima
+    producto.cantidad_minima = cantidad_minima
+    producto.precio_producto = Decimal(precio_producto)
+    producto.existencia_producto = existencia_producto
+    producto.producto_activo = activo
+    if imagen_producto:
+        producto.imagen_producto = imagen_producto
+    producto.save()
+    return redirect('vista_productos_administracion')
+
+
+
 

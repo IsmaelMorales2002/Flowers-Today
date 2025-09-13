@@ -6,7 +6,7 @@
 <section class="container my-5 text-white">
     <h2 class="mb-4 text-center">Editar Producto</h2>
 
-    <form method="post" enctype="multipart/form-data" action="#" id="form-editar-producto">
+    <form method="post" enctype="multipart/form-data" action="{% url 'EditarProducto' producto.id_producto %}" id="form-editar-producto">
         {% csrf_token %}
         <div class="row gy-4">
             <!-- Columna Izquierda: Imagen -->
@@ -25,7 +25,7 @@
 
                 <!-- Estado del producto como checkbox (abajo de imagen) -->
                 <div class="form-check form-check-inline mt-4">
-                    <input class="form-check-input" type="checkbox" id="producto_activo" name="producto_activo" value="{{producto.producto_activo}}"  {% if producto.producto_activo %}checked{% else %}{% endif %}>
+                    <input class="form-check-input" type="checkbox" id="producto_activo" name="producto_activo"  {% if producto.producto_activo %}checked{% else %}{% endif %}>
                     <label class="form-check-label ms-2" for="producto_activo">
                         Producto Activo
                     </label>

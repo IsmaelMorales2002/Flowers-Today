@@ -58,6 +58,7 @@ urlpatterns = [
     path('ActualizarClave/<uidb64>/<token>/',Actualizar_Clave,name='ActualizarClave'),
     path('clientes/editar/<int:id>',Editar_Cuenta_Cliente,name='EditarCuentaCliente'),
     path('CrearProducto/',Crear_Producto,name='CrearProducto'),
+    path('EditarProducto/<int:id>/',Editar_Producto,name='EditarProducto'),
 
     #Endpoints
 ]
