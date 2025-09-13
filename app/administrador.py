@@ -520,6 +520,7 @@ def Editar_Producto(request,id):
     if imagen_producto:
         producto.imagen_producto = imagen_producto
     producto.save()
+    messages.success(request,'editado')
     return redirect('vista_productos_administracion')
 
 

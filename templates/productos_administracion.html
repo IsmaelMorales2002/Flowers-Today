@@ -168,19 +168,19 @@
 
 
 
-<!-- Modal de Éxito - Edición de Cliente -->
-<div class="modal fade" id="modalEditadoExitoC" tabindex="-1" aria-labelledby="modalEditadoExitoCLabel" aria-hidden="true">
+<!-- Modal de Éxito - Edición de Producto -->
+<div class="modal fade" id="modalEditadoProducto" tabindex="-1" aria-labelledby="modalEditadoProductoLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0">
       <div class="modal-header bg-dark text-white">
         <h5 class="modal-title text-white">
           <i class="bi bi-pencil-square me-2 "></i>
-          <span>Cliente actualizado</span>
+          <span>Producto actualizado</span>
         </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body text-dark">
-        <p class="fs-5 mb-0">Los datos del cliente han sido actualizados exitosamente.</p>
+        <p class="fs-5 mb-0">Los datos del producto han sido actualizados exitosamente.</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn text-white" style="background-color:#6C2DC7;" data-bs-dismiss="modal">Aceptar</button>
@@ -228,7 +228,7 @@
 {% if messages %}
   {% for message in messages %}
     {% if message.tags == 'success' and message.message == 'editado' %}
-    <script src="{% static 'js/modal_editado_cliente.js' %}"></script>
+    <script src="{% static 'js/modal_editado_producto.js' %}"></script>
     {% elif message.tags == 'success' and message.message == 'creado' %}
     <script src="{% static 'js/modal_exito_producto.js' %}"></script>
     {% endif %}
