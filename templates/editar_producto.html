@@ -6,7 +6,7 @@
 <section class="container my-5 text-white">
     <h2 class="mb-4 text-center">Editar Producto</h2>
 
-    <form method="post" enctype="multipart/form-data" action="#" id="form-editar-producto">
+    <form method="post" enctype="multipart/form-data" action="{% url 'EditarProducto' producto.id_producto %}" id="form-editar-producto">
         {% csrf_token %}
         <div class="row gy-4">
             <!-- Columna Izquierda: Imagen -->
@@ -25,7 +25,7 @@
 
                 <!-- Estado del producto como checkbox (abajo de imagen) -->
                 <div class="form-check form-check-inline mt-4">
-                    <input class="form-check-input" type="checkbox" id="producto_activo" name="producto_activo" value="{{producto.producto_activo}}"  {% if producto.producto_activo %}checked{% else %}{% endif %}>
+                    <input class="form-check-input" type="checkbox" id="producto_activo" name="producto_activo"  {% if producto.producto_activo %}checked{% else %}{% endif %}>
                     <label class="form-check-label ms-2" for="producto_activo">
                         Producto Activo
                     </label>
@@ -123,7 +123,8 @@
 
                 <!-- Botones -->
                 <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
-                    <button type="submit" class="btn btn-primary" style="background-color: #6C2DC7; border: #6C2DC7;">
+                    <button type="button" class="btn btn-primary" style="background-color: #6C2DC7; border: #6C2DC7;" data-bs-toggle="modal"
+                    data-bs-target="#modalConfirmacionProducto">
                         <i class="bi bi-save me-1"></i> Guardar Producto
                     </button>
                     <a href="{% url 'vista_productos_administracion' %}" class="btn btn-secondary" style="background-color: red; border: red;">
@@ -132,6 +133,29 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal de Confirmación -->
+        <div class="modal fade" id="modalConfirmacionProducto" tabindex="-1" aria-labelledby="modalConfirmacionProductoLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-dark">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title">¿Desea modificar este producto?</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body fw-bold">
+                        Asegúrese que la información sea correcta.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn text-white"
+                            style="background-color:#6C2DC7;">Confirmar</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
     </form>
 </section>
 
