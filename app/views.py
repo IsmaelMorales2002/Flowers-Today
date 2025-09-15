@@ -452,3 +452,14 @@ def vista_pedidos_administracion(request):
         'apellido': apellido,
         'pedidos': pedidos,
     })
+
+#Vista para visualizar el carrito
+def vista_carrito(request):
+    activo = request.session.get('activo',False)
+    productos = Producto.objects.all()
+    if activo:
+        return render(request,'carrito.html',{
+            'activo': activo,
+            'productos': productos
+        })
+    return redirect('vista_inicio_cliente')
