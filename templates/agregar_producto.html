@@ -1,0 +1,165 @@
+{% extends 'menuAdministrador.html' %}
+{% load static %}
+{% block title %} Agregar Producto {% endblock %}
+
+{% block content %}
+<section class="container my-5 text-white">
+    <h2 class="mb-4 text-center">Agregar Nuevo Producto</h2>
+
+    <form method="post" enctype="multipart/form-data" action="{% url 'CrearProducto' %}" id="form-insertar-producto">
+        {% csrf_token %}
+        <div class="row gy-4">
+            <!-- Columna Izquierda: Imagen -->
+            <div class="col-12 col-md-4 text-center">
+                <img id="preview-imagen" 
+                     src="{% static 'img/producto-default.png' %}" 
+                     alt="Imagen Producto" 
+                     class="rounded img-thumbnail mb-3" 
+                     style="width: 250px; height: auto;">
+                <input type="file" 
+                       class="form-control form-control-sm" 
+                       id="imagen_producto" 
+                       name="imagen_producto" 
+                       accept="image/*">
+                <div id="error-imagen" class="text-danger mt-2"></div>
+
+                <!-- Estado del producto como checkbox (abajo de imagen) -->
+                <div class="form-check form-check-inline mt-4">
+                    <input class="form-check-input" type="checkbox" id="producto_activo" name="producto_activo" {% if on or not on %} checked {% endif %} {% if inactivo %}{% endif %}>
+                    <label class="form-check-label ms-2" for="producto_activo">
+                        Producto Activo
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Columna Derecha: Datos -->
+            <div class="col-12 col-md-8">
+                <!-- Nombre -->
+                <div class="mb-3">
+                    <label for="nombre_producto" class="form-label">Nombre del Producto:</label>
+                    <input type="text" value="{{ nombre_producto|default:'' }}"  class="form-control {% if 'nombre_producto' in campos_vacios %}is-invalid{% endif %} {% if error_nombre %}is-invalid{% endif %}" id="nombre_producto" name="nombre_producto" required>
+                    {% if 'nombre_producto' in campos_vacios %}
+                    <div class="invalid-feedback">Este campo es obligatorio</div>
+                    {% endif %}
+                    {% if error_nombre %}
+                    <div class="invalid-feedback">Ya existe un producto con este nombre</div>
+                    {% endif %}
+                    
+                </div>
+
+                <!-- Categoría + Tipo -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_categoria" class="form-label">Categoría:</label>
+                        <select class="form-select {% if 'id_categoria' in campos_vacios %}is-invalid{% endif %}" id="id_categoria" name="id_categoria" required>
+                                <option value="">Seleccione Categoría</option>
+                            {% for categoria in categorias %}
+                                <option value="{{ categoria.id_categoria }}" {% if id_categoria == categoria.id_categoria|stringformat:"s" %}selected{% endif %}>{{ categoria.nombre_categoria }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if 'id_categoria' in campos_vacios %}
+                        <div class="invalid-feedback">Debe seleccionar un tipo de producto</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="tipo_producto" class="form-label">Tipo:</label>
+                        <select class="form-select {% if 'tipo_producto' in campos_vacios %}is-invalid{% endif %}" id="tipo_producto" name="tipo_producto" required>
+                            <option value="">Seleccione Tipo</option>
+                            <option value="1" {% if tipo_producto == '1' %}selected{% endif %}>Arreglo Flores</option>
+                            <option value="2" {% if tipo_producto == '2' %}selected{% endif %}>Arreglo Personalizado</option>
+                            <option value="3" {% if tipo_producto == '3' %}selected{% endif %}>Arreglo Mixto</option>
+                        </select>
+                        {% if 'tipo_producto' in campos_vacios %}
+                        <div class="invalid-feedback">Debe seleccionar un tipo de producto</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="mb-3">
+                    <label for="descripcion_producto" class="form-label">Descripción:</label>
+                    <textarea class="form-control {% if 'descripcion_producto' in campos_vacios %}is-invalid{% endif %}" id="descripcion_producto" name="descripcion_producto" rows="2" maxlength="100" required>{{descripcion_producto}}</textarea>
+                    {% if 'descripcion_producto' in campos_vacios %}
+                    <div class="invalid-feedback">Este campo es obligatorio</div>
+                    {% endif %}
+                </div>
+
+                <!-- Cantidad Máxima + Cantidad Mínima -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="cantidad_maxima" class="form-label">Cantidad Máxima:</label>
+                        <input value="{{ cantidad_maxima|default:'' }}"  type="number" class="form-control {% if 'cantidad_maxima' in campos_vacios %}is-invalid{% endif %}" id="cantidad_maxima" name="cantidad_maxima" min="1" required>
+                        {% if 'cantidad_maxima' in campos_vacios %}
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="cantidad_minima" class="form-label">Cantidad Mínima:</label>
+                        <input value="{{ cantidad_minima|default:'' }}"  type="number" class="form-control {% if 'cantidad_minima' in campos_vacios %}is-invalid{% endif %}" id="cantidad_minima" name="cantidad_minima" min="0" required>
+                        {% if 'cantidad_minima' in campos_vacios %}
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Precio + Existencia -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="precio_producto" class="form-label">Precio:</label>
+                        <input type="number" value="{{precio_producto|default:''}}" class="form-control {% if 'precio_producto' in campos_vacios %}is-invalid{% endif %}" id="precio_producto" name="precio_producto" step="0.01" min="0" required>
+                        {% if 'precio_producto' in campos_vacios %}
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="existencia_producto" class="form-label">Existencia Actual:</label>
+                        <input type="number" value="{{existencia_producto|default:''}}" class="form-control {% if 'existencia_producto' in campos_vacios %}is-invalid{% endif %}" id="existencia_producto" name="existencia_producto" min="0" required>
+                        {% if 'existencia_producto' in campos_vacios %}
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
+                    <button type="submit" class="btn btn-primary" style="background-color: #6C2DC7; border: #6C2DC7;">
+                        <i class="bi bi-save me-1"></i> Guardar Producto
+                    </button>
+                    <a href="{% url 'vista_productos_administracion' %}" class="btn btn-secondary" style="background-color: red; border: red;">
+                        <i class="bi bi-x-circle me-1"></i> Cancelar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
+<!-- Script Preview Imagen -->
+<script>
+document.getElementById('imagen_producto').addEventListener('change', function() {
+    const file = this.files[0];
+    const preview = document.getElementById('preview-imagen');
+    const errorDiv = document.getElementById('error-imagen');
+    errorDiv.textContent = '';
+
+    if (file) {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/jpg'];
+
+        if (!allowedTypes.includes(file.type)) {
+            errorDiv.textContent = 'Solo se permiten imágenes (JPG, PNG, GIF, WEBP).';
+            this.value = ''; // Limpiar input
+            preview.src = "{% static 'img/producto-default.png' %}";
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+
+{% endblock %}

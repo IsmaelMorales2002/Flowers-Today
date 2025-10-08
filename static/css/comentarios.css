@@ -1,0 +1,400 @@
+/* comentarios.css - Estilos para Formulario de Comentarios */
+
+/* Variables de colores */
+:root {
+    --primary-color: #6C2DC7;
+    --primary-hover: #5a249b;
+    --light-bg: #f8f9fa;
+    --white: #ffffff;
+    --text-muted: #6c757d;
+    --success-bg: #d4edda;
+    --success-text: #155724;
+    --border-radius: 20px;
+    --border-radius-pill: 50px;
+    --transition: all 0.3s ease;
+}
+
+/* Hero Section */
+.hero-section {
+    background: var(--light-bg);
+}
+
+/* Card principal del formulario */
+.comment-form-card {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.comment-form-header {
+    background: var(--primary-color);
+    border: none;
+}
+
+.comment-form-header h3 {
+    color: var(--white);
+}
+
+.comment-form-header p {
+    color: var(--white);
+    opacity: 0.8;
+}
+
+/* Alertas de mensajes */
+.alert-comment {
+    border-radius: 15px;
+    border-left: 5px solid var(--primary-color);
+    background-color: var(--success-bg);
+    color: var(--success-text);
+}
+
+/* Formulario */
+.form-label-comment {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.input-group-comment .input-group-text {
+    background: var(--primary-color);
+    color: var(--white);
+    border: 2px solid var(--primary-color);
+}
+
+.form-control-comment {
+    border: 2px solid var(--primary-color);
+    border-radius: 0 15px 15px 0;
+    font-size: 1rem;
+    padding: 12px;
+}
+
+.form-control-comment:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(108, 45, 199, 0.25);
+}
+
+.textarea-comment {
+    border: 2px solid var(--primary-color);
+    border-radius: 15px;
+    font-size: 1rem;
+    padding: 15px;
+    resize: vertical;
+    min-height: 120px;
+}
+
+.textarea-comment:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(108, 45, 199, 0.25);
+}
+
+/* Botón principal */
+.btn-comment-submit {
+    background: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius-pill);
+    color: var(--white);
+    transition: var(--transition);
+    padding: 0.75rem 2rem;
+    font-weight: bold;
+}
+
+.btn-comment-submit:hover {
+    transform: translateY(-2px);
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: var(--white);
+}
+
+/* Separador decorativo */
+.decorative-separator {
+    height: 3px;
+    background: var(--primary-color);
+    width: 100%;
+}
+
+.separator-icon {
+    background: var(--primary-color);
+    min-width: 60px;
+    padding: 0.75rem;
+    border-radius: 50%;
+}
+
+.separator-icon i {
+    color: var(--white);
+    font-size: 1.5rem;
+}
+
+/* Título de sección destacado */
+.section-title-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    background: var(--primary-color);
+    border: 3px solid var(--secondary-color);
+    border-radius: var(--border-radius-pill);
+    padding: 0.75rem 2rem;
+    position: relative;
+}
+
+.section-title h2 {
+    color: var(--white);
+    margin: 0;
+    font-weight: bold;
+}
+
+.title-icon {
+    background: var(--white);
+    border-radius: 50%;
+    padding: 0.5rem;
+    margin: 0 0.75rem;
+}
+
+.title-icon i {
+    color: var(--primary-color);
+}
+
+/* Línea decorativa pequeña */
+.small-separator {
+    height: 3px;
+    background: var(--primary-color);
+    width: 200px;
+}
+
+.small-separator-icon {
+    background: var(--primary-color);
+    border-radius: 50%;
+    padding: 0.5rem;
+    margin: 0 0.75rem;
+}
+
+.small-separator-icon i {
+    color: var(--white);
+    font-size: 0.9rem;
+}
+
+/* Cards de comentarios */
+.comment-card {
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    transition: transform 0.3s ease;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    height: 100%;
+}
+
+.comment-card:hover {
+    transform: translateY(-10px);
+}
+
+.comment-card-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: var(--primary-color);
+}
+
+.comment-quote-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--light-bg);
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.comment-quote-icon i {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+
+.comment-title {
+    color: var(--primary-color);
+    line-height: 1.3;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.comment-text {
+    color: var(--text-muted);
+    line-height: 1.6;
+    flex-grow: 1;
+}
+
+.comment-footer {
+    background-color: var(--light-bg);
+    border: none;
+    padding: 1rem 1.5rem;
+}
+
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    background: var(--primary-color);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+}
+
+.user-avatar i {
+    font-size: 0.9rem;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #212529;
+    font-size: 0.875rem;
+}
+
+.comment-date {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+}
+
+.comment-date i {
+    margin-right: 0.25rem;
+}
+
+/* Estado vacío */
+.empty-comments {
+    background: var(--light-bg);
+    border-radius: var(--border-radius);
+    border: 2px solid var(--primary-color);
+    padding: 3rem 1rem;
+    text-align: center;
+}
+
+.empty-comments-icon {
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.empty-comments h4 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.empty-comments p {
+    color: var(--text-muted);
+}
+
+/* Sección de llamada a la acción */
+.cta-section {
+    background: var(--light-bg);
+    border-top: 3px solid var(--primary-color);
+    padding: 3rem 0;
+}
+
+.cta-title {
+    color: var(--primary-color);
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.cta-description {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+.btn-cta {
+    background: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius-pill);
+    color: var(--white);
+    text-decoration: none;
+    padding: 0.75rem 2rem;
+    font-weight: bold;
+    transition: var(--transition);
+    display: inline-block;
+}
+
+.btn-cta:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: var(--white);
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+/* Utilidades adicionales */
+.border-2 {
+    border-width: 2px !important;
+}
+
+.shadow-custom {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .display-6 {
+        font-size: 1.8rem;
+    }
+    
+    .lead {
+        font-size: 1rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .px-5 {
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+    }
+    
+    .section-title {
+        padding: 0.5rem 1.5rem;
+    }
+    
+    .title-icon {
+        margin: 0 0.5rem;
+    }
+    
+    .small-separator {
+        width: 150px;
+    }
+    
+    .btn-comment-submit,
+    .btn-cta {
+        padding: 0.625rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .comment-form-card {
+        margin: 1rem;
+    }
+    
+    .section-title {
+        padding: 0.5rem 1rem;
+    }
+    
+    .section-title h2 {
+        font-size: 1.25rem;
+    }
+    
+    .small-separator {
+        width: 100px;
+    }
+    
+    .comment-card {
+        margin-bottom: 1rem;
+    }
+    
+    .cta-section {
+        padding: 2rem 0;
+    }
+}

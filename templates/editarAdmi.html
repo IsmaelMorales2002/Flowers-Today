@@ -1,0 +1,103 @@
+{% extends 'menuAdministrador.html' %}
+{% load static %}
+{% block title %}Editar Administrador{% endblock %}
+
+{% block content %}
+<section class="container my-5 text-white">
+    <h2 class="mb-4 text-center">Editar Administrador</h2>
+
+    <form method="post" action="{% url 'EditarCuentaAdmi' administrador.id_usuario %}" id="form-editar-admi">
+        {% csrf_token %}
+        <div class="row gy-4">
+            <div class="col-12 col-md-6">
+                <label class="form-label">Nombre:</label>
+                <input type="text" name="txtNombre"
+                    class="form-control {% if 'nombre' in campos_vacios %}is-invalid{% endif %}"
+                    value="{{ administrador.nombre_usuario }}" required>
+                {% if 'nombre' in campos_vacios %}
+                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                {% endif %}
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label class="form-label">Apellido:</label>
+                <input type="text" name="txtApellido"
+                    class="form-control {% if 'apellido' in campos_vacios %}is-invalid{% endif %}"
+                    value="{{ administrador.apellido_usuario }}" required>
+                {% if 'apellido' in campos_vacios %}
+                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                {% endif %}
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label for="telefono" class="form-label">Teléfono</label>
+                <input type="tel" name="txtTelefono"
+                    class="form-control {% if error_telefono or 'telefono' in campos_vacios %}is-invalid{% endif %}"
+                    value="{{ telefono|default:administrador.telefono_usuario }}">
+                {% if 'telefono' in campos_vacios %}
+                <div class="invalid-feedback">El campo teléfono es obligatorio.</div>
+                {% elif error_telefono %}
+                <div class="invalid-feedback">Este teléfono ya está registrado.</div>
+                {% endif %}
+
+
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label class="form-label">Correo electrónico:</label>
+                <input type="email" name="txtCorreo" class="form-control {% if error_correo %}is-invalid{% endif %}"
+                    value="{{ administrador.correo_usuario }}" required>
+                {% if error_correo %}
+                <div class="invalid-feedback">Correo ya registrado</div>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label">Rol:</label>
+                <select name="txtRol" class="form-select {% if 'rol' in campos_vacios %}is-invalid{% endif %}" required>
+                    <option value="A" {% if rol_A %}selected{% endif %}>Administrador</option>
+                    <option value="C" {% if rol_C %}selected{% endif %}>Cliente</option>
+
+                </select>
+                {% if 'rol' in campos_vacios %}
+                <div class="invalid-feedback">Debe seleccionar un rol.</div>
+                {% endif %}
+            </div>
+
+
+
+            <div class="d-flex flex-column flex-md-row justify-content-center gap-2 mt-4">
+                <button type="button" class="btn text-white" style="background-color:#6C2DC7;" data-bs-toggle="modal"
+                    data-bs-target="#modalConfirmacion">Guardar Cambios</button>
+                <a href="{% url 'vista_administradores_administracion' %}" class="btn btn-danger">Cancelar</a>
+            </div>
+        </div>
+
+        <!-- Modal de Confirmación -->
+        <div class="modal fade" id="modalConfirmacion" tabindex="-1" aria-labelledby="modalConfirmacionLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-dark">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title">¿Desea modificar este administrador?</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body fw-bold">
+                        Asegúrese que la información sea correcta.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn text-white"
+                            style="background-color:#6C2DC7;">Confirmar</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
+{% if messages %}
+
+</div>
+{% endif %}
+{% endblock %}

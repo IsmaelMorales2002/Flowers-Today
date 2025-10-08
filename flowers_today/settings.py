@@ -29,9 +29,10 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 # CAMBIAR EN PRODUCCION!
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://55f8-179-51-3-208.ngrok-free.app'
-]
+#TODO : CAMBIAR EN PRODUCCION
+# CSRF_TRUSTED_ORIGINS = [
+#     'https://flowers-today-production.up.railway.app'
+# ]
 
 # Application definition
 
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -83,8 +85,12 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'flowers',
         'USER': 'postgres',
+<<<<<<< HEAD
         'PASSWORD': '1234',
+=======
+>>>>>>> origin/main
         'HOST': 'localhost',
+        'PASSWORD': 'root',
         'PORT': '5432'
     }
 }
@@ -125,12 +131,39 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = '/home/ec2-user/uploads'
+
+MEDIA_URL = 'https://3.140.248.123/media/'
+MEDIA_ROOT = '/home/ec2-user/uploads/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Verificacion de actividad
+# 10 minutos de inactividad (600 segundos)
+"""SESSION_COOKIE_AGE = 600"""
+
+#Renovacion si interactua
+"""SESSION_SAVE_EVERY_REQUEST = True"""
+
+#Eliminar datos de sesión cuando se cierra el navegador (Opcional)
+#SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+#Sesion Para Token de Recuperacion
+PASSWORD_RESET_TIMEOUT = 300
+
+#Configuracion de envio de correo
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'alesibrian25@gmail.com'
+EMAIL_HOST_PASSWORD = 'sfga ecgy qeeb xeyu'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

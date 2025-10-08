@@ -1,558 +1,465 @@
-from django.http import JsonResponse
-from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib import messages
+from django.core.mail import EmailMessage
+from django.urls import reverse
+from django.template.loader import render_to_string
+from django.conf import settings
+from django.shortcuts import render,redirect
+from app.administrador import *
 from .models import *
-import json
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password,check_password
+#Generacion de Tokens
+from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from .token import token_generator
+from app.generar_comprobante import *
 
-#Funcion Vista_Login, Muestra la vista Login.html
+# Vista_Inicio, muestra la vista inicio.html
+def Vista_Inicio_Cliente(request):
+    # Solo productos activos
+    productos = Producto.objects.filter(producto_activo=True)
+    
+    # Solo categorías activas que tienen productos activos relacionados
+    categorias = Categoria.objects.filter(
+        estado_categoria=True,
+        producto__producto_activo=True  # relación inversa hacia productos
+    ).distinct()
+    
+    activo = request.session.get('activo', False)
+    
+    return render(request, 'inicio.html', {
+        'activo': activo,
+        'productos': productos,
+        'categorias': categorias
+    })
+
+    
+def Vista_Inicio_Administrador(request):
+    #Proteccion de Ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        return render(request,'inicioAdministrador.html',{
+                'activo': activo
+        })
+    return redirect('vista_inicio_cliente')
+
+# Vista_Login, muestra la vista login.html
 def Vista_Login(request):
     return render(request,'login.html')
 
-#Funcion Vista_Crear_Cuenta, Muestra la vista registro.html
-def Vista_Crear_Cuenta(request):
+# Vista_Registro, muestra la vista registro.html
+def Vista_Registro(request):
     return render(request,'registro.html')
 
-"""
-Funcion: Crear_Cuenta_Cliente
-Descripcion: 
-Crea un nuevo registro en la tabla usuario en la base de datos,
-con un rol de tipo Cliente bandera tipo C.
-"""
-def Crear_Cuenta_Cliente(request):
-    nombre = request.POST.get('txtNombreN','').strip()
-    apellido = request.POST.get('txtApellidoN','').strip()
-    telefono = request.POST.get('txtTelefonoN','').strip()
-    correo = request.POST.get('txtCorreoN','').strip()
-    password_plano = request.POST.get('txtPasswordN','').strip()
-
-    campos_vacios = []
-    if not nombre:
-        campos_vacios.append('nombre')
-    if not apellido:
-        campos_vacios.append('apellido')
-    if not telefono:
-        campos_vacios.append('telefono')
-    if not correo:
-        campos_vacios.append('correo')
-    if not password_plano:
-        campos_vacios.append('password')
-
-    contexto = {
-            'nombre': nombre,
-            'apellido': apellido,
-            'telefono': telefono,
-            'correo': correo,
-            'campos_vacios': campos_vacios
-    }
-    if campos_vacios:
-        messages.warning(request,'Por favor No Dejar Campos En Blanco')
-        return render(request,'registro.html',contexto)
-    
-    #Creacion de registro en tabla Rol en Base De Datos
-    try:
-        rol = Rol(
-            nombre_rol = 'C'
-        )
-    #Termina la creacion del registro Rol
-
-    #Verificacion de correo y telefono existente
-        datosExistentes = Usuario.objects.filter(Q(correo_usuario = correo) | Q(telefono_usuario = telefono))
-        if datosExistentes:
-            messages.warning(request,'!Correo o Telefono, ya registrado!')
-            return render(request,'registro.html',contexto)
-
-        #Cifrar Contraseña
-        password = make_password(password_plano)
-
-    #Creacion de registo en tabla Usuario en Base De Datos
-        cliente = Usuario(
-            id_rol = rol,
-            nombre_usuario = nombre,
-            apellido_usuario = apellido,
-            correo_usuario = correo,
-            password_usuario = password,
-            telefono_usuario = telefono,
-            usuario_activo = True
-        )
-    #Termina la creacion del registro Usuario
-    #Si todo salio bien , vamos a guardar todo en base de datos
-        rol.save()
-        cliente.save()
-        messages.success(request,'!Cuenta Creada Con Exito!')
-        request.session['usuario_nombre'] = cliente.nombre_usuario
-        request.session['usuario_apellido'] = cliente.apellido_usuario
-        request.session['usuario_correo'] = cliente.correo_usuario
-        request.session['usuario_id'] = cliente.id_usuario
-        return redirect('inicio')
-    except Exception as e:
-        messages.error(request,'!Error!, Cuenta no creada')
-
-    return redirect('login')
-
-#Funcion Vista_Inicio, Muestra la vista Inicio.html
-def Vista_Inicio(request):
-    activo = request.session.get('usuario_correo', None)
-    categorias_con_productos = obtener_productos_por_categoria()
-
-    return render(request, 'inicio.html', {
-        'activo': activo,
-        'categorias_con_productos': categorias_con_productos
-    })
-
-
-def obtener_productos_por_categoria():
-    categorias = Categoria.objects.filter(estado_categoria=True)
-    categorias_con_productos = []
-
-    for categoria in categorias:
-        productos = Producto.objects.filter(
-            id_categoria=categoria,
-            producto_activo=True
-        )
-
-        if productos.exists():
-            categorias_con_productos.append({
-                'categoria': categoria,
-                'productos': productos
-            })
-
-    return categorias_con_productos
-
-#Funcion Vista_Inicio_Administrador, Muestra la vista InicioAdministrador.html
-def Vista_Inicio_Administrador(request):
-    activo_admin = request.session.get('admin_correo',None)
-    if activo_admin:
-        return render(request,'inicioAdministrador.html',{
-            'activo_admin': activo_admin
-        })
-    return render(request,'inicio.html')
-
-"""Funcion: Iniciar_Sesion
-Descripcion:
-Verifica que el correo y contraseña sean los correcto para darle acceso al sistema
-"""
+# Iniciar_Sesion, Logica para iniciar sesion
 def Iniciar_Sesion(request):
-    correo = request.POST.get('txtCorreo')
-    password = request.POST.get('txtPassword')
+    correo = request.POST.get('txtCorreo','').strip()
+    password = request.POST.get('txtPassword','').strip()
 
-    try:
+    contexto = {}
+    try: 
         usuario = Usuario.objects.get(correo_usuario = correo)
-        
+
         #Verificacion de contraseña
         if check_password(password,usuario.password_usuario):
             #Session para guardar informacion del cliente
             if usuario.id_rol.nombre_rol == 'C':
-                request.session['usuario_nombre'] = usuario.nombre_usuario
-                request.session['usuario_apellido'] = usuario.apellido_usuario
-                request.session['usuario_correo'] = usuario.correo_usuario
-                request.session['usuario_id'] = usuario.id_usuario
-                return redirect('inicio')
+                request.session['nombre_cliente'] = usuario.nombre_usuario
+                request.session['apellido_cliente'] = usuario.apellido_usuario
+                request.session['correo_cliente'] = usuario.correo_usuario
+                request.session['id_usuario'] = usuario.id_usuario
+                request.session['activo'] = True
+                return redirect('vista_inicio_cliente')
             
+            #Session paran guardar informacion del administrador
             elif usuario.id_rol.nombre_rol == 'A':
-                request.session['admin_nombre'] = usuario.nombre_usuario
-                request.session['admin_apellido'] = usuario.apellido_usuario
-                request.session['admin_correo'] = usuario.correo_usuario
-                request.session['admin_id'] = usuario.id_usuario
-                return redirect('inicio_admin')
-            
-            else:
-                messages.error(request,'!Usuario No Encontrado!')
-                return redirect('login')
+                request.session['nombre_administrador'] = usuario.nombre_usuario
+                request.session['apellido_administrador'] = usuario.apellido_usuario
+                request.session['correo_administrador'] = usuario.correo_usuario
+                request.session['id_usuario'] = usuario.id_usuario
+                request.session['activo_administrador'] = True
+                return redirect('vista_inicio_administrador')
         else:
-            messages.warning(request,'Credenciales Incorrectas')
-            return render(request,'login.html',{
-                'activo': request.session.get('usuario_correo')
-            })
+            contexto['error_credenciales'] = 'Credenciales Incorrectas'
+            contexto['correo'] = correo
+            return render(request,'login.html',contexto)
 
     except Usuario.DoesNotExist:
-        messages.error(request,'!Usuario No Encontrado!')
-        return redirect('login')
-
-
-
-#Funcion Cerrar_Sesion, Cierra Session y elimina las session creadas
+        contexto['error_usuario'] = 'Usuario No Encontrado'
+        return render(request,'login.html',contexto)
+    
+# Cerrar_Sesion, logica para cerrar sesion
 def Cerrar_Sesion(request):
+    # Identificar que rol tiene para eliminar las request.sessiones corecctas
     try:
-        usuario = Usuario.objects.get(id_usuario = request.session.get('usuario_id',None))
-        if usuario.id_rol.nombre_rol == 'C':
-            del request.session['usuario_correo']
-            del request.session['usuario_apellido']
-            del request.session['usuario_nombre']
-            del request.session['usuario_id']
-            return redirect('inicio')
+        cliente = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
+        if cliente.id_rol.nombre_rol == 'C':
+            del request.session['nombre_cliente']
+            del request.session['apellido_cliente']
+            del request.session['correo_cliente']
+            del request.session['id_usuario']
+            del request.session['activo']
+            return redirect('vista_inicio_cliente')
+        elif cliente.id_rol.nombre_rol == 'A':
+            del request.session['nombre_administrador']
+            del request.session['apellido_administrador']
+            del request.session['correo_administrador']
+            del request.session['id_usuario']
+            del request.session['activo_administrador']
+            return redirect('vista_inicio_cliente')
+    except Usuario.DoesNotExist:
+        return redirect('vista_login')
     
-    except Usuario.DoesNotExist as e:
-        try:
-            admin = Usuario.objects.get(id_usuario = request.session.get('admin_id',None))
-            if admin.id_rol.nombre_rol == 'A': 
-                del request.session['admin_correo']
-                del request.session['admin_apellido']
-                del request.session['admin_nombre']
-                del request.session['admin_id']
-                return redirect('inicio')
-        except Usuario.DoesNotExist:
-            return redirect('login')
-
-#Funcion Vista_Ver_Perfil, Muestra la vista perfil.html
-# Esta vista puede ser utilizada para mostrar la informacion del usuario logueado
-def Vista_Ver_Perfil(request):
-    #Seguridad de Rutas
-    activo = request.session.get('usuario_correo',None)
-    if activo:
-        try:
-            usuario = Usuario.objects.get(correo_usuario = activo)
-            return render(request, 'perfil.html',{
-                'activo': activo,
-                'usuario': usuario
-            })
-        except Usuario.DoesNotExist:
-            return redirect('inicio')
-    else:
-        return redirect('login')
-    
-def Vista_Ver_Perfil_Admin(request):
-    #Seguridad de Rutas
-    activo_admin = request.session.get('admin_correo',None)
-    if activo_admin:
-        try:
-            usuario = Usuario.objects.get(correo_usuario = activo_admin)
-            return render(request, 'perfilAdministrador.html',{
-                'activo_admin': activo_admin,
-                'usuario': usuario
-            })
-        except Usuario.DoesNotExist:
-            return redirect('inicio')
-    else:
-        return redirect('login')
-
-
-#Funcion Vista_Editar_Perfil, Muestra la vista editar_perfil.html
-# Esta vista puede ser utilizada para editar la informacion del usuario logueado
-def Vista_Editar_Perfil(request):
-    activo = request.session.get('usuario_correo',None)
-    if activo:
-        try:
-            usuario = Usuario.objects.get(correo_usuario = activo)
-            return render(request,'editar_perfil.html',{
-                'activo': activo,
-                'usuario': usuario
-            })
-        except Usuario.DoesNotExist:
-            return redirect('inicio')
-    else:
-        return redirect('login')
-
-#Funcion Vista_Recuperar_Password, Muestra la vista recuperar_password.html
-# Esta vista puede ser utilizada para iniciar el proceso de recuperacion de contraseña
+# Vista_Recuperar_Password, muestra la vista recuperar_password.html
 def Vista_Recuperar_Password(request):
-    return render(request, 'recuperar_password.html')
+    return render(request,'recuperar_password.html')
 
-def Vista_Nueva_Password(request, token):
-    return render(request, 'nueva_password.html', {'token': token})
-
-# Funcion Vista_Listar_Categoria, Muestra la vista listar_categoria.html
-# Esta vista lista todas las categorias disponibles en la base de datos
-def Vista_Listar_Categoria(request):
-    #Seguridad De Ruta
-    activo_admin = request.session.get('admin_correo',None)
-    if activo_admin:
+# Vista_Ver_Perfil_Cliente, muestra la vista perfilCliente.html
+def Vista_Ver_Perfil_Cliente(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo',False)
+    if activo:
         try:
-            categorias = Categoria.objects.all().order_by('nombre_categoria')
-            return render(request, 'listar_categoria.html', {
-                'categorias': categorias,
-                'activo_admin': activo_admin
+            #Conocer informacion del cliente
+            cliente = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
+            return render(request,'perfilCliente.html',{
+                'activo': activo,
+                'usuario': cliente
             })
-        except Exception as e:
-            print(e)
-            return render(request, 'listar_categoria.html', {'categorias': []})
-    return redirect('login')
+        except Usuario.DoesNotExist:
+            return redirect('vista_inicio_cliente')
+    else:
+        return redirect('vista_inicio_cliente')
     
-# Funcion Vista_Insertar_Categoria, Muestra la vista insertar_categoria.html
-# Esta vista permite al usuario registrar una nueva categoria en la base de datos 
-def Vista_Insertar_Categoria(request):
-    if request.method == 'POST':
-        nombre_categoria = request.POST.get('nombre_categoria', '').strip()
-
-        if nombre_categoria == '':
-            messages.error(request, 'El nombre de la categoría no puede estar vacío.')
-            return redirect('insertar_categoria')
-
-        # Validar duplicado
-        if Categoria.objects.filter(nombre_categoria__iexact=nombre_categoria).exists():
-            messages.error(request, 'Ya existe una categoría con ese nombre.')
-            return redirect('insertar_categoria')
-
+# Vista_Editar_Perfil_Cliente, muestra la vista editar_perfilCliente
+def Vista_Editar_Perfil_Cliente(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo',False)
+    if activo:
         try:
-            nueva_categoria = Categoria(nombre_categoria=nombre_categoria)
-            nueva_categoria.save()
-            messages.success(request, 'Categoría registrada exitosamente.')
-            return redirect('listar_categoria')  # Redirigir a la lista
-        except Exception as e:
-            messages.error(request, f'Ocurrió un error al registrar la categoría: {str(e)}')
-            return redirect('insertar_categoria')
-
-    return render(request, 'insertar_categoria.html')
-
-
-def Vista_Insertar_Producto(request):
-    activo_admin = request.session.get('admin_correo',None)
-
-    if activo_admin:
-        categorias = Categoria.objects.all().order_by('nombre_categoria')
-
-        if request.method == 'POST':
-            try:
-                nombre_producto = request.POST.get('nombre_producto', '').strip()
-                id_categoria = request.POST.get('id_categoria')
-                descripcion_producto = request.POST.get('descripcion_producto', '').strip()
-                
-                imagen_producto = request.FILES.get('imagen_producto')
-
-                cantidad_maxima = request.POST.get('cantidad_maxima')
-                cantidad_minima = request.POST.get('cantidad_minima')
-                precio_producto = request.POST.get('precio_producto')
-                
-                existencia_producto = request.POST.get('existencia_producto')
-                
-                tipo_producto = request.POST.get('tipo_producto')
-                
-                # Checkbox
-                activo = True if request.POST.get('producto_activo') else False
-
-                # Validación básica
-                if nombre_producto == '' or id_categoria == '' or tipo_producto == '':
-                    messages.error(request, 'Debe completar todos los campos.')
-                    return redirect('insertar_producto')
-
-                nuevo_producto = Producto(
-                    nombre_producto = nombre_producto,
-                    id_categoria_id = id_categoria,
-                    descripcion_producto = descripcion_producto,
-                    imagen_producto = imagen_producto,
-                    cantidad_maxima = cantidad_maxima,
-                    cantidad_minima = cantidad_minima,
-                    precio_producto = precio_producto,
-                    existencia_producto = existencia_producto,  # respetando el modelo
-                    tipo_producto = tipo_producto,
-                    producto_activo = activo
-                )
-                nuevo_producto.save()
-
-                messages.success(request, 'Producto registrado exitosamente.')
-                return redirect('listar_producto')
-
-            except Exception as e:
-                messages.error(request, f'Error al registrar el producto: {str(e)}')
-                return redirect('insertar_producto')
-
-        return render(request, 'insertar_producto.html', {
-            'categorias': categorias,
-            'activo_admin': activo_admin
+            #Conocer informacion del cliente
+            cliente = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
+            return render(request,'editar_perfilCliente.html',{
+                'activo': activo,
+                'usuario': cliente
             })
+        except Usuario.DoesNotExist:
+            return redirect('vista_inicio_cliente')
+    else:
+        return redirect('vista_inicio_cliente')
 
-
-TIPO_PRODUCTO = {
-    1: 'Arreglos Mixto',
-    2: 'Flores',
-    3: 'Arreglos Flores'
-}
-
-def Vista_Listar_Producto(request):
-    activo_admin = request.session.get('admin_correo',None)
-    if activo_admin:
-        productos = Producto.objects.select_related('id_categoria').all().order_by('-id_producto')
-        categorias = Categoria.objects.all().order_by('nombre_categoria')
-
-        lista_productos = []
-        for p in productos:
-            lista_productos.append({
-                'id_producto': p.id_producto,
-                'nombre_producto': p.nombre_producto,
-                'nombre_categoria': p.id_categoria.nombre_categoria if p.id_categoria else '',
-                'id_categoria': p.id_categoria.id_categoria if p.id_categoria else '',
-                'tipo_producto': TIPO_PRODUCTO.get(p.tipo_producto, 'Desconocido'),
-                'tipo_producto_val': p.tipo_producto,
-                'descripcion_producto': p.descripcion_producto,
-                'cantidad_maxima': p.cantidad_maxima,
-                'cantidad_minima': p.cantidad_minima,
-                'precio_producto': p.precio_producto,
-                'existencia_producto': p.existencia_producto,
-                'producto_activo': p.producto_activo,
-                'imagen_producto': p.imagen_producto.url,  # ya es URL
+# Vista_Clientes_Administracion, muestra la vista clientes_administracion
+def Vista_Clientes_Administracion(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        try:
+            usuarios = Usuario.objects.filter(id_rol__nombre_rol = 'C')
+            return render(request,'clientes_administracion.html',{
+                'activo' : activo,
+                'usuarios': usuarios
             })
+        except Exception:
+            return redirect('vista_inicio_administrador')
 
-        return render(request, 'listar_producto.html', {
-            'productos': lista_productos,
-            'categorias': categorias,
-            'activo_admin': activo_admin
+    return redirect('vista_inicio_cliente')
+
+# Vista_Crear_Cliente, muestra la vista crearCliente.html
+def Vista_Crear_Cliente(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        return render(request,'crearCliente.html',{
+            'activo':activo
+        })
+    return redirect('vista_inicio_cliente')
+
+def Vista_Administradores_Administracion(request):
+   #Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+
+    if activo:
+        try:
+            id_actual = request.session.get('id_usuario')  # ID del usuario logueado
+            usuarios = Usuario.objects.filter(id_rol__nombre_rol='A').exclude(id_usuario=id_actual)
+
+            return render(request,'admi_administracion.html',{
+                'activo' : activo,
+                'usuarios': usuarios
+            })
+        except Exception:
+            return redirect('vista_inicio_administrador')
+
+    return redirect('vista_inicio_cliente')
+
+def Vista_Crear_Admi(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        return render(request,'crearAdmi.html',{
+            'activo':activo
+        })
+    return redirect('vista_inicio_cliente')
+
+
+def Vista_Categoria_Administracion(request):
+     #Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        try:
+            usuarios = Usuario.objects.filter(id_rol__nombre_rol = 'A')
+            categorias = Categoria.objects.all()
+            return render(request,'categoria_administracion.html',{
+                'activo' : activo,
+                'usuarios': usuarios,
+                'categorias': categorias
+            })
+        except Exception:
+            return redirect('vista_inicio_administrador')
+
+    return redirect('vista_inicio_cliente')
+
+def Vista_Crear_Categoria(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    
+    if activo:
+        return render(request,'crearCategoria.html',{
+            'activo':activo
+        })
+    return redirect('vista_inicio_cliente')
+
+def Vista_Editar_Categoria(request, id_categoria):
+    activo = request.session.get('activo_administrador', False)
+    if activo:
+        try:
+            categoria = Categoria.objects.get(id_categoria=id_categoria)
+            contexto = {
+                'activo': activo,
+                'nombre': categoria.nombre_categoria,
+                'id_categoria': id_categoria
+            }
+            return render(request, 'editar_categoria.html', contexto)
+        except Categoria.DoesNotExist:
+            return redirect('vista_categoria_administracion')
+
+    return redirect('vista_login')
+
+def vista_comentario(request):
+    activo = request.session.get('activo', False)
+    if activo:
+        try:
+            nombre = request.session.get('nombre_cliente', '')
+            apellido = request.session.get('apellido_cliente', '')
+            comentarios = Comentario.objects.select_related('id_usuario').order_by('-fecha_comentario')[:9]  # solo los 10 más recientes
+
+            contexto = {
+                'activo': activo,
+                'nombre': nombre,
+                'apellido': apellido,
+                'comentarios': comentarios,
+            }
+            return render(request, 'comentario_formulario.html', contexto)
+        except KeyError:
+            return redirect('vista_login')
+    return redirect('vista_login')
+
+#Vista de actualizar clave
+def Vista_Actualizar_Clave(request,uidb64,token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        usuario = Usuario.objects.get(id_usuario=uid)
+    except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
+        usuario = None
+
+    if usuario is not None and token_generator.check_token(usuario,token):
+        return render(request,'nueva_password.html',{
+            'uidb64': uidb64, 
+            'token': token
+        })
+    else:
+        return render(request,'token_invalido.html')
+    
+#Logica para actualizar contraseña
+def Actualizar_Clave(request,uidb64,token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        usuario = Usuario.objects.get(id_usuario=uid)
+    except (TypeError, ValueError, OverflowError, Usuario.DoesNotExist):
+        usuario = None
+        return redirect('vista_login')
+
+    if usuario and token_generator.check_token(usuario,token):
+        nueva_pass = request.POST.get('txtPasswordNueva').strip()
+        usuario.password_usuario = make_password(nueva_pass)
+        usuario.save()
+        messages.success(request,"Contraseña Actualizada")
+        return redirect('vista_login')
+
+#Logica Para enviar correos de recuperacion de clave 
+def Correo_Recuperacion(request):
+    correo_destinatario = request.POST.get('txtCorreoUsuario').strip()
+    contexto = {}
+
+    if correo_destinatario:
+        contexto['correo'] = correo_destinatario
+        try: 
+            usuario = Usuario.objects.get(correo_usuario=correo_destinatario)
+        except Usuario.DoesNotExist:
+            contexto['error_usuario'] = 'Usuario No Encontrado'
+            return render(request,'recuperar_password.html',contexto)
+        
+        # Generar UID y Tokem
+        uid = urlsafe_base64_encode(force_bytes(usuario.id_usuario))
+        token = token_generator.make_token(usuario)
+
+        # Enlace de recuperacion
+        enlace_recuperacion = request.build_absolute_uri(
+            reverse('vista_credencial',kwargs={'uidb64':uid, 'token': token})
+        )
+
+        # Renderizar Plantilla HTML
+        mensaje = render_to_string('recuperacion.html',{
+            'enlace_recuperacion': enlace_recuperacion
         })
 
+        # Enviar Correo
+        email = EmailMessage(
+            'Recuperación de Contraseña',
+            mensaje,
+            settings.DEFAULT_FROM_EMAIL,
+            [correo_destinatario]
+        )
+        email.content_subtype = 'html'
+        email.send()
+        messages.success(request,'!Enviado!')
+        return redirect('vista_recuperar_password')
+    
+    return render(request,'recuperar_password.html',contexto)
 
-def Vista_Editar_Producto(request):
-    if request.method == 'POST':
+def Vista_Editar_Admi(request, id):
+    # Protección de ruta
+    activo = request.session.get('activo_administrador', False)
+
+    if activo:
         try:
-            id_producto = request.POST.get('id_producto')
-            producto = get_object_or_404(Producto, id_producto=id_producto)
+            administrador = Usuario.objects.get(id_usuario=id)
+            return render(request, 'editarAdmi.html', {
+                'administrador': administrador,
+                'activo': activo
+            })
+        except Usuario.DoesNotExist:
+            return redirect('vista_administradores_administracion')  # si no existe, vuelve al listado
+    return redirect('vista_inicio_cliente')
 
-            nombre_producto = request.POST.get('nombre_producto', '').strip()
-            id_categoria = request.POST.get('id_categoria')
-            tipo_producto = request.POST.get('tipo_producto')
-            descripcion_producto = request.POST.get('descripcion_producto', '').strip()
-            cantidad_maxima = request.POST.get('cantidad_maxima')
-            cantidad_minima = request.POST.get('cantidad_minima')
-            precio_producto = request.POST.get('precio_producto')
-            existencia_producto = request.POST.get('existencia_producto')
-            imagen_producto = request.POST.get('imagen_producto', '').strip()
-            producto_activo = True if request.POST.get('producto_activo') == 'on' else False
+#Vista Editar Cliente desde Administracion
+def Vista_Editar_Cliente_Admin(request,id):
+    # Protección de ruta
+    activo = request.session.get('activo_administrador', False)
 
-            #  Validación: ningún campo vacío
-            if (not nombre_producto or not id_categoria or not tipo_producto or not descripcion_producto 
-                or not cantidad_maxima or not cantidad_minima or not precio_producto or not existencia_producto 
-                ):
-                
-                messages.error(request, 'Debe completar todos los campos.')
-                return redirect('listar_producto')
+    if activo:
+        try:
+            cliente = Usuario.objects.get(id_usuario = id)
+            return render(request,'editarCliente.html',{
+                'cliente': cliente,
+                'activo': activo
+            })
+        except Usuario.DoesNotExist:
+            return redirect('vista_clientes_administracion')
+    return redirect('vista_inicio_cliente')
 
-            # Si todo bien: actualizar
-            producto.nombre_producto = nombre_producto
-            producto.id_categoria_id = id_categoria
-            producto.tipo_producto = tipo_producto
-            producto.descripcion_producto = descripcion_producto
-            producto.cantidad_maxima = cantidad_maxima
-            producto.cantidad_minima = cantidad_minima
-            producto.precio_producto = precio_producto
-            producto.existencia_producto = existencia_producto
-            producto.imagen_producto = producto.imagen_producto
-            producto.producto_activo = producto_activo
 
-            producto.save()
+def vista_comentario_administracion(request):
+    activo = request.session.get('activo_administrador', False)
+    if activo:
+        try:
+            nombre = request.session.get('nombre_administrador', '')
+            apellido = request.session.get('apellido_administrador', '')
+            comentarios = Comentario.objects.select_related('id_usuario').order_by('-fecha_comentario')
 
-            messages.success(request, 'Producto editado correctamente.')
-            return redirect('listar_producto')
+            contexto = {
+                'activo': activo,
+                'nombre': nombre,
+                'apellido': apellido,
+                'comentarios': comentarios,
+            }
+            return render(request, 'comentarios_administracion.html', contexto)
+        except KeyError:
+            return redirect('vista_inicio_cliente')
+    return redirect('vista_inicio_cliente')
 
-        except Exception as e:
-            messages.error(request, f'Error al editar producto: {str(e)}')
-            return redirect('listar_producto')
-    else:
-        messages.error(request, 'Método no permitido.')
-        return redirect('listar_producto')
+
+# Vista_Productos
+def Vista_Productos(request):
+    # Protección de ruta
+    activo = request.session.get('activo_administrador', False)
+    if activo:
+        productos = Producto.objects.all()
+        return render(request,'productos_administracion.html',{
+            'productos' : productos,
+            'activo': activo
+        })
+    return redirect('vista_inicio_cliente')
     
-    
-def Vista_Cambiar_Estado_Producto(request):
-    if request.method == 'POST':
-        id_producto = request.POST.get('id_producto')
-        accion = request.POST.get('accion')  # puede ser 'activar' o 'desactivar'
+# Vista_Agregar_Producto
+def Vista_Agregar_Producto(request):
+    # Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        categorias = Categoria.objects.all()
+        return render(request,'agregar_producto.html',{
+            'activo': activo,
+            'categorias': categorias
+        })
+    return redirect('vista_inicio_cliente')
 
-        producto = get_object_or_404(Producto, id_producto=id_producto)
+# Vista_Actualizar_Producto
+def Vista_Actualizar_Producto(request,id):
+    # Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        producto = Producto.objects.get(id_producto=id)
+        categorias = Categoria.objects.all()
+        return render(request,'editar_producto.html',{
+            'activo': activo,
+            'producto': producto,
+            'categorias': categorias
+        })
+    return redirect('vista_inicio_cliente')
 
-        if accion == 'activar':
-            producto.producto_activo = True
-        else:
-            producto.producto_activo = False
 
-        producto.save()
-        messages.success(request, 'Estado del producto actualizado correctamente.')
-        return redirect('listar_producto')
-    else:
-        messages.error(request, 'Solicitud inválida.')
-        return redirect('listar_producto')
 
-""" Funcion: EditarPerfil
-Descripcion:
-Actualiza la informacion del cliente en la tabla Usuario
-"""
-def EditarPerfil(request):
-    nombre = request.POST.get('txtNombreA','').strip()
-    apellido = request.POST.get('txtApellidoA','').strip()
-    telefono = request.POST.get('txtTelefonoA','').strip()
-    correo = request.POST.get('txtCorreoA','').strip()
-    imagen = request.FILES.get('imagen_usuario')
+def vista_pedidos_administracion(request):
+    activo = request.session.get('activo_administrador', False)
+    if not activo:
+        return redirect('vista_inicio_cliente')
 
-    campos_vacios = []
-    if not nombre:
-        campos_vacios.append('nombre')
-    if not apellido:
-        campos_vacios.append('apellido')
-    if not telefono:
-        campos_vacios.append('telefono')
-    if not correo:
-        campos_vacios.append('correo')
+    nombre = request.session.get('nombre_administrador', '')
+    apellido = request.session.get('apellido_administrador', '')
 
-    if campos_vacios:
-        messages.warning(request,'Por Favor No Dejar Campos En Blanco')
-        return redirect('editar_perfil')
-    
-    #Verificacion de Actualziacion De Campos
-    try:
-        usuario = Usuario.objects.get(id_usuario = request.session.get('usuario_id',None))
-        usuario.nombre_usuario = nombre
-        usuario.apellido_usuario = apellido
-        usuario.telefono_usuario = telefono
-        usuario.correo_usuario = correo
-        if imagen:
-            usuario.imagen_usuario = imagen
-        usuario.save()
-        request.session['usuario_nombre'] = usuario.nombre_usuario
-        request.session['usuario_apellido'] = usuario.apellido_usuario
-        request.session['usuario_correo'] = usuario.correo_usuario
-        return redirect('ver_perfil')
-    except Usuario.DoesNotExist:
-        messages.error(request,'!Error!, Actualización No Realizada')
-        return redirect('editar_perfil')
+    if request.method == 'POST' and 'cambiar_estado' in request.POST:
+        cambiar_estado_pedido(request)
+        return redirect('vista_pedidos_administracion')
 
-def cambiar_estado_categoria(request):
-    if request.method == 'POST':
-        id_categoria = request.POST.get('id_categoria')
-        accion = request.POST.get('accion')
+    if request.GET.get('pdf'):
+        return generar_comprobante_pdf(request.GET.get('pdf'))
 
-        categoria = Categoria.objects.get(id_categoria=id_categoria)
-        if accion == 'activar':
-            categoria.estado_categoria = True
-        else:
-            categoria.estado_categoria = False
-        categoria.save()
+    pedidos = listar_pedidos()
 
-        messages.success(request, 'El estado de la categoría ha sido actualizado.')
-        return redirect('listar_categoria')
-
-def Vista_Listar_Usuarios(request):
-    usuarios = Usuario.objects.all()
-    return render(request, 'listar_usuarios.html', {
-        'usuarios': usuarios
+    return render(request, 'pedidos_administracion.html', {
+        'activo': activo,
+        'nombre': nombre,
+        'apellido': apellido,
+        'pedidos': pedidos,
     })
 
-def Vista_Actualizar_Categoria(request,id):
-    try:
-        categoria = Categoria.objects.get(id_categoria=id)
-        return render(request,'actualizarCategoria.html',{
-        'categoria': categoria
+#Vista para visualizar el carrito
+def vista_carrito(request):
+    activo = request.session.get('activo',False)
+    productos = Producto.objects.all()
+    if activo:
+        return render(request,'carrito.html',{
+            'activo': activo,
+            'productos': productos
         })
-    except Categoria.DoesNotExist:
-        return render('login')
-   
-
-def Actualizar_Categoria(request):
-    id_categoria = request.POST.get('id_categoria',None)
-    nombre_categoria = request.POST.get('nombre_categoria','').strip()
-
-    if not nombre_categoria:
-        messages.warning(request,'!Por favor No dejar campos en blanco!')
-        return redirect('actualizar_categoria',id=id_categoria)
-    
-    #Verificas Categoria Existente
-    existe = Categoria.objects.filter(nombre_categoria = nombre_categoria).exists()
-    if existe:
-        messages.warning(request,'!Categoria Ya Registrada!')
-        return redirect('actualizar_categoria',id=id_categoria)
-    
-    try: 
-        categoria = Categoria.objects.get(id_categoria = id_categoria)
-        categoria.nombre_categoria = nombre_categoria
-        categoria.save()
-        messages.success(request,'Categoria Actualizada')
-        return redirect('listar_categoria')
-    except Categoria.DoesNotExist:
-        messages.error(request,'!No se puedo actulizar!, Intente mas tarde!')
-        return redirect('actualizar_categoria',id=id_categoria)
+    return redirect('vista_inicio_cliente')

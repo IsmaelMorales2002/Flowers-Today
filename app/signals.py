@@ -16,7 +16,7 @@ def subir_imagen_usuario(path, url):
     try:
         with open(path, 'rb') as file:
             files = {'file': file}
-            response = requests.post(url, files=files, timeout=5)
+            response = requests.post(url, files=files, timeout=5,verify=False)
             response.raise_for_status()
             print('Imagen de usuario subida correctamente al servidor')
     except requests.exceptions.RequestException as e:
@@ -32,7 +32,7 @@ def enviar_imagen_usuario(sender, instance, created, **kwargs):
         return
 
     ruta_imagen = instance.imagen_usuario.path
-    url_servidor = 'http://3.140.248.123/usuario/'  # Cambia esta URL si es necesario
+    url_servidor = 'https://3.140.248.123/usuario/'  # Cambia esta URL si es necesario
 
     threading.Thread(target=subir_imagen_usuario, args=(ruta_imagen, url_servidor)).start()
 
@@ -49,7 +49,7 @@ def subir_imagen_producto(path, url):
     try:
         with open(path, 'rb') as file:
             files = {'file': file}
-            response = requests.post(url, files=files, timeout=5)
+            response = requests.post(url, files=files, timeout=5,verify=False)
             response.raise_for_status()
             print('Imagen de producto subida correctamente al servidor')
     except requests.exceptions.RequestException as e:
@@ -65,6 +65,6 @@ def enviar_imagen_producto(sender, instance, created, **kwargs):
         return
 
     ruta_imagen = instance.imagen_producto.path
-    url_servidor = 'http://3.140.248.123/producto/'  # Cambia esta URL si es necesario
+    url_servidor = 'https://3.140.248.123/producto/'  # Cambia esta URL si es necesario
 
     threading.Thread(target=subir_imagen_producto, args=(ruta_imagen, url_servidor)).start()

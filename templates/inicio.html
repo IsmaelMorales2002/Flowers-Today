@@ -1,140 +1,98 @@
 {% extends 'menu.html' %}
-{% block title %} Inicio {% endblock %}
+{% load static %}
+
+{% block title %}Inicio{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+<link rel="stylesheet" href="{% static 'css/carrusel.css' %}">
 
-<!-- Slick CSS -->
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
-
-<!-- Estilos -->
-<style>
-.card-producto {
-    background-color: #ffffff;
-    color: #000000;
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    min-height: 520px; /* 🔥 clave: todas las tarjetas del mismo alto */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 10px;
-    margin: 10px;
-}
-.card-producto img {
-    object-fit: cover;
-    width: 100%;
-    aspect-ratio: 1/1;
-}
-.card-producto .card-body {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-.card-producto .card-title {
-    font-size: 1rem;
-    font-weight: bold;
-    min-height: 40px;
-    margin-bottom: 5px;
-}
-.card-producto .card-text {
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-    max-height: 70px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    /* -webkit-line-clamp: 4; */
-    -webkit-box-orient: vertical;
-}
-.card-producto .card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: auto;
-    padding-top: 10px;
-    border-top: 1px solid #ddd;
-}
-.card-producto .card-price {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #6C2DC7;
-}
-.card-producto .btn-agregar {
-    background-color: #6C2DC7;
-    color: white;
-    border: none;
-    font-size: 0.85rem;
-    padding: 4px 8px;
-    border-radius: 5px;
-}
-.card-producto .btn-agregar:hover {
-    background-color: #5920a3;
-}
-</style>
-
-<section class="container my-5">
-    <h2 class="mb-4 text-center text-white">Nuestros Productos</h2>
-
-    {% for item in categorias_con_productos %}
-        <h3 class="text-white my-4">{{ item.categoria.nombre_categoria }}</h3>
-
-        <div class="slider-categoria">
-            {% for producto in item.productos %}
-                <div>
-                    <div class="card card-producto">
-                        <img src="{{ producto.imagen_producto.url }}" alt="{{ producto.nombre_producto }}">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ producto.nombre_producto }}</h5>
-                            <p class="card-text">{{ producto.descripcion_producto }}</p>
-                        </div>
-                        <div class="card-footer">
-                            <span class="card-price">Precio: ${{ producto.precio_producto }}</span>
-                            <button class="btn btn-agregar btn-sm" disabled>
-                                🛒
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
+<div class="container my-5">
+  <!-- MENSAJE DE BIENVENIDA -->
+  {% if activo %}
+  <div class="welcome-banner logged-in">
+    <div class="container">
+      <div class="welcome-content">
+        <div class="welcome-icon">
+          <i class="bi bi-heart-fill"></i>
         </div>
-    {% endfor %}
-</section>
+        <div class="welcome-text">
+          <p>Florece donde la vida te plante, y embellece al mundo con tu esencia.</p>
+          <h4>¡Hola, {{request.session.nombre_cliente}}! Bienvenido</h4>
+          <p>Nos alegra tenerte de vuelta. Descubre nuestras nuevas creaciones florales especialmente para ti.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="welcome-banner guest">
+    <div class="container">
+      <div class="welcome-content">
+        <div class="welcome-icon">
+          <i class="bi bi-flower2"></i>
+        </div>
+        <div class="welcome-text">
+          <p>Cuando las palabras faltan, un ramo habla por ti.</p>
+          <h4>Bienvenido a Flowers Today</h4>
+          <p>Nuestras flores son mensajeras de tus emociones más profundas. ¡Descubre la belleza de la naturaleza con nosotros! 💐</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
 
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- PRODUCTOS POR CATEGORÍA -->
+  {% for categoria in categorias %}
+    <h3 class="text-white mb-4 text-center">{{ categoria.nombre_categoria }}</h3>
 
-<!-- Slick JS -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <div class="carousel-wrapper my-4">
+      <!-- Flecha izquierda -->
+      <button class="btn btn-light shadow carousel-btn left"
+              onclick="scrollCarousel('carousel-{{ forloop.counter }}', -1)">
+        <i class="bi bi-chevron-left"></i>
+      </button>
 
-<!-- Inicialización Slick -->
-<script type="text/javascript">
-$(document).ready(function(){
-    $('.slider-categoria').slick({
-        slidesToShow: 4,
-        slidesToScroll: 4,
-        arrows: true,
-        dots: false,
-        infinite: false,
-        responsive: [
-            {
-                breakpoint: 992,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 2
-                }
-            },
-            {
-                breakpoint: 576,
-                settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1
-                }
-            }
-        ]
-    });
-});
-</script>
+      <!-- Contenedor de productos -->
+      <div id="carousel-{{ forloop.counter }}" class="carousel-container d-flex overflow-x-auto">
+        {% for producto in productos %}
+          {% if producto.id_categoria.nombre_categoria == categoria.nombre_categoria %}
+            <!-- Tarjeta con clase uniform-card -->
+            <div class="card uniform-card text-center shadow me-3 flex-shrink-0">
+              <img src="https://3.140.248.123/media/{{ producto.imagen_producto }}" 
+                   class="card-img-top producto-img" 
+                   alt="{{ producto.nombre_producto }}">
+              <div class="card-body bg-white">
+                <h5 class="card-title">{{ producto.nombre_producto }}</h5>
+                <p class="card-text">{{ producto.descripcion_producto }}</p>
+                <p class="fw-bold">Precio: ${{ producto.precio_producto }}</p>
+                <div class="carrito-control d-flex justify-content-center">
+                  <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
+                    style="background-color: #6C2DC7; color: white;">
+                    Agregar al Carrito
+                  </button>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
 
+      <!-- Flecha derecha -->
+      <button class="btn btn-light shadow carousel-btn right"
+              onclick="scrollCarousel('carousel-{{ forloop.counter }}', 1)">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block footer %}
+  {% include 'footer.html' %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/carrito.js' %}"></script>
+<script src="{% static 'js/carrusel.js' %}"></script>
 {% endblock %}
