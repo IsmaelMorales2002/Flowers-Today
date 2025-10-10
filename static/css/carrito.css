@@ -1,0 +1,11 @@
+  /* 🔹 Ajustes visuales para móviles */
+  @media (max-width: 768px) {
+    .card-body {
+      flex-direction: column !important;
+      text-align: center;
+    }
+
+    .card-body img {
+      margin-bottom: 10px;
+    }
+  }
