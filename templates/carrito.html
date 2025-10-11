@@ -1,75 +1,72 @@
 {% extends 'menu.html' %}
 {% load static %}
-{% block title %} Carrito {% endblock %}
+{% block title %}Carrito{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-  <h2 class="mb-4 text-center text-white">Carrito de Compras</h2>
+<link rel="stylesheet" href="{% static 'css/carrito.css' %}">
+<section class="container my-5 text-white">
+  <h2 class="mb-4 text-center">Carrito De Compras</h2>
 
   <div class="row g-4">
     <!-- Productos -->
     <div class="col-12 col-lg-8">
-      <div class="list-group">
-        {% for producto in productos %}
-        <div class="list-group-item list-group-item-action d-flex flex-column flex-md-row align-items-center justify-content-between mb-2 shadow-sm">
-          <!-- Producto -->
-          <div class="d-flex align-items-center mb-2 mb-md-0" style="min-width: 200px;">
-            <img src="{% if producto.imagen_producto %}{{ producto.imagen_producto.url }}{% else %}{% static 'img/producto-default.png' %}{% endif %}" alt="{{ producto.nombre_producto }}" class="img-thumbnail me-3" style="width: 60px;">
-            <span class="fw-bold">{{ producto.nombre_producto }}</span>
+      {% for producto in productos %}
+      <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-4 col-md-2">
+              <img src="{% if producto.imagen_producto %}{{ producto.imagen_producto.url }}{% else %}{% static 'img/producto-default.png' %}{% endif %}" 
+                   alt="{{ producto.nombre_producto }}" class="img-thumbnail me-3" style="width: 90px;">
+            </div>
+            <div class="col-8 col-md-6">
+              <h5 class="card-title">{{ producto.nombre_producto }}</h5>
+              <p class="text-muted mb-0">{{ producto.descripcion_producto }}</p>
+            </div>
+            <div class="col-12 col-md-4 mt-3 mt-md-0">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                  <button class="btn btn-sm text-white" style="background: #6C2DC7;">−</button>
+                  <span class="mx-2">1</span>
+                  <button class="btn btn-dark btn-sm">+</button>
+                </div>
+                <div class="text-end">
+                  <strong class="me-4">${{ producto.precio_producto }}</strong>
+                  <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <!-- Precio -->
-          <div class="mb-2 mb-md-0" style="min-width: 70px;">
-            ${{ producto.precio_producto }}
-          </div>
-
-          <!-- Cantidad -->
-          <div class="input-group input-group-sm mb-2 mb-md-0" style="max-width: 120px;">
-            <button class="btn btn-outline-secondary btn-decrease" type="button">-</button>
-            <input type="text" class="form-control text-center cantidad" value="1" readonly>
-            <button class="btn btn-outline-secondary btn-increase" type="button">+</button>
-          </div>
-
-          <!-- Subtotal -->
-          <div class="mb-2 mb-md-0 fw-bold" style="min-width: 70px;">
-            $<span class="subtotal">{{ producto.precio_producto }}</span>
-          </div>
-
-          <!-- Botón borrar -->
-          <button class="btn btn-danger btn-sm">
-            <i class="bi bi-trash"></i>
-          </button>
         </div>
-        {% endfor %}
       </div>
+      {% endfor %}
     </div>
 
     <!-- Resumen -->
-    <div class="col-12 col-lg-4 mt-3 mt-lg-0">
-      <div class="card shadow-sm">
+    <div class="col-12 col-lg-4">
+      <div class="card shadow-sm border-0" style="position: sticky; top: 20px;">
         <div class="card-body">
           <h5 class="card-title text-center">Resumen</h5>
           <ul class="list-group mb-3">
-            <li class="list-group-item d-flex justify-content-between">
+            <li class="list-group-item d-flex justify-content-between border-0 border-bottom">
               <span>Subtotal</span>
               <strong id="resumen-subtotal">${{ subtotal }}</strong>
             </li>
-            <li class="list-group-item d-flex justify-content-between">
+            <li class="list-group-item d-flex justify-content-between border-0 border-bottom">
               <span>Envío</span>
               <strong>${{ envio }}</strong>
             </li>
-            <li class="list-group-item d-flex justify-content-between">
+            <li class="list-group-item d-flex justify-content-between border-0">
               <span>Total</span>
               <strong id="resumen-total">${{ total }}</strong>
             </li>
           </ul>
           <div class="d-grid gap-2">
-            <button class="btn btn-success">Finalizar compra</button>
-            <a href="#" class="btn btn-outline-secondary">Seguir comprando</a>
+            <button class="btn btn-dark">Finalizar compra</button>
+            <a href="#" class="btn btn-ms text-white" style="background: #6C2DC7;">Seguir comprando</a>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
 {% endblock %}
