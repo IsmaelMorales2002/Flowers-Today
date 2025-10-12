@@ -25,6 +25,7 @@ urlpatterns = [
     #Vistas Administrador
     path('administracion/',Vista_Inicio_Administrador,name='vista_inicio_administrador'),
     path('perfil/administrador',Vista_Perfil_Admin,name='vista_perfil_administrador'),
+    path('editar_perfil/administrador',Vista_Editar_Perfil_Admin,name='vista_editar_perfil_administrador'),
     path('clientes/',Vista_Clientes_Administracion,name='vista_clientes_administracion'),
     path('administradores/',Vista_Administradores_Administracion,name='vista_administradores_administracion'),
     path('crear_cuenta/',Vista_Crear_Cliente,name='vista_crear_cuenta'),

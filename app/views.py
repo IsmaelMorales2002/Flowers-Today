@@ -478,3 +478,16 @@ def Vista_Perfil_Admin(request):
         except Usuario.DoesNotExist:
             return redirect('vista_inicio_cliente')
 
+#Vista Vista_Editar_Perfil_Admin    
+def Vista_Editar_Perfil_Admin(request):
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        try:
+            admin = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
+            return render(request,'editar_perfilAdmin.html',{
+                'activo': activo,
+                'usuario': admin
+            })
+        except Usuario.DoesNotExist:
+            return redirect('vista_inicio_cliente')
+
