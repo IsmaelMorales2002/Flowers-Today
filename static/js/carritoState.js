@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () =>{
             icono_carrito.style.display = 'inline-block'
             icono_carrito.innerHTML = carrito_data.length
         }
+        if(carrito_data.length == 0){
+            icono_carrito.style.display = 'none'
+        }
     }
 
     actualizarIconoCarrito();
