@@ -58,7 +58,7 @@
           {% if producto.id_categoria.nombre_categoria == categoria.nombre_categoria %}
             <!-- Tarjeta con clase uniform-card -->
             <div class="card uniform-card text-center shadow me-3 flex-shrink-0">
-              <img src="https://3.140.248.123/media/{{ producto.imagen_producto }}" 
+              <img src="{% if producto.imagen_producto %}{{producto.imagen_producto.url}}{% else %}{% static 'img/producto-default.png'%}{% endif %}" 
                    class="card-img-top producto-img" 
                    alt="{{ producto.nombre_producto }}">
               <div class="card-body bg-white">
@@ -67,7 +67,13 @@
                 <p class="fw-bold">Precio: ${{ producto.precio_producto }}</p>
                 <div class="carrito-control d-flex justify-content-center">
                   <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
-                    style="background-color: #6C2DC7; color: white;">
+                    style="background-color: #6C2DC7; color: white;"
+                    data-id="{{producto.id_producto}}"
+                    data-nombre="{{producto.nombre_producto}}"
+                    data-imagen = "{% if producto.imagen_producto%}{{producto.imagen_producto.url}}{% else %}{% static 'img/producto-default.png' %}{% endif %}"
+                    data-precio = "{{producto.precio_producto}}"
+                    data-descripcion="{{producto.descripcion_producto}}"
+                    >
                     Agregar al Carrito
                   </button>
                 </div>
@@ -93,6 +99,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/carrito.js' %}"></script>
+<script src="{% static 'js/carritoState.js' %}"></script>
 <script src="{% static 'js/carrusel.js' %}"></script>
 {% endblock %}
