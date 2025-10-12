@@ -18,8 +18,10 @@ document.addEventListener('DOMContentLoaded', () =>{
             
             
             if(btn.classList.contains("agregado")){
-                
-                
+                let id = btn.dataset.id
+                carrito_data = carrito_data.filter(item => item.id !== id)
+                localStorage.setItem('carrito',JSON.stringify(carrito_data))
+                console.log(carrito_data)
             }else{
                 let id = btn.dataset.id
                 let nombre = btn.dataset.nombre
