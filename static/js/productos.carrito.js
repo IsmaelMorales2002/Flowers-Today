@@ -37,11 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="d-flex justify-content-between align-items-center">
               <div class="d-flex align-items-center">
                 <button class="btn btn-sm text-white btn-restar" style="background: #6C2DC7;">−</button>
-                <span class="mx-2 cantidad">1</span>
+                <span class="mx-2 cantidad">${producto.cantidad || 1}</span>
                 <button class="btn btn-dark btn-sm btn-sumar">+</button>
               </div>
               <div class="text-end">
-                <strong class="me-4">$${producto.precio}</strong>
+                <strong class="me-4 precio-unitario" data-precio="${producto.precio}">
+                $${(producto.precio * (producto.cantidad || 1)).toFixed(2)}
+                </strong>
                 <button class="btn btn-danger btn-sm btn-eliminar" data-id="${producto.id}">
                   <i class="bi bi-trash"></i>
                 </button>
@@ -54,4 +56,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     contenedor.appendChild(card);
   });
+
+  contenedor.addEventListener('click', (e) => {
+    const btnSumar = e.target.closest('.btn-sumar')
+    const btnRestar = e.target.closest('.btn-restar')
+
+    if(btnSumar || btnRestar ){
+        const card = e.target.closest('.card')
+        const id = card.querySelector('.btn-eliminar').dataset.id
+        const cantidadElemento = card.querySelector('.cantidad')
+        const precioElemento = card.querySelector('.precio-unitario')
+
+        const producto = carrito.find(p => p.id == id)
+
+        let cantidad = parseInt(cantidadElemento.textContent)
+
+        if(btnSumar)
+            cantidad++
+        else if(btnRestar && cantidad > 1)
+            cantidad--
+        
+        cantidadElemento.textContent = cantidad;
+        const nuevoPrecio = producto.precio * cantidad;
+        precioElemento.textContent =`$${nuevoPrecio.toFixed(2)}`
+    }
+  })
 });
