@@ -5,44 +5,16 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/carrito.css' %}">
 <section class="container my-5 text-white">
-  <h2 class="mb-4 text-center">Carrito De Compras</h2>
+  <h2 class="mb-4 text-center" id="titulo-carrito"></h2>
 
   <div class="row g-4">
     <!-- Productos -->
-    <div class="col-12 col-lg-8">
-      {% for producto in productos %}
-      <div class="card mb-3 shadow-sm">
-        <div class="card-body">
-          <div class="row align-items-center">
-            <div class="col-4 col-md-2">
-              <img src="{% if producto.imagen_producto %}{{ producto.imagen_producto.url }}{% else %}{% static 'img/producto-default.png' %}{% endif %}" 
-                   alt="{{ producto.nombre_producto }}" class="img-thumbnail me-3" style="width: 90px;">
-            </div>
-            <div class="col-8 col-md-6">
-              <h5 class="card-title">{{ producto.nombre_producto }}</h5>
-              <p class="text-muted mb-0">{{ producto.descripcion_producto }}</p>
-            </div>
-            <div class="col-12 col-md-4 mt-3 mt-md-0">
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                  <button class="btn btn-sm text-white" style="background: #6C2DC7;">−</button>
-                  <span class="mx-2">1</span>
-                  <button class="btn btn-dark btn-sm">+</button>
-                </div>
-                <div class="text-end">
-                  <strong class="me-4">${{ producto.precio_producto }}</strong>
-                  <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% endfor %}
+    <div class="col-12 col-lg-8"  id="contenedor-productos">
+     
     </div>
 
     <!-- Resumen -->
-    <div class="col-12 col-lg-4">
+    <div class="col-12 col-lg-4" id="resumen-total" style="display: none;">
       <div class="card shadow-sm border-0" style="position: sticky; top: 20px;">
         <div class="card-body">
           <h5 class="card-title text-center">Resumen</h5>
@@ -69,4 +41,6 @@
     </div>
   </div>
 </section>
+
+<script src="{% static 'js/productos.carrito.js'%}"></script>
 {% endblock %}
