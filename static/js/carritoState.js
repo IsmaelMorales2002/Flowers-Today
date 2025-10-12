@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () =>{
                 let id = btn.dataset.id
                 carrito_data = carrito_data.filter(item => item.id !== id)
                 localStorage.setItem('carrito',JSON.stringify(carrito_data))
-                console.log(carrito_data)
+                actualizarIconoCarrito();
             }else{
                 let id = btn.dataset.id
                 let nombre = btn.dataset.nombre
