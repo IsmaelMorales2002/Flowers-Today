@@ -48,11 +48,17 @@
                             </span>
                         </td>
                     </tr>
+                    <tr>
+                        <th>Rol:</th>
+                        {% if usuario.id_rol.nombre_rol == 'A' %}
+                        <td>Administrador</td>
+                        {% endif %}
+                    </tr>
                 </table>
             </div>
 
             <!-- Botón Editar -->
-            <a href="{% url 'editar_perfil' %}" class="btn btn-primary mt-3" style="background-color: #6C2DC7; border: #6C2DC7;">
+            <a href="#" class="btn btn-primary mt-3" style="background-color: #6C2DC7; border: #6C2DC7;">
                  <i class="bi bi-pencil-square me-1"></i> Editar Perfil
             </a>
 
