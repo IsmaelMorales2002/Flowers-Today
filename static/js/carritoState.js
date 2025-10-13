@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () =>{
                 let imagen = btn.dataset.imagen
                 let precio = btn.dataset.precio
                 let descripcion = btn.dataset.descripcion
-    
+                
                 let producto = {id,nombre,imagen,precio,descripcion}
     
                 carrito_data.push(producto)
@@ -42,7 +42,17 @@ document.addEventListener('DOMContentLoaded', () =>{
     })
 
     // Actulizacion Cuando se recarga la pagina
-    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    const contenedor = document.getElementById("contenedor-productos");
+    if(contenedor){
+        contenedor.addEventListener('click', (e) =>{
+            const btnEliminar = e.target.closest('.btn-eliminar')
+            if(btnEliminar){
+                actualizarIconoCarrito()
+            }
+        })
+    }
+
     const botones = document.querySelectorAll('.btn-agregar');
 
     if (carrito.length > 0) {

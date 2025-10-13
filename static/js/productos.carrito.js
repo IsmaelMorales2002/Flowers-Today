@@ -71,6 +71,19 @@ document.addEventListener("DOMContentLoaded", () => {
   contenedor.addEventListener('click', (e) => {
     const btnSumar = e.target.closest('.btn-sumar')
     const btnRestar = e.target.closest('.btn-restar')
+    const btnEliminar = e.target.closest('.btn-eliminar')
+
+    if(btnEliminar){
+      let id = btnEliminar.dataset.id
+
+      carrito = carrito.filter(item => item.id !== id)
+      localStorage.setItem('carrito',JSON.stringify(carrito))
+
+      const card = btnEliminar.closest('.card')
+      if(card){
+        card.remove()
+      }
+    }
 
     if(btnSumar || btnRestar ){
         const card = e.target.closest('.card')
