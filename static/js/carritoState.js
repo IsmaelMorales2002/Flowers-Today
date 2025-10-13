@@ -41,4 +41,19 @@ document.addEventListener('DOMContentLoaded', () =>{
         })
     })
 
+    // Actulizacion Cuando se recarga la pagina
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    const botones = document.querySelectorAll('.btn-agregar');
+
+    if (carrito.length > 0) {
+        carrito.forEach(producto => {
+            const boton = document.querySelector(`.btn-agregar[data-id="${producto.id}"]`);
+            if (boton) {
+                boton.textContent = "Agregado al carrito";
+                boton.classList.add("agregado", "bi-cart-check");
+                boton.classList.remove("bi-cart3");
+                boton.style.backgroundColor = "#28a745";
+            }
+        });
+    }
 })
