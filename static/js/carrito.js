@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Carruseles (si usas en otras secciones)
   document.querySelectorAll(".slider-wrapper").forEach(wrapper => {
     const slider = wrapper.querySelector(".slider");
     const leftArrow = wrapper.querySelector(".left-arrow");
