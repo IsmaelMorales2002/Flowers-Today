@@ -39,9 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="col-4">
             <span class="fw-bold d-block mb-1">Cantidad</span>
             <div class="d-flex justify-content-center align-items-center">
-                <button class="btn btn-sm text-white btn-restar" style="background: #6C2DC7;">−</button>
+                <button class="btn btn-sm btn-dark text-white btn-restar">−</button>
                 <span class="mx-2 cantidad">${producto.cantidad || 1}</span>
-                <button class="btn btn-dark btn-sm btn-sumar">+</button>
+                <button class="btn btn-sm btn-sumar text-white" style="background: #6C2DC7;">+</button>
             </div>
             </div>
 
