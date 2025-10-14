@@ -85,6 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
         card.remove()
         if(carrito.length == 0){
           resumenTotal.remove()
+          titulo.innerHTML = 'Carrito De Compras Vacio'
         }
       }
     }
