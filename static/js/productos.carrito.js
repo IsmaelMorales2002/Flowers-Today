@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnSumar = e.target.closest('.btn-sumar')
     const btnRestar = e.target.closest('.btn-restar')
     const btnEliminar = e.target.closest('.btn-eliminar')
+    const resumenTotal = document.getElementById('resumen-total')
 
     if(btnEliminar){
       let id = btnEliminar.dataset.id
@@ -82,6 +83,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const card = btnEliminar.closest('.card')
       if(card){
         card.remove()
+        if(carrito.length == 0){
+          resumenTotal.remove()
+        }
       }
     }
 
