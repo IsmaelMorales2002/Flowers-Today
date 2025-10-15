@@ -58,16 +58,37 @@
           {% if producto.id_categoria.nombre_categoria == categoria.nombre_categoria %}
             <!-- Tarjeta con clase uniform-card -->
             <div class="card uniform-card text-center shadow me-3 flex-shrink-0">
-              <img src="{% if producto.imagen_producto %}{{producto.imagen_producto.url}}{% else %}{% static 'img/producto-default.png'%}{% endif %}" 
-                   class="card-img-top producto-img" 
-                   alt="{{ producto.nombre_producto }}">
+              <!-- Dentro de la tarjeta -->
+                  <div class="img-wrap position-relative">
+                    <img
+                      src="{% if producto.imagen_producto %}{{producto.imagen_producto.url}}{% else %}{% static 'img/producto-default.png'%}{% endif %}"
+                      class="card-img-top producto-img"
+                      alt="{{ producto.nombre_producto }}"
+                    >
+
+                    <!-- Overlay con botón -->
+                    <button
+                      class="hover-cta btn btn-verProducto d-flex align-items-center"
+                      data-id="{{ producto.id_producto }}"
+                      data-nombre="{{ producto.nombre_producto }}"
+                      data-descripcion="{{ producto.descripcion_producto }}"
+                      data-precio="{{ producto.precio_producto }}"
+                      data-imagen="{% if producto.imagen_producto %}{{ producto.imagen_producto.url }}{% else %}{% static 'img/producto-default.png' %}{% endif %}"
+                      data-categoria="{{ producto.id_categoria.nombre_categoria }}"
+                      data-existencias="{{ producto.existencia_producto|default:0 }}"
+                      data-tipo="{{ producto.get_tipo_producto_display|default:'N/D' }}"
+                      type="button"
+                    >
+                      <i class="bi bi-eye me-2"></i> Ver producto
+                    </button>
+                  </div>
+
               <div class="card-body bg-white">
                 <h5 class="card-title">{{ producto.nombre_producto }}</h5>
                 <p class="card-text">{{ producto.descripcion_producto }}</p>
-                <p class="fw-bold">Precio: ${{ producto.precio_producto }}</p>
                 <div class="carrito-control d-flex justify-content-center">
                   <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
-                    style="background-color: #6C2DC7; color: white;"
+                    style="background-color: rgb(108, 45, 199); color: white;"
                     data-id="{{producto.id_producto}}"
                     data-nombre="{{producto.nombre_producto}}"
                     data-imagen = "{% if producto.imagen_producto%}{{producto.imagen_producto.url}}{% else %}{% static 'img/producto-default.png' %}{% endif %}"
@@ -92,6 +113,50 @@
   {% endfor %}
 </div>
 
+<!-- Modal para ver producto (Cliente) -->
+<div class="modal fade" id="modalVerProductoCliente" data-default-img="{% static 'img/producto-default.png' %}" tabindex="-1" aria-labelledby="modalVerProductoClienteLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      
+      <!-- Encabezado -->
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="modalVerProductoClienteLabel">Información del Producto</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      
+      <!-- Cuerpo -->
+      <div class="modal-body">
+        <div class="row align-items-center">
+          
+          <!-- Columna imagen -->
+          <div class="col-md-4 text-center mb-3 mb-md-0">
+            <img id="modal-imagen-producto" src="" alt="Imagen del Producto" 
+                 class="rounded shadow" 
+                 style="width: 200px; height: 200px; object-fit: cover;">
+          </div>
+          
+          <!-- Columna información -->
+          <div class="col-md-8">
+            <p class="mb-1"><strong>Categoría:</strong> <span id="modal-categoria"></span></p>
+            <p class="mb-1"><strong>Nombre:</strong> <span id="modal-nombre-producto"></span></p>
+            <p class="mb-1"><strong>Descripción:</strong> <span id="modal-descripcion"></span></p>
+            <p class="mb-1"><strong>Existencias:</strong> <span id="modal-existencias"></span></p>
+            <p class="mb-1"><strong>Precio:</strong> $<span id="modal-precio"></span></p>
+            <p class="mb-1"><strong>Tipo de Producto:</strong> <span id="modal-tipo-producto"></span></p>
+          </div>
+
+        </div>
+      </div>
+      
+      <!-- Pie -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+           Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block footer %}
@@ -101,4 +166,5 @@
 {% block scripts %}
 <script src="{% static 'js/carrito.js' %}"></script>
 <script src="{% static 'js/carrusel.js' %}"></script>
+<script src="{% static 'js/Modal_verProductoCliente.js' %}"></script>
 {% endblock %}
