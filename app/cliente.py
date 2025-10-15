@@ -178,3 +178,23 @@ def guardar_comentario(request):
             messages.error(request, 'Usuario no válido.')
 
     return redirect('vista_comentario')
+
+
+#Logica Al realizar una compra
+def RealizarCompra(request):
+    correo = request.POST.get('txtCorreo')
+    fecha = timezone.localtime(timezone.now()).date()
+    total = request.POST.get('txtTotal')
+    try: 
+        usuario = Usuario.objects.get(correo_usuario = correo)
+        compra = Compra(
+            id_usuario = usuario,
+            fecha_compra = fecha,
+            total_compra = total
+        )
+        compra.save()
+        return redirect('vista_inicio_cliente')
+    except Usuario.DoesNotExist:
+        return redirect('vista_carrito')
+
+    
