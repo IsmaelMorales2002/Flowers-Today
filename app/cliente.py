@@ -191,13 +191,6 @@ def RealizarCompra(request):
     lista_ids = [int(i) for i in ids.split(',') if i.isdigit()]
     lista_cantidades = [int(i) for i in cantidades.split(',') if i.isdigit()]
 
-    #Verificacion de Productos en existencia
-    for p_id,cant in zip(lista_ids,lista_cantidades):
-        produc = Producto.objects.get(id_producto = p_id)
-        if(produc.existencia_producto < cant):
-            messages.warning(request,f"El Producto '{produc.nombre_producto}' está agostado")
-            return render(request,'carrito.html')
-
     try: 
         usuario = Usuario.objects.get(correo_usuario = correo)
         #Compra
