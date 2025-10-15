@@ -62,7 +62,7 @@ urlpatterns = [
     path('CrearProducto/',Crear_Producto,name='CrearProducto'),
     path('EditarProducto/<int:id>/',Editar_Producto,name='EditarProducto'),
     path('productos/cambiar-estado/',Cambiar_Estado_Producto,name='cambiar_estado_producto'),
-
+    path('RealizarCompra',RealizarCompra,name='RealizarCompra'),
     #Endpoints
 ]
 

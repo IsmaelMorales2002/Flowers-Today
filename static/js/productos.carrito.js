@@ -117,6 +117,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function ActualizarPrecios(){
     const precios = document.querySelectorAll('.precio-unitario')
     const subtotal = document.getElementById('resumen-subtotal')
+    const pagar = document.getElementById('modal-total')
+    const total = document.getElementById('txtTotal')
 
     let subTotal = 0
     precios.forEach(precio =>{
@@ -126,7 +128,16 @@ document.addEventListener("DOMContentLoaded", () => {
       subTotal += valor
     })
     subtotal.textContent = `$${subTotal.toFixed(2)}`
-    envio.textContent = `$${2.50.toFixed(2)}`
+    pagar.textContent = `$${subTotal.toFixed(2)}`
+    total.value = subTotal.toFixed(2)
+    const ids = carrito.map(p => p.id).join(',')
+    document.getElementById('txtIdProducto').value = ids;
+
+    const cantidades = carrito.map((p,i) =>{
+      const card = document.querySelectorAll('.card')[i]
+      return card.querySelector('.cantidad').textContent
+    }).join(',');
+    document.getElementById('txtCantidad').value = cantidades
   }
 
   ActualizarPrecios()

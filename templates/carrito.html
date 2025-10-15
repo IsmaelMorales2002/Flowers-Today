@@ -25,7 +25,7 @@
             </li>
           </ul>
           <div class="d-grid gap-2">
-            <button class="btn btn-dark">Finalizar compra</button>
+            <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#modalFinalizarCompra">Finalizar compra</button>
             <a href="{% url 'vista_inicio_cliente' %}" class="btn btn-ms text-white" style="background: #6C2DC7;">Seguir comprando</a>
           </div>
         </div>
@@ -33,6 +33,37 @@
     </div>
   </div>
 </section>
+
+<!-- Modal -->
+<div class="modal fade" id="modalFinalizarCompra" tabindex="-1" aria-labelledby="modalFinalizarCompraLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header bg-dark text-white rounded-top-4">
+        <h5 class="modal-title" id="modalFinalizarCompraLabel">Confirmar compra</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <div class="modal-body text-center p-4">
+        <form id="formFinalizarCompra" method="POST" action="{% url 'RealizarCompra' %}">{% csrf_token %}
+
+          <p class="mb-3"><strong>¿Estás seguro de que deseas finalizar la compra?</strong></p>
+          <p class="mb-4"><strong>Total a pagar: </strong> <strong id="modal-total">$0.00</strong></p>
+
+          <input type="hidden" name="txtCorreo" value="{{request.session.correo_cliente}}">
+          <input type="hidden" name="txtTotal" id="txtTotal" value="">
+          <input type="hidden" name="productos[]" id="txtIdProducto" value="">
+          <input type="hidden" name="cantidades[]" id="txtCantidad" value="">
+
+          <div class="d-flex justify-content-center gap-3">
+            <button type="submit" class="btn text-white" style="background: #6C2DC7;">Confirmar</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-cancelar-compra">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script src="{% static 'js/productos.carrito.js'%}"></script>
 {% endblock %}
