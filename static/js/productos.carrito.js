@@ -130,6 +130,14 @@ document.addEventListener("DOMContentLoaded", () => {
     subtotal.textContent = `$${subTotal.toFixed(2)}`
     pagar.textContent = `$${subTotal.toFixed(2)}`
     total.value = subTotal.toFixed(2)
+    const ids = carrito.map(p => p.id).join(',')
+    document.getElementById('txtIdProducto').value = ids;
+
+    const cantidades = carrito.map((p,i) =>{
+      const card = document.querySelectorAll('.card')[i]
+      return card.querySelector('.cantidad').textContent
+    }).join(',');
+    document.getElementById('txtCantidad').value = cantidades
   }
 
   ActualizarPrecios()
