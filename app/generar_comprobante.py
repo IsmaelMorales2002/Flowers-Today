@@ -109,7 +109,7 @@ def generar_comprobante_pdf(id_comprobante):
         p.drawString(80, y_pos, "COMPROBANTE DE PAGO")
 
         # Código de Comprobante
-        codigo_texto = f"Código de Comprobante: {comprobante.id_comprobante}"
+        codigo_texto = f"Código de Comprobante: {comprobante.codigo_comprobante}"
         max_width_codigo = 250
         font_name = "Helvetica"
         font_size = 11
