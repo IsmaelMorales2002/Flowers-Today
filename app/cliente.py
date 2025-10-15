@@ -5,6 +5,7 @@ from .models import *
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
+import uuid
 
 # Crear_Cuenta_Cliente, logica para crear cuenta tipo cliente
 def Crear_Cuenta_Cliente(request):
@@ -212,6 +213,17 @@ def RealizarCompra(request):
                 detalle.save()
             except Producto.DoesNotExist:
                 pass
+
+        #Creacion de comprobante
+        cod_comprobante = f"CP-{uuid.uuid4().hex[:12].upper()}"
+        #Comprobante de Pago
+        comprobante = Comprobante_Pago(
+            id_compra = compra,
+            fecha_comprobante = fecha,
+            codigo_comprobante = cod_comprobante,
+            estado_comprobante = 'Pe',
+        )
+        comprobante.save()
         return redirect('vista_inicio_cliente')
     except Usuario.DoesNotExist:
         return redirect('vista_carrito')
