@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Contenedor donde irán las cards
+  
   const contenedor = document.getElementById("contenedor-productos");
   const titulo = document.getElementById('titulo-carrito')
   const resumen = document.getElementById('resumen-total')
@@ -39,9 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="col-4">
             <span class="fw-bold d-block mb-1">Cantidad</span>
             <div class="d-flex justify-content-center align-items-center">
-                <button class="btn btn-sm text-white btn-restar" style="background: #6C2DC7;">−</button>
+                <button class="btn btn-sm btn-dark text-white btn-restar">−</button>
                 <span class="mx-2 cantidad">${producto.cantidad || 1}</span>
-                <button class="btn btn-dark btn-sm btn-sumar">+</button>
+                <button class="btn btn-sm btn-sumar text-white" style="background: #6C2DC7;">+</button>
             </div>
             </div>
 
@@ -87,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
           resumenTotal.remove()
           titulo.innerHTML = 'Carrito De Compras Vacio'
         }
+        ActualizarPrecios()
       }
     }
 
@@ -108,6 +110,25 @@ document.addEventListener("DOMContentLoaded", () => {
         cantidadElemento.textContent = cantidad;
         const nuevoPrecio = producto.precio * cantidad;
         precioElemento.textContent =`$${nuevoPrecio.toFixed(2)}`
+        ActualizarPrecios()
     }
   })
+
+  function ActualizarPrecios(){
+    const precios = document.querySelectorAll('.precio-unitario')
+    const subtotal = document.getElementById('resumen-subtotal')
+
+    let subTotal = 0
+    precios.forEach(precio =>{
+      let valor = precio.textContent.replace('$','').trim()
+      valor = parseFloat(valor)
+
+      subTotal += valor
+    })
+    subtotal.textContent = `$${subTotal.toFixed(2)}`
+    envio.textContent = `$${2.50.toFixed(2)}`
+  }
+
+  ActualizarPrecios()
+
 });
