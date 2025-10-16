@@ -190,7 +190,7 @@ def RealizarCompra(request):
     cantidades = request.POST.get('cantidades[]')
     lista_ids = [int(i) for i in ids.split(',') if i.isdigit()]
     lista_cantidades = [int(i) for i in cantidades.split(',') if i.isdigit()]
-
+    
     try: 
         usuario = Usuario.objects.get(correo_usuario = correo)
         #Compra
