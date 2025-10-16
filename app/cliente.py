@@ -199,7 +199,7 @@ def RealizarCompra(request):
             fecha_compra = fecha,
             total_compra = total
         )
-        compra.save()
+        # compra.save()
         for producto_id,cantidad in zip(lista_ids,lista_cantidades):
             try:
                 producto = Producto.objects.get(id_producto = producto_id)
@@ -210,7 +210,7 @@ def RealizarCompra(request):
                     cantidad_producto_compra = cantidad,
                     precio_unitario_compra = producto.precio_producto
                 )
-                detalle.save()
+                # detalle.save()
             except Producto.DoesNotExist:
                 pass
 
@@ -223,7 +223,8 @@ def RealizarCompra(request):
             codigo_comprobante = cod_comprobante,
             estado_comprobante = 'Pe',
         )
-        comprobante.save()
+        # comprobante.save()
+        messages.success(request,'exito')
         return redirect('vista_inicio_cliente')
     except Usuario.DoesNotExist:
         return redirect('vista_carrito')

@@ -67,4 +67,18 @@ document.addEventListener('DOMContentLoaded', () =>{
             }
         });
     }
+
+    const modal = document.getElementById("modalExitoCompra")
+    if(modal){
+        modal.addEventListener('click',() =>{
+        actualizarIconoCarrito()
+
+        document.querySelectorAll(".btn-agregar").forEach(btn => {
+        btn.textContent = "Agregar al Carrito"
+        btn.classList.remove("agregado", "bi-cart-check")
+        btn.classList.add("bi-cart3")
+        btn.style.backgroundColor = "#6C2DC7"
+        })
+    })
+    }
 })
