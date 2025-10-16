@@ -477,6 +477,7 @@ def Vista_Perfil_Admin(request):
             })
         except Usuario.DoesNotExist:
             return redirect('vista_inicio_cliente')
+    return redirect('vista_inicio_cliente')
 
 #Vista Vista_Editar_Perfil_Admin    
 def Vista_Editar_Perfil_Admin(request):
@@ -490,4 +491,13 @@ def Vista_Editar_Perfil_Admin(request):
             })
         except Usuario.DoesNotExist:
             return redirect('vista_inicio_cliente')
-
+    return redirect('vista_inicio_cliente')
+        
+#Vista Vista_Historial_Compras
+def Vista_Historial_Compras(request):
+    activo = request.session.get('activo',False)
+    if activo:
+        try:
+            pass
+        except Compra.DoesNotExist:
+            pass
