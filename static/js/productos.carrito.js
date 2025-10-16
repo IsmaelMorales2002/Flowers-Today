@@ -144,24 +144,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const mensaje = document.getElementById('alerta').querySelector('strong')
   const form = document.getElementById('formFinalizarCompra');
+  const continuar = document.getElementById('btnContinuarAdvertencia')
   form.addEventListener('submit', function(e){
     e.preventDefault();
     const card = document.querySelectorAll('.card')
 
     let agotados = []
+    let idsEnviar = []
+    let cantidadesEnviar = [];
     for(let i=0; i<carrito.length; i++){
       const cantidad = parseInt(card[i].querySelector('.cantidad').textContent)
       const existencia = parseInt(carrito[i].existencia)
       const id = parseInt(carrito[i].id)
       const nombre = carrito[i].nombre
-      if(cantidad > existencia)
+      if(cantidad > existencia){
         agotados.push(nombre)   
+      }else{
+        idsEnviar.push(id)
+        cantidadesEnviar.push(cantidad)
+      }
     }
 
     if(agotados.length > 0){
       const modal = new bootstrap.Modal(document.getElementById('modalAdvertencia'));
       modal.show()
       mensaje.textContent = `El Producto "${agotados.join(', ')}" Está Agotado`
+      continuar.addEventListener('click', () =>{
+        document.getElementById('txtIdProducto').value = idsEnviar.join(',')
+        document.getElementById('txtCantidad').value = cantidadesEnviar.join(',');
+        form.submit()
+      })
+    }else{
+      form.submit()
     }
   })
 
