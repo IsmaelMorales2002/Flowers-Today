@@ -37,14 +37,36 @@
             {% endif %}
             </td>
             <td class="text-center">
-                <a href="#" 
-                class="btn btn-sm text-white" 
-                style="background-color: #6C2DC7;">Ver Detalle Compra</a>
+                <button class="btn btn-sm btn-ver-detalle text-white" style="background-color: #6C2DC7"
+                data-id="{{ compra.id }}"
+                data-bs-toggle="modal"
+                data-bs-target="#modalDetalleCompra">Ver Detalle Compra</button>
             </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+
+<!-- Modal Detalle de Compra -->
+<div class="modal fade" id="modalDetalleCompra" tabindex="-1" aria-labelledby="modalDetalleCompraLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content shadow-lg">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="modalDetalleCompraLabel">Detalle de la Compra</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div id="detalle-contenido">
+            
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
