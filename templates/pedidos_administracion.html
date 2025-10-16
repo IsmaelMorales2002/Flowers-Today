@@ -30,6 +30,7 @@ Administradores
         <tr>
           <th class="text-center">Cliente</th>
           <th class="text-center">Fecha Compra</th>
+          <th class="text-center">Comprobante</th>
           <th class="text-center">Total</th>
           <th class="text-center">Estado Comprobante</th>
           <th class="text-center">Estado de la entrega</th>
@@ -41,6 +42,7 @@ Administradores
         <tr>
           <td>{{ pedido.id_compra.id_usuario.nombre_usuario }} {{ pedido.id_compra.id_usuario.apellido_usuario }}</td>
           <td>{{ pedido.fecha_comprobante|date:"d/m/Y" }}</td>
+          <td>{{ pedido.codigo_comprobante}}</td>
           <td>${{ pedido.id_compra.total_compra }}</td>
           <td>
             {% if pedido.estado_comprobante == 'Pe' %}

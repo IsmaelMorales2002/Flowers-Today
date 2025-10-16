@@ -21,6 +21,7 @@ urlpatterns = [
     path('comentario/guardar/', guardar_comentario, name='guardar_comentario'),
     path('actualizar_credencial/<uidb64>/<token>/',Vista_Actualizar_Clave,name='vista_credencial'),
     path('carrito/',vista_carrito,name='vista_carrito'),
+    path('historial/',Vista_Historial_Compras,name='vista_historial_compras'),
 
     #Vistas Administrador
     path('administracion/',Vista_Inicio_Administrador,name='vista_inicio_administrador'),
