@@ -5,6 +5,8 @@
 {% block content %}
 <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.5/css/responsive.bootstrap5.css">
+<link rel="stylesheet" href="{% static 'css/tablaCliente.css'%}" />
+
 
 <div class="container mt-5">
   <h2 class="text-center text-white mb-4">🛍️ Historial de Compras</h2>
@@ -22,7 +24,25 @@
         </tr>
       </thead>
       <tbody>
-        
+        {% for comprobante in comprobantes %}
+        <tr>
+            <td class="text-center">{{comprobante.fecha_comprobante|date:"d/m/Y"}}</td>
+            <td class="text-center">{{comprobante.codigo_comprobante}}</td>
+            <td class="text-center">${{comprobante.id_compra.total_compra}}</td>
+            <td class="text-center">
+            {% if  comprobante.estado_comprobante == 'Pe' %}
+                <span class="badge bg-danger">Pendiente</span>
+                {% elif comprobante.estado_comprobante == 'Pa' %}
+                <span class="badge bg-success ">Pagado</span>
+            {% endif %}
+            </td>
+            <td class="text-center">
+                <a href="#" 
+                class="btn btn-sm text-white" 
+                style="background-color: #6C2DC7;">Ver Detalle Compra</a>
+            </td>
+        </tr>
+        {% endfor %}
       </tbody>
     </table>
 

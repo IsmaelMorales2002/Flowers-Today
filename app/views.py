@@ -500,10 +500,10 @@ def Vista_Historial_Compras(request):
         try:
             usuario = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
             compras = Compra.objects.filter(id_usuario = usuario.id_usuario)
-            print(compras)
+            comprobantes = Comprobante_Pago.objects.filter(id_compra__in = compras)
             return render(request,'historial_compras.html',{
                 'activo': activo,
-                'compras' : compras
+                'comprobantes': comprobantes
             })    
         except Compra.DoesNotExist:
             return redirect('vista_inicio_cliente')
