@@ -508,3 +508,8 @@ def Vista_Historial_Compras(request):
         except Compra.DoesNotExist:
             return redirect('vista_inicio_cliente')
     return redirect('vista_inicio_cliente')
+
+#Peticion GET_Consultar_Detalle_Compra
+def GET_Detalle_Compra(request,compra_id):
+    print('hola')
+    print(request.session.get('correo_cliente'),None)

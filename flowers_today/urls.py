@@ -64,7 +64,8 @@ urlpatterns = [
     path('EditarProducto/<int:id>/',Editar_Producto,name='EditarProducto'),
     path('productos/cambiar-estado/',Cambiar_Estado_Producto,name='cambiar_estado_producto'),
     path('RealizarCompra',RealizarCompra,name='RealizarCompra'),
-    #Endpoints
+    #Apis
+    path('/detalleCompra/<int:compra_id>',GET_Detalle_Compra,name='GetdetalleCompras'),
 ]
 
 if settings.DEBUG:
