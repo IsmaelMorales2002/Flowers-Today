@@ -73,6 +73,7 @@
                     data-imagen = "{% if producto.imagen_producto%}{{producto.imagen_producto.url}}{% else %}{% static 'img/producto-default.png' %}{% endif %}"
                     data-precio = "{{producto.precio_producto}}"
                     data-descripcion="{{producto.descripcion_producto}}"
+                    data-existencia = "{{producto.existencia_producto}}"
                     >
                     Agregar al Carrito
                   </button>

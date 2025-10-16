@@ -31,8 +31,9 @@ document.addEventListener('DOMContentLoaded', () =>{
                 let imagen = btn.dataset.imagen
                 let precio = btn.dataset.precio
                 let descripcion = btn.dataset.descripcion
+                let existencia = btn.dataset.existencia
                 
-                let producto = {id,nombre,imagen,precio,descripcion}
+                let producto = {id,nombre,imagen,precio,descripcion,existencia}
     
                 carrito_data.push(producto)
                 localStorage.setItem('carrito',JSON.stringify(carrito_data))

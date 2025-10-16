@@ -142,4 +142,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   ActualizarPrecios()
 
+  const mensaje = document.getElementById('alerta').querySelector('strong')
+  const form = document.getElementById('formFinalizarCompra');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const card = document.querySelectorAll('.card')
+
+    let agotados = []
+    for(let i=0; i<carrito.length; i++){
+      const cantidad = parseInt(card[i].querySelector('.cantidad').textContent)
+      const existencia = parseInt(carrito[i].existencia)
+      const id = parseInt(carrito[i].id)
+      const nombre = carrito[i].nombre
+      if(cantidad > existencia)
+        agotados.push(nombre)   
+    }
+
+    if(agotados.length > 0){
+      const modal = new bootstrap.Modal(document.getElementById('modalAdvertencia'));
+      modal.show()
+      mensaje.textContent = `El Producto "${agotados.join(', ')}" Está Agotado`
+    }
+  })
+
 });
