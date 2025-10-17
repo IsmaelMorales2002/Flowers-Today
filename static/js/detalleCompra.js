@@ -12,7 +12,7 @@ document.addEventListener('click', (e) => {
                 const totalCell = modal.querySelector("#detalle-total");
                 const modalTitulo = modal.querySelector(".modal-title");
 
-                modalTitulo.textContent = `Detalle De Compra Del Comprobante ${comprobante.textContent} `;
+                modalTitulo.textContent = `Detalle De Compra ${comprobante.textContent} `;
                 tbody.innerHTML = "";
 
                 data.productos.forEach(p => {
