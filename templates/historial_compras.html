@@ -27,7 +27,7 @@
         {% for comprobante in comprobantes %}
         <tr>
             <td class="text-center">{{comprobante.fecha_comprobante|date:"d/m/Y"}}</td>
-            <td class="text-center">{{comprobante.codigo_comprobante}}</td>
+            <td class="text-center" id="comprobante">{{comprobante.codigo_comprobante}}</td>
             <td class="text-center">${{comprobante.id_compra.total_compra}}</td>
             <td class="text-center">
             {% if  comprobante.estado_comprobante == 'Pe' %}
@@ -37,9 +37,13 @@
             {% endif %}
             </td>
             <td class="text-center">
-                <button class="btn btn-sm btn-ver-detalle text-white" style="background-color: #6C2DC7"
+                <a href="{% url 'getdetalleCompras' comprobante.id_compra.id_compra %}" 
+                class="btn btn-sm btn-ver-detalle text-white" 
+                style="background-color: #6C2DC7"
                 data-bs-toggle="modal"
-                data-bs-target="#modalDetalleCompra">Ver Detalle Compra</button>
+                data-bs-target="#modalDetalleCompra">
+                Ver Detalle Compra
+                </a>
             </td>
         </tr>
         {% endfor %}
@@ -88,11 +92,11 @@
 
 
 
-  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
-  <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
-  <script src="https://cdn.datatables.net/responsive/3.0.5/js/dataTables.responsive.js"></script>
-  <script src="https://cdn.datatables.net/responsive/3.0.5/js/responsive.bootstrap5.js"></script>
-  <script src="{% static 'js/dataTableHistorial.js'%}"></script>
-  <script src="{% static 'js/detalleCompra.js'%}"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+<script src="https://cdn.datatables.net/responsive/3.0.5/js/dataTables.responsive.js"></script>
+<script src="https://cdn.datatables.net/responsive/3.0.5/js/responsive.bootstrap5.js"></script>
+<script src="{% static 'js/dataTableHistorial.js'%}"></script>
+<script src="{% static 'js/detalleCompra.js'%}"></script>
 {% endblock %}

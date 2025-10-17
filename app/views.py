@@ -8,6 +8,7 @@ from app.administrador import *
 from .models import *
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password,check_password
+from django.http import JsonResponse
 #Generacion de Tokens
 from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
 from django.utils.encoding import force_bytes
@@ -511,5 +512,24 @@ def Vista_Historial_Compras(request):
 
 #Peticion GET_Consultar_Detalle_Compra
 def GET_Detalle_Compra(request,compra_id):
-    print('hola')
-    print(request.session.get('correo_cliente'),None)
+    
+    compra = Compra.objects.get(id_compra = compra_id, id_usuario = request.session.get('id_usuario'))
+    
+    detalles = Detalle_Compra.objects.filter(id_compra = compra.id_compra)
+    productos = []
+
+    for detalle in detalles:
+        productos.append({
+            "nombre": detalle.id_producto.nombre_producto,  
+            "imagen": detalle.id_producto.imagen_producto.url if detalle.id_producto.imagen_producto else "/static/img/producto-default.png",
+            "cantidad": detalle.cantidad_producto_compra,
+            "precio": float(detalle.precio_unitario_compra),
+            "subtotal": float(detalle.cantidad_producto_compra * detalle.precio_unitario_compra)
+        })
+
+    return JsonResponse({
+        "id_compra": compra.id_compra,
+        "fecha": compra.fecha_compra,
+        "total": compra.total_compra,
+        "productos": productos,
+    })
