@@ -533,3 +533,12 @@ def GET_Detalle_Compra(request,compra_id):
         "total": compra.total_compra,
         "productos": productos,
     })
+
+#Vista Configuracion
+def Vista_Configuracion(request):
+    activo = request.session.get('activo',False)
+    if activo:
+        return render(request,'configuracion.html',{
+            'activo': activo
+        })
+    return redirect('vista_inicio_cliente')
