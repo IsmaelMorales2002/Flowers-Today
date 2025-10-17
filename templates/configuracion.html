@@ -16,7 +16,7 @@
                     <i class="bi bi-key-fill fs-1 mb-3 text-primary"></i>
                     <h5 class="card-title">Actualizar contraseña</h5>
                     <p class="card-text">Cambia tu contraseña actual por una más segura.</p>
-                    <a href="#" class="btn btn-primary">Actualizar</a>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#actualizarContraseñaModal">Actualizar</button>
                 </div>
             </div>
         </div>
@@ -39,25 +39,101 @@
     </div>
 </div>
 
+<!-- Modal para actualizar contraseña -->
+<div class="modal fade" id="actualizarContraseñaModal" tabindex="-1" aria-labelledby="actualizarContraseñaModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content ">
+      <form method="POST" action="#" id="form-actualizar-contraseña">
+        {% csrf_token %}
+        <!-- Encabezado del modal con fondo oscuro -->
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title" id="actualizarContraseñaModalLabel">Actualizar contraseña</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Contraseña actual -->
+          <div class="mb-3">
+            <label for="contraseñaActual" class="form-label">Contraseña actual</label>
+            <div class="input-group">
+              <input type="password" class="form-control" id="contraseñaActual" name="contraseña_actual" placeholder="Ingrese su contraseña actual" required>
+              <button type="button" class="btn text-white" style="background-color: #6C2DC7;" id="toggleContraseñaActual">Mostrar</button>
+            </div>
+          </div>
+          <!-- Contraseña nueva -->
+          <div class="mb-3">
+            <label for="contraseñaNueva" class="form-label">Contraseña nueva</label>
+            <div class="input-group">
+              <input type="password" class="form-control" id="contraseñaNueva" name="contraseña_nueva" placeholder="Ingrese su nueva contraseña" required minlength="8" maxlength="12">
+              <button type="button" class="btn text-white" style="background-color: #6C2DC7;" id="toggleContraseñaNueva">Mostrar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer border-0 pt-0">
+            <button type="submit" class="btn bg-dark text-white " >Actualizar</button>
+          <button type="button" class="btn btn-danger text-white" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Script toggle para mostrar/ocultar contraseña -->
+<script>
+document.getElementById('toggleContraseñaActual').addEventListener('click', function() {
+    const input = document.getElementById('contraseñaActual');
+    if (input.type === "password") {
+        input.type = "text";
+        this.textContent = "Ocultar";
+    } else {
+        input.type = "password";
+        this.textContent = "Mostrar";
+    }
+});
+
+document.getElementById('toggleContraseñaNueva').addEventListener('click', function() {
+    const input = document.getElementById('contraseñaNueva');
+    if (input.type === "password") {
+        input.type = "text";
+        this.textContent = "Ocultar";
+    } else {
+        input.type = "password";
+        this.textContent = "Mostrar";
+    }
+});
+</script>
+
+
+
 <!-- Modal para eliminar cuenta -->
 <div class="modal fade" id="eliminarCuentaModal" tabindex="-1" aria-labelledby="eliminarCuentaModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="eliminarCuentaModalLabel">Confirmar eliminación</h5>
+      <div class="modal-header bg-dark">
+        <h5 class="modal-title text-white" id="eliminarCuentaModalLabel">Confirmar eliminación</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
-        ¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.
+        <div class="alert alert-danger mb-0" role="alert">
+            <div class="mb-1">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <strong>Precaución:</strong> Esta acción eliminará tu cuenta permanentemente.
+            </div>
+            <div>
+            Para reactivarla, ponte en contacto con la administración o el soporte del sitio.
+            </div>
+        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <form method="POST" action="#">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Eliminar cuenta</button>
-        </form>
+          <form method="POST" action="#">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-dark">Eliminar cuenta</button>
+          </form>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
       </div>
     </div>
   </div>
 </div>
+
 {% endblock %}
