@@ -8,6 +8,7 @@ from app.administrador import *
 from .models import *
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password,check_password
+from django.http import JsonResponse
 #Generacion de Tokens
 from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
 from django.utils.encoding import force_bytes
@@ -477,6 +478,7 @@ def Vista_Perfil_Admin(request):
             })
         except Usuario.DoesNotExist:
             return redirect('vista_inicio_cliente')
+    return redirect('vista_inicio_cliente')
 
 #Vista Vista_Editar_Perfil_Admin    
 def Vista_Editar_Perfil_Admin(request):
@@ -490,4 +492,53 @@ def Vista_Editar_Perfil_Admin(request):
             })
         except Usuario.DoesNotExist:
             return redirect('vista_inicio_cliente')
+    return redirect('vista_inicio_cliente')
+        
+#Vista Vista_Historial_Compras
+def Vista_Historial_Compras(request):
+    activo = request.session.get('activo',False)
+    if activo:
+        try:
+            usuario = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
+            compras = Compra.objects.filter(id_usuario = usuario.id_usuario)
+            comprobantes = Comprobante_Pago.objects.filter(id_compra__in = compras)
+            return render(request,'historial_compras.html',{
+                'activo': activo,
+                'comprobantes': comprobantes
+            })    
+        except Compra.DoesNotExist:
+            return redirect('vista_inicio_cliente')
+    return redirect('vista_inicio_cliente')
 
+#Peticion GET_Consultar_Detalle_Compra
+def GET_Detalle_Compra(request,compra_id):
+    
+    compra = Compra.objects.get(id_compra = compra_id, id_usuario = request.session.get('id_usuario'))
+    
+    detalles = Detalle_Compra.objects.filter(id_compra = compra.id_compra)
+    productos = []
+
+    for detalle in detalles:
+        productos.append({
+            "nombre": detalle.id_producto.nombre_producto,  
+            "imagen": detalle.id_producto.imagen_producto.url if detalle.id_producto.imagen_producto else "/static/img/producto-default.png",
+            "cantidad": detalle.cantidad_producto_compra,
+            "precio": float(detalle.precio_unitario_compra),
+            "subtotal": float(detalle.cantidad_producto_compra * detalle.precio_unitario_compra)
+        })
+
+    return JsonResponse({
+        "id_compra": compra.id_compra,
+        "fecha": compra.fecha_compra,
+        "total": compra.total_compra,
+        "productos": productos,
+    })
+
+#Vista Configuracion
+def Vista_Configuracion(request):
+    activo = request.session.get('activo',False)
+    if activo:
+        return render(request,'configuracion.html',{
+            'activo': activo
+        })
+    return redirect('vista_inicio_cliente')

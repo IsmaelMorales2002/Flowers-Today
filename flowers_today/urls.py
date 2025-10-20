@@ -21,6 +21,7 @@ urlpatterns = [
     path('comentario/guardar/', guardar_comentario, name='guardar_comentario'),
     path('actualizar_credencial/<uidb64>/<token>/',Vista_Actualizar_Clave,name='vista_credencial'),
     path('carrito/',vista_carrito,name='vista_carrito'),
+    path('historial/',Vista_Historial_Compras,name='vista_historial_compras'),
 
     #Vistas Administrador
     path('administracion/',Vista_Inicio_Administrador,name='vista_inicio_administrador'),
@@ -40,7 +41,7 @@ urlpatterns = [
     path('editar-producto/<int:id>',Vista_Actualizar_Producto,name='vista_actualizar_producto'),
     path('comentario/administracion/', vista_comentario_administracion, name='vista_comentario_administracion'),
     path('pedidos/administracion/', vista_pedidos_administracion, name='vista_pedidos_administracion'),
-
+    path('configuracion/',Vista_Configuracion,name='vista_configuracion'),
 
 
  
@@ -63,7 +64,8 @@ urlpatterns = [
     path('EditarProducto/<int:id>/',Editar_Producto,name='EditarProducto'),
     path('productos/cambiar-estado/',Cambiar_Estado_Producto,name='cambiar_estado_producto'),
     path('RealizarCompra',RealizarCompra,name='RealizarCompra'),
-    #Endpoints
+    #Apis
+    path('detalleCompra/<int:compra_id>',GET_Detalle_Compra,name='getdetalleCompras'),
 ]
 
 if settings.DEBUG:

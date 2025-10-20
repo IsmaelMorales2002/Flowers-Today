@@ -31,8 +31,9 @@ document.addEventListener('DOMContentLoaded', () =>{
                 let imagen = btn.dataset.imagen
                 let precio = btn.dataset.precio
                 let descripcion = btn.dataset.descripcion
+                let existencia = btn.dataset.existencia
                 
-                let producto = {id,nombre,imagen,precio,descripcion}
+                let producto = {id,nombre,imagen,precio,descripcion,existencia}
     
                 carrito_data.push(producto)
                 localStorage.setItem('carrito',JSON.stringify(carrito_data))
@@ -65,5 +66,19 @@ document.addEventListener('DOMContentLoaded', () =>{
                 boton.style.backgroundColor = "#28a745";
             }
         });
+    }
+
+    const modal = document.getElementById("modalExitoCompra")
+    if(modal){
+        modal.addEventListener('click',() =>{
+        actualizarIconoCarrito()
+
+        document.querySelectorAll(".btn-agregar").forEach(btn => {
+        btn.textContent = "Agregar al Carrito"
+        btn.classList.remove("agregado", "bi-cart-check")
+        btn.classList.add("bi-cart3")
+        btn.style.backgroundColor = "#6C2DC7"
+        })
+    })
     }
 })

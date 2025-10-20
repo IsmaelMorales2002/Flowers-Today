@@ -1,0 +1,102 @@
+{% extends 'menu.html' %}
+{% load static %}
+{% block title %}Historial De Compras{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.5/css/responsive.bootstrap5.css">
+<link rel="stylesheet" href="{% static 'css/tablaCliente.css'%}" />
+
+
+<div class="container mt-5">
+  <h2 class="text-center text-white mb-4">🛍️ Historial de Compras</h2>
+
+   
+  <div class="table-responsive bg-white p-3 rounded shadow mb-2">
+    <table id="tabla-historial" class="table table-striped table-bordered bg-white text-dark responsive">
+      <thead class="table-light">
+        <tr>
+          <th class="text-center">Fecha</th>
+          <th class="text-center">Comprobante</th>
+          <th class="text-center">Total</th>
+          <th class="text-center">Estado</th>
+          <th class="text-center">Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for comprobante in comprobantes %}
+        <tr>
+            <td class="text-center">{{comprobante.fecha_comprobante|date:"d/m/Y"}}</td>
+            <td class="text-center" id="comprobante">{{comprobante.codigo_comprobante}}</td>
+            <td class="text-center">${{comprobante.id_compra.total_compra}}</td>
+            <td class="text-center">
+            {% if  comprobante.estado_comprobante == 'Pe' %}
+                <span class="badge bg-danger">Pendiente</span>
+                {% elif comprobante.estado_comprobante == 'Pa' %}
+                <span class="badge bg-success ">Pagado</span>
+            {% endif %}
+            </td>
+            <td class="text-center">
+                <a href="{% url 'getdetalleCompras' comprobante.id_compra.id_compra %}" 
+                class="btn btn-sm btn-ver-detalle text-white" 
+                style="background-color: #6C2DC7"
+                data-bs-toggle="modal"
+                data-bs-target="#modalDetalleCompra">
+                Ver Detalle Compra
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+<!-- Modal Detalle de Compra -->
+<div class="modal fade" id="modalDetalleCompra" tabindex="-1" aria-labelledby="modalDetalleCompraLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content shadow-lg">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="modalDetalleCompraLabel">Detalle de Productos</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table align-middle text-center" id="tabla-detalle">
+            <thead class="table-dark">
+              <tr>
+                <th>Imagen</th>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot class="table-light">
+              <tr>
+                <td colspan="4" class="text-end fw-bold">Total:</td>
+                <td id="detalle-total" class="fw-bold"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+<script src="https://cdn.datatables.net/responsive/3.0.5/js/dataTables.responsive.js"></script>
+<script src="https://cdn.datatables.net/responsive/3.0.5/js/responsive.bootstrap5.js"></script>
+<script src="{% static 'js/dataTableHistorial.js'%}"></script>
+<script src="{% static 'js/detalleCompra.js'%}"></script>
+{% endblock %}

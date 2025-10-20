@@ -224,6 +224,7 @@ def RealizarCompra(request):
             estado_comprobante = 'Pe',
         )
         comprobante.save()
+        messages.success(request,'exito')
         return redirect('vista_inicio_cliente')
     except Usuario.DoesNotExist:
         return redirect('vista_carrito')
