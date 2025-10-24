@@ -538,6 +538,56 @@ def Editar_Producto(request,id):
     messages.success(request,'editado')
     return redirect('vista_productos_administracion')
 
+# Editar_Perfil_Admin, logica para editar una cuenta tipo cliente
+def Editar_Perfil_Admin(request):
+    imagen = request.FILES.get('imagen_usuario')
+    nombre = request.POST.get('txtNombreA','').strip()
+    apellido = request.POST.get('txtApellidoA','').strip()
+    correo = request.POST.get('txtCorreoA','').strip()
+    telefono = request.POST.get('txtTelefonoA','').strip()
+
+    campos_vacios = []
+    if not nombre:
+        campos_vacios.append('nombre')
+    if not apellido:
+        campos_vacios.append('apellido')
+    if not telefono:
+        campos_vacios.append('telefono')
+    if not correo:
+        campos_vacios.append('correo')
+
+    contexto = {
+            'nombre': nombre,
+            'apellido': apellido,
+            'telefono': telefono,
+            'correo': correo,
+            'campos_vacios': campos_vacios
+    }
+
+    try:
+        #Obteniendo Cliente
+        admin = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
+
+        if campos_vacios:
+                contexto['activo'] = True
+                contexto['usuario'] = admin
+                return render(request,'editar_perfilCliente.html',contexto)
+    
+        #Actualziacion
+        admin.nombre_usuario = nombre
+        admin.apellido_usuario = apellido
+        admin.telefono_usuario = telefono
+        admin.correo_usuario = correo
+        if imagen:
+            admin.imagen_usuario = imagen
+        admin.save()
+        #Actualizacion de session
+        request.session['nombre_administrador'] = admin.nombre_usuario
+        request.session['apellido_administrador'] = admin.apellido_usuario
+        request.session['correo_administrador'] = admin.correo_usuario
+        return redirect('vista_perfil_administrador')
+    except Usuario.DoesNotExist:
+        return redirect('vista_login')
 
 
 

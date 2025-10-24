@@ -50,6 +50,7 @@ urlpatterns = [
     path('IniciarSesion/',Iniciar_Sesion,name='IniciarSesion'),
     path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion'),
     path('EditarPerfilCliente/',Editar_Perfil_Cliente,name='EditarPerfilCliente'),
+    path('EditarPerfilAdmin/',Editar_Perfil_Admin,name='EditarPerfilAdmin'),
     path('CreaCuentaAdmi',Crear_Cuenta_Admi,name='CrearCuentaAdmi'),
     path('CreaCategoria',Crear_Categoria,name='CrearCategoria'),
     path('editar-categoria/guardar/<int:id_categoria>/', Editar_Categoria, name='editar_categoria'),

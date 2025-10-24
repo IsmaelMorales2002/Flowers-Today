@@ -19,7 +19,7 @@
                  style="width: 150px; height: 150px; object-fit: cover;">
                  <!-- Formulario -->
             <div class="mt-2">
-              <form method="POST" enctype="multipart/form-data" action="{% url 'EditarPerfilCliente' %}" id="form-editar-perfil">
+              <form method="POST" enctype="multipart/form-data" action="{% url 'EditarPerfilAdmin' %}" id="form-editar-perfil">
               {% csrf_token %}
               <input type="file"
                      class="form-control form-control-sm mx-auto"
@@ -86,7 +86,7 @@
 
             <!-- Botones -->
             <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
-              <button type="submit" class="btn btn-primary w-100 w-md-auto" style="background-color: #6C2DC7; border: #6C2DC7;">
+              <button type="submit" class="btn btn-primary w-100 w-md-auto" id="btn-confirmar-actualizacion-admin" style="background-color: #6C2DC7; border: #6C2DC7;">
                 <i class="bi bi-save me-1"></i> Guardar Cambios
               </button>
               <a href="{% url 'vista_perfil_administrador' %}" class="btn btn-danger w-100 w-md-auto">
@@ -100,7 +100,39 @@
   </div>
 </section>
 
+<!-- Modal Confirmar Actualización de Perfil -->
+<div class="modal fade" id="modalConfirmarActualizacionAdmin" tabindex="-1" aria-labelledby="modalConfirmarActualizacionLabelAdmin" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      
+      <!-- Encabezado -->
+      <div class="modal-header bg-dark text-white rounded-top-4">
+        <h5 class="modal-title" id="modalConfirmarActualizacionLabel">
+          Confirmar actualización
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <!-- Cuerpo -->
+      <div class="modal-body text-center p-4 ">
+        <p class="mb-3"><strong>¿Estás seguro de que deseas actualizar tu perfil?</strong></p>
+        <div class="d-flex justify-content-center gap-3">
+          <button type="button" class="btn text-white" id="btn-confirmar-guardar-admin" style="background: #6C2DC7;">
+            <i class="bi bi-check-circle me-1"></i> Confirmar
+          </button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-1"></i> Cancelar
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
 <script src="{% static 'js/imagen_previa.js' %}"></script>
 <script src="{% static 'js/campos_vacios.js' %}"></script>
+<script src="{% static 'js/confirmacion_admin.js' %}"></script>
 
 {% endblock %}
