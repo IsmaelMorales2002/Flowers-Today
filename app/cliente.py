@@ -3,7 +3,7 @@ from django.shortcuts import render,redirect
 from django.contrib import messages
 from .models import *
 from django.db.models import Q
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password,check_password
 from django.utils import timezone
 import uuid
 
@@ -229,4 +229,23 @@ def RealizarCompra(request):
     except Usuario.DoesNotExist:
         return redirect('vista_carrito')
 
+#logica para actualizar contraseña
+def ActualizarClaveCliente(request):
+    correo = request.POST.get('txtCorreo','').strip()
+    password = request.POST.get('txtPasswordActual','').strip()
+    passwordNueva = request.POST.get('txtPasswordNueva','').strip()
+    try:
+        usuario = Usuario.objects.get(correo_usuario = correo)
+        if check_password(password,usuario.password_usuario):
+            nuevaPassword = make_password(passwordNueva)
+            usuario.password_usuario = nuevaPassword
+            # usuario.save()
+            messages.success(request,'Exito')
+            return redirect('vista_configuracion')
+        else:
+            messages.warning(request,'Contraseña Invalida') 
+            return redirect('vista_configuracion')
+    except Usuario.DoesNotExist:
+        messages.error(request,'Error')
+        return redirect('vista_inicio_cliente')
     

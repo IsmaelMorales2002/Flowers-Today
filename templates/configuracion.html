@@ -4,6 +4,7 @@
 
 {% block content %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
 <div class="container mt-5">
     <h2 class="mb-4 text-center text-white">Configuración de la cuenta</h2>
@@ -43,8 +44,9 @@
 <div class="modal fade" id="actualizarContraseñaModal" tabindex="-1" aria-labelledby="actualizarContraseñaModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content ">
-      <form method="POST" action="#" id="form-actualizar-contraseña">
+      <form method="POST" action="{% url 'ActualizarClaveCliente' %}" id="form-actualizar-contraseña">
         {% csrf_token %}
+        <input type="hidden" name="txtCorreo" value="{{request.session.correo_cliente}}">
         <!-- Encabezado del modal con fondo oscuro -->
         <div class="modal-header bg-dark text-white">
           <h5 class="modal-title" id="actualizarContraseñaModalLabel">Actualizar contraseña</h5>
@@ -56,7 +58,7 @@
           <div class="mb-3">
             <label for="contraseñaActual" class="form-label">Contraseña actual</label>
             <div class="input-group">
-              <input type="password" class="form-control" id="contraseñaActual" name="contraseña_actual" placeholder="Ingrese su contraseña actual" required>
+              <input type="password" class="form-control" id="contraseñaActual" name="txtPasswordActual" placeholder="Ingrese su contraseña actual" required>
               <button type="button" class="btn text-white" style="background-color: #6C2DC7;" id="toggleContraseñaActual">Mostrar</button>
             </div>
           </div>
@@ -64,7 +66,7 @@
           <div class="mb-3">
             <label for="contraseñaNueva" class="form-label">Contraseña nueva</label>
             <div class="input-group">
-              <input type="password" class="form-control" id="contraseñaNueva" name="contraseña_nueva" placeholder="Ingrese su nueva contraseña" required minlength="8" maxlength="12">
+              <input type="password" class="form-control" id="contraseñaNueva" name="txtPasswordNueva" placeholder="Ingrese su nueva contraseña" required minlength="8" maxlength="12">
               <button type="button" class="btn text-white" style="background-color: #6C2DC7;" id="toggleContraseñaNueva">Mostrar</button>
             </div>
           </div>
@@ -78,33 +80,6 @@
     </div>
   </div>
 </div>
-
-<!-- Script toggle para mostrar/ocultar contraseña -->
-<script>
-document.getElementById('toggleContraseñaActual').addEventListener('click', function() {
-    const input = document.getElementById('contraseñaActual');
-    if (input.type === "password") {
-        input.type = "text";
-        this.textContent = "Ocultar";
-    } else {
-        input.type = "password";
-        this.textContent = "Mostrar";
-    }
-});
-
-document.getElementById('toggleContraseñaNueva').addEventListener('click', function() {
-    const input = document.getElementById('contraseñaNueva');
-    if (input.type === "password") {
-        input.type = "text";
-        this.textContent = "Ocultar";
-    } else {
-        input.type = "password";
-        this.textContent = "Mostrar";
-    }
-});
-</script>
-
-
 
 <!-- Modal para eliminar cuenta -->
 <div class="modal fade" id="eliminarCuentaModal" tabindex="-1" aria-labelledby="eliminarCuentaModalLabel" aria-hidden="true">
@@ -135,5 +110,40 @@ document.getElementById('toggleContraseñaNueva').addEventListener('click', func
     </div>
   </div>
 </div>
+
+<!-- Modal de Notificación - Contraseña Actualizada -->
+<div class="modal fade" id="modalNotificacion" tabindex="-1" aria-labelledby="modalNotificacionLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-body text-center p-5">
+        <div class="icono-exito mx-auto mb-3">
+          <i id="modalIcon" class="bi bi-check-circle-fill text-dark fs-1"></i>
+        </div>
+        <h4 id="modalNotificacionLabel" class="fw-bold text-dark mt-3">
+          ¡Contraseña Actualizada!
+        </h4>
+        <p id="modalMensaje" class="text-muted mt-2 mb-4">
+          Tu contraseña se ha cambiado correctamente ✅
+        </p>
+        <button type="button" class="btn btn-dark px-4 py-2 rounded-pill" data-bs-dismiss="modal">
+          <i class="bi bi-check2-circle me-1"></i> Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/toggleConfiguracion.js'%}"></script>
+
+{% if messages %}
+{% for message in messages %}
+{% if message.tags == 'success'%}
+<script src="{% static 'js/modal_exito_clave.js' %}"></script>
+{% elif message.tags == 'warning'%}
+<script src="{% static 'js/modal_error_clave.js' %}"></script>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
 
 {% endblock %}
