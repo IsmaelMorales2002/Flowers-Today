@@ -60,30 +60,33 @@ def Iniciar_Sesion(request):
     contexto = {}
     try: 
         usuario = Usuario.objects.get(correo_usuario = correo)
-
-        #Verificacion de contraseña
-        if check_password(password,usuario.password_usuario):
-            #Session para guardar informacion del cliente
-            if usuario.id_rol.nombre_rol == 'C':
-                request.session['nombre_cliente'] = usuario.nombre_usuario
-                request.session['apellido_cliente'] = usuario.apellido_usuario
-                request.session['correo_cliente'] = usuario.correo_usuario
-                request.session['id_usuario'] = usuario.id_usuario
-                request.session['activo'] = True
-                return redirect('vista_inicio_cliente')
-            
-            #Session paran guardar informacion del administrador
-            elif usuario.id_rol.nombre_rol == 'A':
-                request.session['nombre_administrador'] = usuario.nombre_usuario
-                request.session['apellido_administrador'] = usuario.apellido_usuario
-                request.session['correo_administrador'] = usuario.correo_usuario
-                request.session['id_usuario'] = usuario.id_usuario
-                request.session['activo_administrador'] = True
-                return redirect('vista_inicio_administrador')
+        
+        if usuario.usuario_activo:
+            #Verificacion de contraseña
+            if check_password(password,usuario.password_usuario):
+                #Session para guardar informacion del cliente
+                if usuario.id_rol.nombre_rol == 'C':
+                    request.session['nombre_cliente'] = usuario.nombre_usuario
+                    request.session['apellido_cliente'] = usuario.apellido_usuario
+                    request.session['correo_cliente'] = usuario.correo_usuario
+                    request.session['id_usuario'] = usuario.id_usuario
+                    request.session['activo'] = True
+                    return redirect('vista_inicio_cliente')
+                
+                #Session paran guardar informacion del administrador
+                elif usuario.id_rol.nombre_rol == 'A':
+                    request.session['nombre_administrador'] = usuario.nombre_usuario
+                    request.session['apellido_administrador'] = usuario.apellido_usuario
+                    request.session['correo_administrador'] = usuario.correo_usuario
+                    request.session['id_usuario'] = usuario.id_usuario
+                    request.session['activo_administrador'] = True
+                    return redirect('vista_inicio_administrador')
+            else:
+                contexto['error_credenciales'] = 'Credenciales Incorrectas'
+                contexto['correo'] = correo
+                return render(request,'login.html',contexto)
         else:
-            contexto['error_credenciales'] = 'Credenciales Incorrectas'
-            contexto['correo'] = correo
-            return render(request,'login.html',contexto)
+            return redirect('vista_inicio_cliente')
 
     except Usuario.DoesNotExist:
         contexto['error_usuario'] = 'Usuario No Encontrado'
