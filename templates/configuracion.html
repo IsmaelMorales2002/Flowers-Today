@@ -108,7 +108,7 @@
       <div class="modal-footer border-0 d-flex justify-content-between">
 
         <!-- Form para eliminar -->
-        <form method="POST" action="#">
+        <form method="POST" action="{% url 'DesactivarCuenta' %}">
           {% csrf_token %}
           <input type="hidden" name="txtCorreo" value="{{request.session.correo_cliente}}">
           <button type="submit" class="btn bg-dark rounded-pill text-white">

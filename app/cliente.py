@@ -249,3 +249,19 @@ def ActualizarClaveCliente(request):
         messages.error(request,'Error')
         return redirect('vista_inicio_cliente')
     
+#Logica para desactivar cuenta
+def DesactivarCuenta(request):
+    correo = request.POST.get('txtCorreo','').strip()
+    try:
+        usuario = Usuario.objects.get(correo_usuario = correo)
+        usuario.usuario_activo = False
+        usuario.save()
+        del request.session['nombre_cliente']
+        del request.session['apellido_cliente']
+        del request.session['correo_cliente']
+        del request.session['id_usuario']
+        del request.session['activo']
+        return redirect('vista_inicio_cliente')
+    except Usuario.DoesNotExist:
+        return redirect('vista_inicio_cliente')
+    
