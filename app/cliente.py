@@ -239,7 +239,7 @@ def ActualizarClaveCliente(request):
         if check_password(password,usuario.password_usuario):
             nuevaPassword = make_password(passwordNueva)
             usuario.password_usuario = nuevaPassword
-            # usuario.save()
+            usuario.save()
             messages.success(request,'Exito')
             return redirect('vista_configuracion')
         else:
