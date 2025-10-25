@@ -27,11 +27,11 @@
             <div class="card h-100 shadow-sm border-0">
                 <div class="card-body text-center">
                     <i class="bi bi-trash-fill fs-1 mb-3 text-danger"></i>
-                    <h5 class="card-title text-danger">Eliminar cuenta</h5>
+                    <h5 class="card-title text-danger">Desactivar cuenta</h5>
                     <p class="card-text">
-                        Esta acción eliminará permanentemente tu cuenta. Solo el administrador puede intervenir en casos especiales.
+                        Esta acción desactivara permanentemente tu cuenta. Solo el administrador puede intervenir en casos especiales.
                     </p>
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarCuentaModal">
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalConfirmarEliminarCuenta">
                         Eliminar
                     </button>
                 </div>
@@ -81,35 +81,50 @@
   </div>
 </div>
 
-<!-- Modal para eliminar cuenta -->
-<div class="modal fade" id="eliminarCuentaModal" tabindex="-1" aria-labelledby="eliminarCuentaModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header bg-dark">
-        <h5 class="modal-title text-white" id="eliminarCuentaModalLabel">Confirmar eliminación</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+<!-- Modal Confirmar Eliminación Usuario -->
+<div class="modal fade" id="modalConfirmarEliminarCuenta" tabindex="-1" aria-labelledby="modalConfirmarEliminarCuentaLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      
+      <!-- Header rojo -->
+      <div class="modal-header bg-danger text-white rounded-top-4">
+        <h5 class="modal-title fw-bold" id="modalConfirmarEliminarCuentaLabel">
+          Confirmar Desactivación
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
-        <div class="alert alert-danger mb-0" role="alert">
-            <div class="mb-1">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <strong>Precaución:</strong> Esta acción eliminará tu cuenta permanentemente.
-            </div>
-            <div>
-            Para reactivarla, ponte en contacto con la administración o el soporte del sitio.
-            </div>
-        </div>
+
+      <div class="modal-body text-center p-4">
+        <i class="bi bi-exclamation-octagon-fill text-danger fs-1 mb-3"></i>
+        <p class="fw-semibold">
+          ¿Estás seguro de que deseas desactivar tu cuenta?
+        </p>
+        <p class="text-muted">
+          Esta acción es <strong>permanente</strong> y no se puede deshacer.<br>
+          Si necesitas ayuda para recuperarla más adelante, deberás ponerte en contacto con el soporte del sitio.
+        </p>
       </div>
-      <div class="modal-footer">
-          <form method="POST" action="#">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-dark">Eliminar cuenta</button>
-          </form>
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+
+      <div class="modal-footer border-0 d-flex justify-content-between">
+
+        <!-- Form para eliminar -->
+        <form method="POST" action="#">
+          {% csrf_token %}
+          <input type="hidden" name="txtCorreo" value="{{request.session.correo_cliente}}">
+          <button type="submit" class="btn bg-dark rounded-pill text-white">
+            Sí, eliminar
+          </button>
+        </form>
+
+        <button type="button" class="btn btn-danger rounded-pill" data-bs-dismiss="modal">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>
 </div>
+
+
 
 <!-- Modal de Notificación - Contraseña Actualizada -->
 <div class="modal fade" id="modalNotificacionExito" tabindex="-1" aria-labelledby="modalNotificacionLabelExito" aria-hidden="true">
@@ -146,7 +161,7 @@
         </h4>
             <p id="modalMensaje" class="text-muted mt-2 mb-4">
               La contraseña ingresada no coincide con tu contraseña actual. ❌<br>
-              Por favor, intenta nuevamente.
+            Por favor, intenta nuevamente.
         </p>
         <button type="button" class="btn btn-dark px-4 py-2 rounded-pill" data-bs-dismiss="modal">
           <i class="bi bi-check2-circle me-1"></i> Aceptar
