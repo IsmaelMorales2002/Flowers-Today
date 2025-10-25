@@ -505,6 +505,10 @@ def Vista_Historial_Compras(request):
             usuario = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
             compras = Compra.objects.filter(id_usuario = usuario.id_usuario)
             comprobantes = Comprobante_Pago.objects.filter(id_compra__in = compras)
+
+            if request.GET.get('pdf'):
+                return generar_comprobante_pdf(request.GET.get('pdf'))
+
             return render(request,'historial_compras.html',{
                 'activo': activo,
                 'comprobantes': comprobantes
