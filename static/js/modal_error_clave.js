@@ -1,4 +1,4 @@
 document.addEventListener('DOMContentLoaded', () =>{
-    const modalNotificacion = new bootstrap.Modal(document.getElementById('modalNotificacion'))
-    modalNotificacion.show()
+    const modalNotificacionwarning = new bootstrap.Modal(document.getElementById('modalNotificacionwarning'))
+    modalNotificacionwarning.show()
 })

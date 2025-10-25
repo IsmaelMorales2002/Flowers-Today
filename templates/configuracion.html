@@ -73,7 +73,7 @@
         </div>
 
         <div class="modal-footer border-0 pt-0">
-            <button type="submit" class="btn bg-dark text-white " >Actualizar</button>
+            <button type="submit" class="btn bg-dark text-white " id="btn-actualizar" >Actualizar</button>
           <button type="button" class="btn btn-danger text-white" data-bs-dismiss="modal">Cancelar</button>
         </div>
       </form>
@@ -112,7 +112,7 @@
 </div>
 
 <!-- Modal de Notificación - Contraseña Actualizada -->
-<div class="modal fade" id="modalNotificacion" tabindex="-1" aria-labelledby="modalNotificacionLabel" aria-hidden="true">
+<div class="modal fade" id="modalNotificacionExito" tabindex="-1" aria-labelledby="modalNotificacionLabelExito" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg rounded-4">
       <div class="modal-body text-center p-5">
@@ -124,6 +124,29 @@
         </h4>
         <p id="modalMensaje" class="text-muted mt-2 mb-4">
           Tu contraseña se ha cambiado correctamente ✅
+        </p>
+        <button type="button" class="btn btn-dark px-4 py-2 rounded-pill" data-bs-dismiss="modal">
+          <i class="bi bi-check2-circle me-1"></i> Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Notificación - Contraseña Actualizada -->
+<div class="modal fade" id="modalNotificacionwarning" tabindex="-1" aria-labelledby="modalNotificacionLabelwarning" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-body text-center p-5">
+        <div class="icono-exito mx-auto mb-3">
+          <i id="modalIcon" class="bi bi-check-circle-fill text-dark fs-1"></i>
+        </div>
+        <h4 id="modalNotificacionLabel" class="fw-bold text-dark mt-3">
+          ¡Contraseña Incorrecta!
+        </h4>
+            <p id="modalMensaje" class="text-muted mt-2 mb-4">
+              La contraseña ingresada no coincide con tu contraseña actual. ❌<br>
+              Por favor, intenta nuevamente.
         </p>
         <button type="button" class="btn btn-dark px-4 py-2 rounded-pill" data-bs-dismiss="modal">
           <i class="bi bi-check2-circle me-1"></i> Aceptar
