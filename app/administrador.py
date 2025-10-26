@@ -144,6 +144,51 @@ def Crear_Categoria(request):
         contexto['error_interno'] = '!Error Interno!'
         return render(request, 'crearCategoria.html', contexto)
 
+#Crear Categoria De Servicio
+def Crear_Categoria_Servicio(request):
+    nombre = request.POST.get('txtNombreN', '').strip()
+    vista = request.POST.get('txtVista')
+
+    campos_vacios = []
+    if not nombre:
+        campos_vacios.append('nombre')
+
+    contexto = {
+        'nombre': nombre,
+        'campos_vacios': campos_vacios
+    }
+
+    if campos_vacios:
+        if vista:
+            return render(request, 'crearCategoriaServicio.html', contexto)
+        return render(request, 'registro.html', contexto)
+    
+    try:
+       
+        nombreExiste = Categoria_Servicio.objects.filter(nombre_categoria_servicio__iexact=nombre).exists()
+        if nombreExiste:
+            contexto['error_nombre'] = 'Nombre Ya Registrado'
+            if vista:
+                return render(request, 'crearCategoriaServicio.html', contexto)
+            return render(request, 'registro.html', contexto)
+
+        # Crear nueva categoría
+        categoriaServicio = Categoria_Servicio(
+            nombre_categoria_servicio=nombre,
+            estado_categoria_servicio=True
+        )
+        categoriaServicio.save()
+        messages.success(request, 'Categoría creada exitosamente')
+
+        if vista:
+            return redirect('vista_categoria_servicio')
+        return redirect('vista_inicio_cliente')
+
+    except Exception:
+  
+        contexto['error_interno'] = '!Error Interno!'
+        return render(request, 'crearCategoriaServicio.html', contexto)
+
 
 def Editar_Categoria(request, id_categoria):
     if request.method == 'POST':

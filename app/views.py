@@ -205,6 +205,25 @@ def Vista_Crear_Admi(request):
         })
     return redirect('vista_inicio_cliente')
 
+#Vista de categorias de servicio
+def Vista_Categoria_Servicio_Administracion(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        try:
+            usuarios = Usuario.objects.filter(id_rol__nombre_rol = 'A')
+            categorias = Categoria_Servicio.objects.all()
+            
+            return render(request,'categoria_servicios.html',{
+                'activo' : activo,
+                'usuarios': usuarios,
+                'categorias': categorias
+            })
+        except Exception as e:
+            print(e)
+            return redirect('vista_inicio_administrador')
+
+    return redirect('vista_inicio_cliente')   
 
 def Vista_Categoria_Administracion(request):
      #Proteccion de ruta
@@ -229,6 +248,17 @@ def Vista_Crear_Categoria(request):
     
     if activo:
         return render(request,'crearCategoria.html',{
+            'activo':activo
+        })
+    return redirect('vista_inicio_cliente')
+
+#Vista Crear Categoria Servicio
+def Vista_Crear_Categoria_Servicio(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    
+    if activo:
+        return render(request,'crearCategoriaServicio.html',{
             'activo':activo
         })
     return redirect('vista_inicio_cliente')

@@ -22,6 +22,9 @@ urlpatterns = [
     path('actualizar_credencial/<uidb64>/<token>/',Vista_Actualizar_Clave,name='vista_credencial'),
     path('carrito/',vista_carrito,name='vista_carrito'),
     path('historial/',Vista_Historial_Compras,name='vista_historial_compras'),
+    path('configuracion/',Vista_Configuracion,name='vista_configuracion'),
+    path('arreglos/',Vista_Arreglos,name='vista_arreglos'),
+    path('flores/',Vista_Flores,name='vista_flores'),
 
     #Vistas Administrador
     path('administracion/',Vista_Inicio_Administrador,name='vista_inicio_administrador'),
@@ -41,9 +44,9 @@ urlpatterns = [
     path('editar-producto/<int:id>',Vista_Actualizar_Producto,name='vista_actualizar_producto'),
     path('comentario/administracion/', vista_comentario_administracion, name='vista_comentario_administracion'),
     path('pedidos/administracion/', vista_pedidos_administracion, name='vista_pedidos_administracion'),
-    path('configuracion/',Vista_Configuracion,name='vista_configuracion'),
-    path('arreglos/',Vista_Arreglos,name='vista_arreglos'),
-    path('flores/',Vista_Flores,name='vista_flores'),
+    path('categoria/servicios',Vista_Categoria_Servicio_Administracion,name='vista_categoria_servicio'),
+    path('crear_categoria_servicio/',Vista_Crear_Categoria_Servicio,name='vista_crear_categoria_servicio'),
+
 
 
  
@@ -55,6 +58,7 @@ urlpatterns = [
     path('EditarPerfilAdmin/',Editar_Perfil_Admin,name='EditarPerfilAdmin'),
     path('CreaCuentaAdmi',Crear_Cuenta_Admi,name='CrearCuentaAdmi'),
     path('CreaCategoria',Crear_Categoria,name='CrearCategoria'),
+    path('CreaCategoriaServicio',Crear_Categoria_Servicio,name='CrearCategoriaServicio'),
     path('editar-categoria/guardar/<int:id_categoria>/', Editar_Categoria, name='editar_categoria'),
     path('categoria/cambiar-estado/', cambiar_estado_categoria, name='cambiar_estado_categoria'),
     path('CorreoRecuperacion/',Correo_Recuperacion,name='CorreoRecuperacion'),
