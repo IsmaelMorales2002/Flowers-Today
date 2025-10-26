@@ -647,3 +647,14 @@ def Vista_SolicitudesPedidos(request):
             'servicios': servicios
         })
     return redirect('vista_inicio_cliente')
+
+#Vista Solicitudes de Pedidos Administracion
+def Vista_Solicitudes_Pedidos_Admin(request):
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        servicios = Servicio.objects.all()
+        return render(request,'solicitudesPedidosAdmin.html',{
+            'activo': activo,
+            'servicios': servicios
+        })
+    return redirect('vista_inicio_cliente')

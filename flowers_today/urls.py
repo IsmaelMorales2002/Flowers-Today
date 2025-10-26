@@ -49,7 +49,7 @@ urlpatterns = [
     path('pedidos/administracion/', vista_pedidos_administracion, name='vista_pedidos_administracion'),
     path('categoria/servicios',Vista_Categoria_Servicio_Administracion,name='vista_categoria_servicio'),
     path('crear_categoria_servicio/',Vista_Crear_Categoria_Servicio,name='vista_crear_categoria_servicio'),
-
+    path('gestion-solicitudes/',Vista_Solicitudes_Pedidos_Admin,name='vista_gestion_solicitudes'),
 
  
     #Logica
