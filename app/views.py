@@ -549,3 +549,18 @@ def Vista_Configuracion(request):
             'activo': activo
         })
     return redirect('vista_inicio_cliente')
+
+#Vista Arreglos
+def Vista_Arreglos(request):
+    productos = Producto.objects.filter(producto_activo = True)
+    categorias = Categoria.objects.filter(
+        estado_categoria=True,
+        producto__producto_activo=True,
+        nombre_categoria__icontains = 'arreglo'
+    ).distinct()
+    activo = request.session.get('activo',False)
+    return render(request,'arreglos.html',{
+        'activo': activo,
+        'categorias': categorias,
+        'productos': productos
+    })

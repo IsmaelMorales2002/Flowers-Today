@@ -42,6 +42,7 @@ urlpatterns = [
     path('comentario/administracion/', vista_comentario_administracion, name='vista_comentario_administracion'),
     path('pedidos/administracion/', vista_pedidos_administracion, name='vista_pedidos_administracion'),
     path('configuracion/',Vista_Configuracion,name='vista_configuracion'),
+    path('arreglos/',Vista_Arreglos,name='vista_arreglos'),
 
 
  
