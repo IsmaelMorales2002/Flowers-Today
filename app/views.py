@@ -564,3 +564,20 @@ def Vista_Arreglos(request):
         'categorias': categorias,
         'productos': productos
     })
+
+#Vista Flores
+def Vista_Flores(request):
+    productos = Producto.objects.filter(producto_activo = True)
+    categorias = Categoria.objects.filter(
+        estado_categoria=True,
+        producto__producto_activo=True,
+    ).filter(
+        Q(nombre_categoria__icontains='flore') |
+        Q(nombre_categoria__icontains='rosa')
+    ).distinct()
+    activo = request.session.get('activo',False)
+    return render(request,'flores.html',{
+        'activo': activo,
+        'categorias': categorias,
+        'productos': productos
+    })
