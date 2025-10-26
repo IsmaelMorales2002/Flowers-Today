@@ -16,7 +16,7 @@
         <div class="card-body p-4">
 
           <!-- FORMULARIO SERVICIO PERSONALIZADO (Cliente) -->
-          <form method="POST" action="#">
+          <form method="POST" action="{% url 'CrearServicio' %}">
             {% csrf_token %}
 
             <!-- Categoría -->

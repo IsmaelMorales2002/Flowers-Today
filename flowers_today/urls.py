@@ -50,7 +50,6 @@ urlpatterns = [
     path('crear_categoria_servicio/',Vista_Crear_Categoria_Servicio,name='vista_crear_categoria_servicio'),
 
 
-
  
     #Logica
     path('CreaCuentaCliente',Crear_Cuenta_Cliente,name='CrearCuentaCliente'),
@@ -77,6 +76,7 @@ urlpatterns = [
     path('RealizarCompra/',RealizarCompra,name='RealizarCompra'),
     path('ActualizarClave/',ActualizarClaveCliente,name='ActualizarClaveCliente'),
     path('DesctivarCuenta/',DesactivarCuenta,name='DesactivarCuenta'),
+    path('CrearServicio/',RegistrarServicio,name='CrearServicio'),
     #Apis
     path('detalleCompra/<int:compra_id>',GET_Detalle_Compra,name='getdetalleCompras'),
 ]

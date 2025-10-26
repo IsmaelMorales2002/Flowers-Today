@@ -265,3 +265,29 @@ def DesactivarCuenta(request):
     except Usuario.DoesNotExist:
         return redirect('vista_inicio_cliente')
     
+# Logica Para registrar un servicio
+def RegistrarServicio(request):
+    activo = request.session.get('activo',False)
+    id_usuario = request.session.get('id_usuario','')
+    id_categoria = request.POST.get('categoriaServicio','').strip()
+    descripcion = request.POST.get('descripcion','').strip()
+    fecha = timezone.localtime(timezone.now()).date()
+
+
+    if activo:
+        #Registro de Servicio
+        categoria = Categoria_Servicio.objects.get(id_categoria_servicio = id_categoria)
+        usuario = Usuario.objects.get(id_usuario = id_usuario)
+        pedido = Servicio(
+            id_usuario = usuario,
+            id_categoria_servicio = categoria,
+            descripcion_servicio = descripcion,
+            estado_servicio = 'Pe',
+            fecha_servicio = fecha,
+            comentario_servicio = ' '
+        )
+        pedido.save()
+        return redirect('vista_inicio_cliente')
+    else:
+        return redirect('vista_inicio_cliente')
+    
