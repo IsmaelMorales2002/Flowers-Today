@@ -22,13 +22,11 @@
             <!-- Categoría -->
             <div class="mb-3">
               <label for="categoria" class="form-label fw-bold">Categoría del servicio</label>
-              <select id="categoria" name="categoria" class="form-select" required>
+              <select id="categoria" name="categoriaServicio" class="form-select" required>
                 <option value="" disabled selected>Seleccione una categoría</option>
-                <option value="Arreglos florales">Arreglos florales</option>
-                <option value="Decoración de eventos">Decoración de eventos</option>
-                <option value="Ramos personalizados">Ramos personalizados</option>
-                <option value="Centros de mesa">Centros de mesa</option>
-                <option value="Otro">Otro</option>
+                {% for cat in categorias %}
+                <option value="{{cat.id_categoria_servicio}}">{{cat.nombre_categoria_servicio}}</option>
+                {% endfor %}
               </select>
             </div>
 
@@ -40,6 +38,7 @@
                 name="descripcion"
                 class="form-control" 
                 rows="4" 
+                maxlength="150"
                 placeholder="Ej: Quiero un arreglo con rosas rojas y blancas para aniversario…" 
                 required
               ></textarea>

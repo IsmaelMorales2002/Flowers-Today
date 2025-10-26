@@ -631,6 +631,8 @@ def Vista_Flores(request):
 # Vista Solicitar Servicio
 def Vista_Solicitar_Servicio(request):
     activo = request.session.get('activo',False)
+    categoria_servicio = Categoria_Servicio.objects.filter(estado_categoria_servicio = True)
     return render(request,'servicios.html',{
         'activo': activo,
+        'categorias': categoria_servicio
     })
