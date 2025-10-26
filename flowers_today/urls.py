@@ -25,6 +25,7 @@ urlpatterns = [
     path('configuracion/',Vista_Configuracion,name='vista_configuracion'),
     path('arreglos/',Vista_Arreglos,name='vista_arreglos'),
     path('flores/',Vista_Flores,name='vista_flores'),
+    path('servicio/',Vista_Solicitar_Servicio,name='vista_servicio'),
 
     #Vistas Administrador
     path('administracion/',Vista_Inicio_Administrador,name='vista_inicio_administrador'),

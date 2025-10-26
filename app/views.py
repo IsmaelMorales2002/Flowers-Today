@@ -627,3 +627,10 @@ def Vista_Flores(request):
         'categorias': categorias,
         'productos': productos
     })
+
+# Vista Solicitar Servicio
+def Vista_Solicitar_Servicio(request):
+    activo = request.session.get('activo',False)
+    return render(request,'servicios.html',{
+        'activo': activo,
+    })
