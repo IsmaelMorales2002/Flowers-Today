@@ -220,7 +220,6 @@ def Vista_Categoria_Servicio_Administracion(request):
                 'categorias': categorias
             })
         except Exception as e:
-            print(e)
             return redirect('vista_inicio_administrador')
 
     return redirect('vista_inicio_cliente')   
@@ -276,6 +275,23 @@ def Vista_Editar_Categoria(request, id_categoria):
             return render(request, 'editar_categoria.html', contexto)
         except Categoria.DoesNotExist:
             return redirect('vista_categoria_administracion')
+
+    return redirect('vista_login')
+
+#Vista_Editar_Categoria_Servicio
+def Vista_Editar_Categoria_Servicio(request, id_categoria_servicio):
+    activo = request.session.get('activo_administrador', False)
+    if activo:
+        try:
+            categoria = Categoria_Servicio.objects.get(id_categoria_servicio=id_categoria_servicio)
+            contexto = {
+                'activo': activo,
+                'nombre': categoria.nombre_categoria_servicio,
+                'id_categoria_servicio': id_categoria_servicio
+            }
+            return render(request, 'editar_categoriaServicio.html', contexto)
+        except Categoria.DoesNotExist:
+            return redirect('vista_categoria_servicio')
 
     return redirect('vista_login')
 

@@ -230,7 +230,46 @@ def Editar_Categoria(request, id_categoria):
             contexto['error_interno'] = '!Error interno!'
             return render(request, 'editar_categoria.html', contexto)
 
+# Editar Categoria Servicio
+def Editar_CategoriaServicio(request, id_categoria_servicio):
+    if request.method == 'POST':
+        nombre = request.POST.get('txtNombreN', '').strip()
+        campos_vacios = []
+        error_nombre = False
+        error_longitud = False
 
+        if not nombre:
+            campos_vacios.append('nombre')
+        if len(nombre) > 25:
+            error_longitud = True
+
+        contexto = {
+            'nombre': nombre,
+            'campos_vacios': campos_vacios,
+            'error_nombre': False,
+            'error_longitud': error_longitud,
+            'id_categoria_servicio': id_categoria_servicio  # <- Esto es crucial
+        }
+
+        if campos_vacios or error_longitud:
+            return render(request, 'editar_categoriaServicio.html', contexto)
+
+        try:
+            # Verificar si ya existe otra categoria con ese nombre, excluyendo la actual
+            existe = Categoria_Servicio.objects.filter(nombre_categoria_servicio__iexact=nombre).exclude(id_categoria_servicio=id_categoria_servicio).exists()
+            if existe:
+                contexto['error_nombre'] = True
+                return render(request, 'editar_categoriaServicio.html', contexto)
+
+            categoria = get_object_or_404(Categoria_Servicio, id_categoria_servicio=id_categoria_servicio)
+            categoria.nombre_categoria_servicio = nombre
+            categoria.save()
+            messages.success(request, 'categoria_editada')
+
+            return redirect('vista_categoria_servicio')
+        except Exception:
+            contexto['error_interno'] = '!Error interno!'
+            return render(request, 'editar_categoriaServicio.html', contexto)
 
 def cambiar_estado_categoria(request):
     if request.method == 'POST':
