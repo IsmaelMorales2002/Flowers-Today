@@ -288,6 +288,23 @@ def cambiar_estado_categoria(request):
 
     return redirect('vista_categoria_administracion')  # Ajusta a tu vista real
 
+# Cambiar Estado De Categoria De Servicio
+def cambiar_estado_categoria_servicio(request):
+    if request.method == 'POST':
+        id_categoria = request.POST.get('id_categoria')
+        accion = request.POST.get('accion')
+
+        try:
+            categoria = Categoria_Servicio.objects.get(id_categoria_servicio=id_categoria)
+            if accion == 'desactivar':
+                categoria.estado_categoria_servicio = False
+            elif accion == 'activar':
+                categoria.estado_categoria_servicio = True
+            categoria.save()
+        except Categoria.DoesNotExist:
+            pass
+
+    return redirect('vista_categoria_servicio')
 
 
 def Editar_Cuenta_Admi(request, id):

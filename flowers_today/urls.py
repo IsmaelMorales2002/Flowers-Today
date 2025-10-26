@@ -63,6 +63,7 @@ urlpatterns = [
     path('editar-categoria/guardar/<int:id_categoria>/', Editar_Categoria, name='editar_categoria'),
     path('editar-categoriaServicio/guardar/<int:id_categoria_servicio>/', Editar_CategoriaServicio, name='editar_categoriaServicio'),
     path('categoria/cambiar-estado/', cambiar_estado_categoria, name='cambiar_estado_categoria'),
+    path('categoriaServicio/cambiar-estado/', cambiar_estado_categoria_servicio, name='cambiar_estado_categoriaServicio'),
     path('CorreoRecuperacion/',Correo_Recuperacion,name='CorreoRecuperacion'),
     path('administradores/editar/<int:id>/', Editar_Cuenta_Admi, name='EditarCuentaAdmi'),
     path('administradores/cambiar-estado/', cambiar_estado_administrador, name='cambiar_estado_administrador'),
