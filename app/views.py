@@ -636,3 +636,14 @@ def Vista_Solicitar_Servicio(request):
         'activo': activo,
         'categorias': categoria_servicio
     })
+
+#Vista Solicitudes de Pedidos
+def Vista_SolicitudesPedidos(request):
+    activo = request.session.get('activo',False)
+    if activo:
+        servicios = Servicio.objects.filter(id_usuario__correo_usuario = request.session.get('correo_cliente'))
+        return render(request,'solicitudesPedidos.html',{
+            'activo': activo,
+            'servicios': servicios
+        })
+    return redirect('vista_inicio_cliente')

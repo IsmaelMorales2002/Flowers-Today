@@ -282,7 +282,7 @@ def RegistrarServicio(request):
             id_usuario = usuario,
             id_categoria_servicio = categoria,
             descripcion_servicio = descripcion,
-            estado_servicio = 'Pe',
+            estado_servicio = 'Re',
             fecha_servicio = fecha,
             comentario_servicio = ' '
         )
