@@ -6,6 +6,8 @@ from django.db.models import Q
 from django.contrib.auth.hashers import make_password,check_password
 from django.utils import timezone
 import uuid
+from django.db import transaction
+from django.db.models import F
 
 # Crear_Cuenta_Cliente, logica para crear cuenta tipo cliente
 def Crear_Cuenta_Cliente(request):
@@ -181,54 +183,62 @@ def guardar_comentario(request):
     return redirect('vista_comentario')
 
 
-#Logica Al realizar una compra
 def RealizarCompra(request):
     correo = request.POST.get('txtCorreo')
     fecha = timezone.localtime(timezone.now()).date()
     total = request.POST.get('txtTotal')
-    ids = request.POST.get('productos[]')
-    cantidades = request.POST.get('cantidades[]')
-    lista_ids = [int(i) for i in ids.split(',') if i.isdigit()]
-    lista_cantidades = [int(i) for i in cantidades.split(',') if i.isdigit()]
+    ids = (request.POST.get('productos[]') or '')
+    cantidades = (request.POST.get('cantidades[]') or '')
 
-    try: 
-        usuario = Usuario.objects.get(correo_usuario = correo)
-        #Compra
-        compra = Compra(
-            id_usuario = usuario,
-            fecha_compra = fecha,
-            total_compra = total
-        )
-        compra.save()
-        for producto_id,cantidad in zip(lista_ids,lista_cantidades):
-            try:
-                producto = Producto.objects.get(id_producto = producto_id)
-                #Detalle Compra
-                detalle = Detalle_Compra(
-                    id_compra = compra,
-                    id_producto = producto,
-                    cantidad_producto_compra = cantidad,
-                    precio_unitario_compra = producto.precio_producto
-                )
-                detalle.save()
-            except Producto.DoesNotExist:
-                pass
+    lista_ids = [int(i) for i in ids.split(',') if i.strip().isdigit()]
+    lista_cantidades = [int(i) for i in cantidades.split(',') if i.strip().isdigit()]
 
-        #Creacion de comprobante
-        cod_comprobante = f"CP-{uuid.uuid4().hex[:12].upper()}"
-        #Comprobante de Pago
-        comprobante = Comprobante_Pago(
-            id_compra = compra,
-            fecha_comprobante = fecha,
-            codigo_comprobante = cod_comprobante,
-            estado_comprobante = 'Pe',
-        )
-        comprobante.save()
-        messages.success(request,'exito')
+    try:
+        usuario = Usuario.objects.get(correo_usuario=correo)
+        with transaction.atomic():  # todo o nada
+            # Compra
+            compra = Compra(
+                id_usuario=usuario,
+                fecha_compra=fecha,
+                total_compra=total
+            )
+            compra.save()
+
+            # Registrar detalles y descontar stock
+            for producto_id, cantidad in zip(lista_ids, lista_cantidades):
+                try:
+                    producto = Producto.objects.get(id_producto=producto_id)
+
+                    Detalle_Compra.objects.create(
+                        id_compra=compra,
+                        id_producto=producto,
+                        cantidad_producto_compra=cantidad,
+                        precio_unitario_compra=producto.precio_producto
+                    )
+
+                    # ⬇️ Descontar existencias en DB (campo correcto: existencia_producto)
+                    Producto.objects.filter(id_producto=producto_id)\
+                        .update(existencia_producto=F('existencia_producto') - cantidad)
+
+                except Producto.DoesNotExist:
+                    # Si algún producto no existe, simplemente lo omites
+                    pass
+
+            # Comprobante
+            cod_comprobante = f"CP-{uuid.uuid4().hex[:12].upper()}"
+            Comprobante_Pago.objects.create(
+                id_compra=compra,
+                fecha_comprobante=fecha,
+                codigo_comprobante=cod_comprobante,
+                estado_comprobante='Pe',
+            )
+
+        messages.success(request, 'exito')
         return redirect('vista_inicio_cliente')
+
     except Usuario.DoesNotExist:
         return redirect('vista_carrito')
-
+    
 #logica para actualizar contraseña
 def ActualizarClaveCliente(request):
     correo = request.POST.get('txtCorreo','').strip()

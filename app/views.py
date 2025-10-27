@@ -17,17 +17,19 @@ from app.generar_comprobante import *
 
 # Vista_Inicio, muestra la vista inicio.html
 def Vista_Inicio_Cliente(request):
-    # Solo productos activos
-    productos = Producto.objects.filter(producto_activo=True)
-    
-    # Solo categorías activas que tienen productos activos relacionados
-    categorias = Categoria.objects.filter(
-        estado_categoria=True,
-        producto__producto_activo=True  # relación inversa hacia productos
-    ).distinct()
-    
+    # ✅ Solo productos activos con stock
+    productos = (Producto.objects
+                 .filter(producto_activo=True, existencia_producto__gt=0)
+                 .select_related('id_categoria'))
+
+    # ✅ Solo categorías activas que tengan productos activos con stock
+    categorias = (Categoria.objects
+                  .filter(estado_categoria=True,
+                          producto__producto_activo=True,
+                          producto__existencia_producto__gt=0)
+                  .distinct())
+
     activo = request.session.get('activo', False)
-    
     return render(request, 'inicio.html', {
         'activo': activo,
         'productos': productos,
@@ -612,17 +614,28 @@ def Vista_Arreglos(request):
     })
 
 #Vista Flores
+
 def Vista_Flores(request):
-    productos = Producto.objects.filter(producto_activo = True)
+    # ✅ Solo productos activos con existencias mayores a 0
+    productos = Producto.objects.filter(
+        producto_activo=True,
+        existencia_producto__gt=0,
+        id_categoria__estado_categoria=True  # opcional, evita mostrar productos de categorías inactivas
+    )
+
+    # ✅ Solo categorías activas con productos de flores/rosas con existencias > 0
     categorias = Categoria.objects.filter(
         estado_categoria=True,
         producto__producto_activo=True,
+        producto__existencia_producto__gt=0
     ).filter(
         Q(nombre_categoria__icontains='flore') |
         Q(nombre_categoria__icontains='rosa')
     ).distinct()
-    activo = request.session.get('activo',False)
-    return render(request,'flores.html',{
+
+    activo = request.session.get('activo', False)
+
+    return render(request, 'flores.html', {
         'activo': activo,
         'categorias': categorias,
         'productos': productos
