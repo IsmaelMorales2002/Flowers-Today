@@ -43,7 +43,8 @@
                     style="background: #6C2DC7;"
                     data-bs-toggle="modal"
                     data-bs-target="#modalDetalleCompra"
-                    data-comentario="{{ servicio.comentario_servicio }}">
+                    data-comentario="{{ servicio.comentario_servicio }}"
+                    data-id_servicio="{{ servicio.id_servicio }}">
                     Ver Comentario
                 </button>
             </td>
@@ -65,11 +66,12 @@
       <div class="modal-body">
         <p id="textoComentario" class="text-dark"></p>
         <p class="fw-bold mt-3 text-center">¿Aceptas?</p>
-        <form method="POST">
+        <form method="POST" action="{% url 'RespuesCliente' %}">
           {% csrf_token %}
           <div class="d-flex justify-content-center gap-2">
-            <button name="respuesta" value="SI" class="btn btn-success">Sí</button>
-            <button name="respuesta" value="NO" class="btn btn-danger">No</button>
+            <input type="hidden" name="id_servicio" id="id_servicio">
+            <button type="submit" name="respuesta" value="SI" class="btn btn-success">Sí</button>
+            <button type="submit" name="respuesta" value="NO" class="btn btn-danger">No</button>
           </div>
         </form>
       </div>
@@ -82,14 +84,21 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    var modal = document.getElementById('modalDetalleCompra');
+    let modal = document.getElementById('modalDetalleCompra');
+
     modal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        var comentario = button.getAttribute('data-comentario');
-        var modalBody = modal.querySelector('#textoComentario');
-        modalBody.textContent = comentario;
+        let button = event.relatedTarget;
+        let comentario = button.getAttribute('data-comentario');
+        let id_servicio = button.getAttribute('data-id_servicio');
+
+        let modalBody = modal.querySelector('#textoComentario');
+        modalBody.textContent = comentario || 'No hay comentario';
+
+        let input = modal.querySelector('#id_servicio');
+        input.value = id_servicio;
     });
 });
+
 </script>
 
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>

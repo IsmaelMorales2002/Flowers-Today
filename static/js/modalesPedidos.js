@@ -2,6 +2,8 @@
   modalDescripcion.addEventListener('show.bs.modal', function (event) {
     let button = event.relatedTarget;
     let descripcion = button.getAttribute('data-descripcion');
+    let id_servicio = button.getAttribute('data-id_servicio')
+    console.log(id_servicio)
     let modalBody = modalDescripcion.querySelector('#contenidoDescripcion');
     modalBody.textContent = descripcion;
   });

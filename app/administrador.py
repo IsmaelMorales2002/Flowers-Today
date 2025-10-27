@@ -702,4 +702,17 @@ def CrearComentario(request):
         return redirect('vista_gestion_solicitudes')
     else:
         return redirect('vista_inicio_administrador')
+    
+#Logica para respuesta del cliente
+def RespuestaCliente(request):
+    respuesta = request.POST.get('respuesta','').strip()
+    id_servicio = request.POST.get('id_servicio','').strip()
+    servicio = Servicio.objects.get(id_servicio = id_servicio)
+    if respuesta == 'SI':
+        servicio.comentario_servicio += 'True'
+    elif respuesta == 'NO':
+        servicio.comentario_servicio += 'False'
+    
+    servicio.save()
+    return redirect('vista_solicitudesPedidos')
 
