@@ -284,7 +284,7 @@ def RegistrarServicio(request):
             descripcion_servicio = descripcion,
             estado_servicio = 'Re',
             fecha_servicio = fecha,
-            comentario_servicio = ' '
+            comentario_servicio = ''
         )
         pedido.save()
         return redirect('vista_inicio_cliente')

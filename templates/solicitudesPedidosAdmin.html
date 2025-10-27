@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.5/css/responsive.bootstrap5.css">
 <link rel="stylesheet" href="{% static 'css/tablaCliente.css'%}" />
 
-<div class="container mt-5">
+<div class="container-fluid mt-5">
   <h2 class="text-center text-white mb-4"><i class="bi bi-clipboard2-check"></i>Gestionar Solicitudes De Pedidos</h2>
    
   <div class="table-responsive bg-white p-3 rounded shadow mb-2">
@@ -15,6 +15,8 @@
       <thead class="table-light">
         <tr>
           <th class="text-center align-middle">Fecha</th>
+          <th class="text-center align-middle">Cliente</th>
+          <th class="text-center align-middle">Correo</th>
           <th class="text-center align-middle">Descripción</th>
           <th class="text-center align-middle">Categoría</th>
           <th class="text-center align-middle">Estado</th>
@@ -26,6 +28,8 @@
         {% for servicio in servicios %}
         <tr>
             <td class="text-center align-middle">{{servicio.fecha_servicio|date:"d/m/Y"}}</td>
+            <td class="text-center align-middle">{{servicio.id_usuario.nombre_usuario}} {{servicio.id_usuario.apellido_usuario}}</td>
+            <td class="text-center align-middle">{{servicio.id_usuario.correo_usuario}}</td>
             <td class="text-center align-middle">
                 <button class="btn btn-sm btn-descripcion text-white" style="background: #6C2DC7;"
                         data-bs-toggle="modal"
@@ -49,9 +53,14 @@
                         data-bs-toggle="modal"
                         data-bs-target="#modalAgregarComentario"
                         data-id="{{ servicio.id_servicio }}"
-                        data-comentario="{{ servicio.comentario_admin }}"
+                        data-comentario="{{ servicio.comentario_servicio }}"
                         data-validacion="{% if servicio.validacion %}{{ servicio.validacion|yesno:'Sí,No' }}{% else %}Pendiente{% endif %}">
-                    Añadir Comentario
+
+                        {% if servicio.comentario_servicio == ''%}
+                        Añadir Comentario
+                        {%elif servicio.comentario_servicio != ''%}
+                        Ver Comentario
+                        {% endif %}
                 </button>
             </td>
             
