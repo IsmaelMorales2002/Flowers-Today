@@ -15,6 +15,9 @@ from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.platypus import Paragraph
 from reportlab.lib.styles import ParagraphStyle
 import os
+from django.http import HttpResponse
+from datetime import datetime
+from django.utils import timezone
 
 def generar_comprobante_pdf(id_comprobante):
     comprobante = get_object_or_404(Comprobante_Pago, id_comprobante=id_comprobante)
@@ -202,7 +205,7 @@ def generar_comprobante_pdf(id_comprobante):
             # Fecha de generación
             p.setFont("Helvetica", 8)
             p.setFillColor(texto_secundario)
-            p.drawString(80, 50, f"Generado: {comprobante.fecha_comprobante.strftime('%d/%m/%Y %H:%M')}")
+            p.drawString(80, 50, f"Generado: {timezone.localtime(timezone.now()).strftime('%d/%m/%Y %H:%M')}")
 
     # ===== FUNCIÓN PARA DIBUJAR TABLA =====
     def draw_table(table_data, y_position, include_header=True):
@@ -287,8 +290,14 @@ def generar_comprobante_pdf(id_comprobante):
         current_page += 1
         
         if current_row < len(data_rows):
-            p.showPage()
+            p.showPage()        
+    p.setTitle(f"Comprobante {comprobante.codigo_comprobante} - Flowers Today") 
 
     p.save()
     buffer.seek(0)
-    return HttpResponse(buffer, content_type='application/pdf')
+    # ===== NOMBRE DEL ARCHIVO =====
+    nombre_archivo = f"Comprobante_{comprobante.codigo_comprobante}_{datetime.now().strftime('%Y%m%d')}.pdf"
+
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="{nombre_archivo}"'
+    return response

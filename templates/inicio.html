@@ -57,7 +57,7 @@
       <!-- Contenedor de productos -->
       <div id="carousel-{{ forloop.counter }}" class="carousel-container d-flex overflow-x-auto">
         {% for producto in productos %}
-          {% if producto.id_categoria.nombre_categoria == categoria.nombre_categoria %}
+          {% if producto.id_categoria.nombre_categoria == categoria.nombre_categoria and producto.existencia_producto > 0 %}
             <!-- Tarjeta con clase uniform-card -->
           <div class="card uniform-card text-center shadow me-3 flex-shrink-0" style="width: 18rem;">
               <!-- Dentro de la tarjeta -->
