@@ -39,14 +39,15 @@
             </td>
             <td class="text-center align-middle">
                 <button 
-                    class="btn btn-sm text-white btn-ver-detalle" 
-                    style="background: #6C2DC7;"
-                    data-bs-toggle="modal"
-                    data-bs-target="#modalDetalleCompra"
-                    data-comentario="{{ servicio.comentario_servicio }}"
-                    data-id_servicio="{{ servicio.id_servicio }}">
-                    Ver Comentario
-                </button>
+                class="btn btn-sm text-white btn-ver-detalle" 
+                style="background: #6C2DC7;"
+                data-bs-toggle="modal"
+                data-bs-target="#modalDetalleCompra"
+                data-comentario="{{ servicio.comentario_servicio }}"
+                data-id_servicio="{{ servicio.id_servicio }}"
+                data-estado="{{ servicio.estado_servicio }}">
+                Ver Comentario
+              </button>
             </td>
         </tr>
         {% endfor %}
@@ -59,21 +60,23 @@
 <div class="modal fade" id="modalDetalleCompra" tabindex="-1" aria-labelledby="modalDetalleCompraLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content rounded-4 border-0 shadow">
-      <div class="modal-header" style="background-color: #6C2DC7;">
+      <div class="modal-header bg-dark text-white">
         <h5 class="modal-title text-white" id="modalDetalleCompraLabel">Comentario del Administrador</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <p id="textoComentario" class="text-dark"></p>
-        <p class="fw-bold mt-3 text-center">¿Aceptas?</p>
-        <form method="POST" action="{% url 'RespuesCliente' %}">
-          {% csrf_token %}
-          <div class="d-flex justify-content-center gap-2">
-            <input type="hidden" name="id_servicio" id="id_servicio">
-            <button type="submit" name="respuesta" value="SI" class="btn btn-success">Sí</button>
-            <button type="submit" name="respuesta" value="NO" class="btn btn-danger">No</button>
-          </div>
-        </form>
+        <div id="seccionValidacion">
+          <p class="fw-bold mt-3 text-center">¿Aceptas?</p>
+          <form method="POST" action="{% url 'RespuesCliente' %}">
+            {% csrf_token %}
+            <div class="d-flex justify-content-center gap-2 ">
+              <input type="hidden" name="id_servicio" id="id_servicio">
+              <button type="submit" name="respuesta" value="SI" class="btn text-white" style="background-color: #6C2DC7;">Sí</button>
+              <button type="submit" name="respuesta" value="NO" class="btn btn-danger">No</button>
+            </div>
+          </form>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
@@ -83,19 +86,54 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     let modal = document.getElementById('modalDetalleCompra');
 
     modal.addEventListener('show.bs.modal', function (event) {
         let button = event.relatedTarget;
+
         let comentario = button.getAttribute('data-comentario');
         let id_servicio = button.getAttribute('data-id_servicio');
 
-        let modalBody = modal.querySelector('#textoComentario');
-        modalBody.textContent = comentario || 'No hay comentario';
+        // Obtener estado desde la tabla
+        let estado = button.closest('tr')
+            .querySelector('td:nth-child(4)')
+            .innerText
+            .trim();
 
-        let input = modal.querySelector('#id_servicio');
-        input.value = id_servicio;
+        // Limpieza del comentario removiendo True o False
+        let comentarioLimpio = (comentario || "")
+            .replace(/true|false/gi, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+        // Mostrar comentario limpio
+        let modalBody = modal.querySelector('#textoComentario');
+        modalBody.textContent = comentarioLimpio || 'No hay comentario';
+
+        // Asignar ID al formulario
+        modal.querySelector('#id_servicio').value = id_servicio;
+
+        // Sección de validación (¿Aceptas?)
+        let seccion = document.getElementById("seccionValidacion");
+
+        let ocultarValidacion =
+            estado === "Aceptado" ||
+            estado === "Rechazado" ||
+            comentarioLimpio === "" ||
+            comentario === null;
+
+        if (ocultarValidacion) {
+            seccion.style.display = "none";
+        } else {
+            seccion.style.display = "block";
+        }
+
+        // Asegurar que los botones siempre queden centrados
+        let botones = seccion.querySelector(".d-flex");
+        if (botones) {
+            botones.style.justifyContent = "center";
+        }
     });
 });
 
