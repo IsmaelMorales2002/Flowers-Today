@@ -1,0 +1,177 @@
+{% extends 'menu.html' %}
+{% load static %}
+
+{% block title %}Arreglos{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+<link rel="stylesheet" href="{% static 'css/carrusel.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<!-- PRODUCTOS POR CATEGORÍA -->
+{% for categoria in categorias %}
+  <h3 class="text-white mb-4 text-center my-5">{{ categoria.nombre_categoria }}</h3>
+
+  <div class="carousel-wrapper my-4">
+    <!-- Flecha izquierda -->
+    <button class="btn btn-light shadow carousel-btn left"
+            onclick="scrollCarousel('carousel-{{ forloop.counter }}', -1)">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+
+    <!-- Contenedor de productos -->
+    <div id="carousel-{{ forloop.counter }}" class="carousel-container d-flex overflow-x-auto">
+      {% for producto in productos %}
+        {% if producto.id_categoria.nombre_categoria == categoria.nombre_categoria %}
+          <!-- Tarjeta con clase uniform-card -->
+          <div class="card uniform-card text-center shadow me-3 flex-shrink-0" style="width: 18rem;">
+            <div class="img-wrap position-relative">
+              <img
+                src="{% if producto.imagen_producto %}{{producto.imagen_producto.url}}{% else %}{% static 'img/producto-default.png'%}{% endif %}"
+                class="card-img-top producto-img"
+                alt="{{ producto.nombre_producto }}"
+              >
+              <!-- Overlay con botón ver producto -->
+              <button
+                class="hover-cta btn btn-verProducto d-flex align-items-center"
+                data-id="{{ producto.id_producto }}"
+                data-nombre="{{ producto.nombre_producto }}"
+                data-descripcion="{{ producto.descripcion_producto }}"
+                data-precio="{{ producto.precio_producto }}"
+                data-imagen="{% if producto.imagen_producto %}{{ producto.imagen_producto.url }}{% else %}{% static 'img/producto-default.png' %}{% endif %}"
+                data-categoria="{{ producto.id_categoria.nombre_categoria }}"
+                data-existencias="{{ producto.existencia_producto|default:0 }}"
+                data-tipo="{{ producto.get_tipo_producto_display|default:'N/D' }}"
+                type="button"
+              >
+                <i class="bi bi-eye me-2"></i> Ver producto
+              </button>
+            </div>
+
+            <!-- Cuerpo de la tarjeta con altura fija -->
+            <div class="card-body bg-white d-flex flex-column justify-content-between" style="height: 250px;">
+              <h5 class="card-title">{{ producto.nombre_producto }}</h5>
+              <p class="card-text descripcion-truncada">{{ producto.descripcion_producto }}</p>
+              <div class="carrito-control mt-auto d-flex justify-content-center">
+                <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
+                        style="background-color: rgb(108, 45, 199); color: white;"
+                        data-id="{{producto.id_producto}}"
+                        data-nombre="{{producto.nombre_producto}}"
+                        data-imagen = "{% if producto.imagen_producto%}{{producto.imagen_producto.url}}{% else %}{% static 'img/producto-default.png' %}{% endif %}"
+                        data-precio = "{{producto.precio_producto}}"
+                        data-descripcion="{{producto.descripcion_producto}}"
+                        data-existencia = "{{producto.existencia_producto}}">
+                  Agregar al Carrito
+                </button>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- Flecha derecha -->
+    <button class="btn btn-light shadow carousel-btn right"
+            onclick="scrollCarousel('carousel-{{ forloop.counter }}', 1)">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+{% endfor %}
+
+<!-- Modal para ver producto (Cliente) -->
+<div class="modal fade" id="modalVerProductoCliente" data-default-img="{% static 'img/producto-default.png' %}" tabindex="-1" aria-labelledby="modalVerProductoClienteLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="modalVerProductoClienteLabel">Información del Producto</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row align-items-center">
+          <div class="col-md-4 text-center mb-3 mb-md-0">
+            <img id="modal-imagen-producto" src="" alt="Imagen del Producto" 
+                 class="rounded shadow" 
+                 style="width: 200px; height: 200px; object-fit: cover;">
+          </div>
+          <div class="col-md-8">
+            <p class="mb-1"><strong>Categoría:</strong> <span id="modal-categoria"></span></p>
+            <p class="mb-1"><strong>Nombre:</strong> <span id="modal-nombre-producto"></span></p>
+            <p class="mb-1"><strong>Descripción:</strong> <span id="modal-descripcion"></span></p>
+            <p class="mb-1"><strong>Existencias:</strong> <span id="modal-existencias"></span></p>
+            <p class="mb-1"><strong>Precio:</strong> $<span id="modal-precio"></span></p>
+            <p class="mb-1"><strong>Tipo de Producto:</strong> <span id="modal-tipo-producto"></span></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Éxito Animado -->
+<div class="modal fade" id="modalExitoCompra" tabindex="-1" aria-labelledby="modalExitoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-body text-center p-5">
+        <div class="icono-exito mx-auto mb-3">
+          <i class="bi bi-check-circle-fill text-dark fs-1"></i>
+        </div>
+        <h4 class="fw-bold text-dark mt-3">¡Compra Exitosa!</h4>
+        <p class="text-muted mt-2 mb-4">Tu compra se ha realizado correctamente 🎉<br>Gracias por confiar en nosotros.</p>
+        <button type="button" class="btn btn-dark px-4 py-2 rounded-pill" data-bs-dismiss="modal">
+          <i class="bi bi-hand-thumbs-up me-1"></i> Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CSS para truncado multi-línea -->
+<style>
+.descripcion-truncada {
+  display: -webkit-box;           
+  -webkit-box-orient: vertical;   
+  -webkit-line-clamp: 3;          
+  line-clamp: 3;                  
+  overflow: hidden;               
+  text-overflow: ellipsis;        
+  max-height: 4.5em;              /* Ajusta según altura de tus líneas */
+}
+.icono-exito {
+  width: 90px;
+  height: 90px;
+  background: rgba(25, 135, 84, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pop 0.6s ease-in-out;
+}
+@keyframes pop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); }
+}
+</style>
+
+{% endblock %}
+
+{% block footer %}
+  {% include 'footer.html' %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/carrito.js' %}"></script>
+<script src="{% static 'js/carrusel.js' %}"></script>
+<script src="{% static 'js/Modal_verProductoCliente.js' %}"></script>
+
+{% if messages %}
+  {% for message in messages %}
+    {% if message.tags == 'success' %}
+      <script src="{% static 'js/confirm_compra.js'%}"></script>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% endblock %}

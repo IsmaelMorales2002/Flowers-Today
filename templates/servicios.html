@@ -1,0 +1,68 @@
+{% extends 'menu.html' %}
+{% load static %}
+{% block title %}Servicio Personalizado{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header text-white text-center rounded-top-4" style="background-color: #6C2DC7;">
+          <h4 class="mb-0"><i class="bi bi-brush me-2"></i>Servicio Personalizado</h4>
+        </div>
+
+        <div class="card-body p-4">
+
+          <!-- FORMULARIO SERVICIO PERSONALIZADO (Cliente) -->
+          <form method="POST" action="{% url 'CrearServicio' %}">
+            {% csrf_token %}
+
+            <!-- Categoría -->
+            <div class="mb-3">
+              <label for="categoria" class="form-label fw-bold">Categoría del servicio</label>
+              <select id="categoria" name="categoriaServicio" class="form-select" required>
+                <option value="" disabled selected>Seleccione una categoría</option>
+                {% for cat in categorias %}
+                <option value="{{cat.id_categoria_servicio}}">{{cat.nombre_categoria_servicio}}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Descripción del servicio -->
+            <div class="mb-3">
+              <label for="descripcion" class="form-label fw-bold">Descripción del servicio</label>
+              <textarea 
+                id="descripcion" 
+                name="descripcion"
+                class="form-control" 
+                rows="4" 
+                maxlength="145"
+                placeholder="Ej: Quiero un arreglo con rosas rojas y blancas para aniversario…" 
+                required
+              ></textarea>
+            </div>
+
+            <p class="text-muted small mb-3">
+              ✅ El administrador evaluará tu solicitud y se pondrá en contacto contigo 📩
+            </p>
+
+            <!-- Botón Enviar -->
+            <div class="text-center mt-4">
+              <button type="submit" class="btn px-4 py-2 rounded-pill text-white" style="background-color: #6C2DC7;">
+                <i class="bi bi-send-fill me-1"></i>Enviar solicitud
+              </button>
+            </div>
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

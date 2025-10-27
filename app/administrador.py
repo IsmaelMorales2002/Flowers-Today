@@ -144,6 +144,51 @@ def Crear_Categoria(request):
         contexto['error_interno'] = '!Error Interno!'
         return render(request, 'crearCategoria.html', contexto)
 
+#Crear Categoria De Servicio
+def Crear_Categoria_Servicio(request):
+    nombre = request.POST.get('txtNombreN', '').strip()
+    vista = request.POST.get('txtVista')
+
+    campos_vacios = []
+    if not nombre:
+        campos_vacios.append('nombre')
+
+    contexto = {
+        'nombre': nombre,
+        'campos_vacios': campos_vacios
+    }
+
+    if campos_vacios:
+        if vista:
+            return render(request, 'crearCategoriaServicio.html', contexto)
+        return render(request, 'registro.html', contexto)
+    
+    try:
+       
+        nombreExiste = Categoria_Servicio.objects.filter(nombre_categoria_servicio__iexact=nombre).exists()
+        if nombreExiste:
+            contexto['error_nombre'] = 'Nombre Ya Registrado'
+            if vista:
+                return render(request, 'crearCategoriaServicio.html', contexto)
+            return render(request, 'registro.html', contexto)
+
+        # Crear nueva categoría
+        categoriaServicio = Categoria_Servicio(
+            nombre_categoria_servicio=nombre,
+            estado_categoria_servicio=True
+        )
+        categoriaServicio.save()
+        messages.success(request, 'Categoría creada exitosamente')
+
+        if vista:
+            return redirect('vista_categoria_servicio')
+        return redirect('vista_inicio_cliente')
+
+    except Exception:
+  
+        contexto['error_interno'] = '!Error Interno!'
+        return render(request, 'crearCategoriaServicio.html', contexto)
+
 
 def Editar_Categoria(request, id_categoria):
     if request.method == 'POST':
@@ -185,7 +230,46 @@ def Editar_Categoria(request, id_categoria):
             contexto['error_interno'] = '!Error interno!'
             return render(request, 'editar_categoria.html', contexto)
 
+# Editar Categoria Servicio
+def Editar_CategoriaServicio(request, id_categoria_servicio):
+    if request.method == 'POST':
+        nombre = request.POST.get('txtNombreN', '').strip()
+        campos_vacios = []
+        error_nombre = False
+        error_longitud = False
 
+        if not nombre:
+            campos_vacios.append('nombre')
+        if len(nombre) > 25:
+            error_longitud = True
+
+        contexto = {
+            'nombre': nombre,
+            'campos_vacios': campos_vacios,
+            'error_nombre': False,
+            'error_longitud': error_longitud,
+            'id_categoria_servicio': id_categoria_servicio  # <- Esto es crucial
+        }
+
+        if campos_vacios or error_longitud:
+            return render(request, 'editar_categoriaServicio.html', contexto)
+
+        try:
+            # Verificar si ya existe otra categoria con ese nombre, excluyendo la actual
+            existe = Categoria_Servicio.objects.filter(nombre_categoria_servicio__iexact=nombre).exclude(id_categoria_servicio=id_categoria_servicio).exists()
+            if existe:
+                contexto['error_nombre'] = True
+                return render(request, 'editar_categoriaServicio.html', contexto)
+
+            categoria = get_object_or_404(Categoria_Servicio, id_categoria_servicio=id_categoria_servicio)
+            categoria.nombre_categoria_servicio = nombre
+            categoria.save()
+            messages.success(request, 'categoria_editada')
+
+            return redirect('vista_categoria_servicio')
+        except Exception:
+            contexto['error_interno'] = '!Error interno!'
+            return render(request, 'editar_categoriaServicio.html', contexto)
 
 def cambiar_estado_categoria(request):
     if request.method == 'POST':
@@ -204,6 +288,23 @@ def cambiar_estado_categoria(request):
 
     return redirect('vista_categoria_administracion')  # Ajusta a tu vista real
 
+# Cambiar Estado De Categoria De Servicio
+def cambiar_estado_categoria_servicio(request):
+    if request.method == 'POST':
+        id_categoria = request.POST.get('id_categoria')
+        accion = request.POST.get('accion')
+
+        try:
+            categoria = Categoria_Servicio.objects.get(id_categoria_servicio=id_categoria)
+            if accion == 'desactivar':
+                categoria.estado_categoria_servicio = False
+            elif accion == 'activar':
+                categoria.estado_categoria_servicio = True
+            categoria.save()
+        except Categoria.DoesNotExist:
+            pass
+
+    return redirect('vista_categoria_servicio')
 
 
 def Editar_Cuenta_Admi(request, id):
@@ -538,6 +639,80 @@ def Editar_Producto(request,id):
     messages.success(request,'editado')
     return redirect('vista_productos_administracion')
 
+# Editar_Perfil_Admin, logica para editar una cuenta tipo cliente
+def Editar_Perfil_Admin(request):
+    imagen = request.FILES.get('imagen_usuario')
+    nombre = request.POST.get('txtNombreA','').strip()
+    apellido = request.POST.get('txtApellidoA','').strip()
+    correo = request.POST.get('txtCorreoA','').strip()
+    telefono = request.POST.get('txtTelefonoA','').strip()
 
+    campos_vacios = []
+    if not nombre:
+        campos_vacios.append('nombre')
+    if not apellido:
+        campos_vacios.append('apellido')
+    if not telefono:
+        campos_vacios.append('telefono')
+    if not correo:
+        campos_vacios.append('correo')
 
+    contexto = {
+            'nombre': nombre,
+            'apellido': apellido,
+            'telefono': telefono,
+            'correo': correo,
+            'campos_vacios': campos_vacios
+    }
+
+    try:
+        #Obteniendo Cliente
+        admin = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
+
+        if campos_vacios:
+                contexto['activo'] = True
+                contexto['usuario'] = admin
+                return render(request,'editar_perfilCliente.html',contexto)
+    
+        #Actualziacion
+        admin.nombre_usuario = nombre
+        admin.apellido_usuario = apellido
+        admin.telefono_usuario = telefono
+        admin.correo_usuario = correo
+        if imagen:
+            admin.imagen_usuario = imagen
+        admin.save()
+        #Actualizacion de session
+        request.session['nombre_administrador'] = admin.nombre_usuario
+        request.session['apellido_administrador'] = admin.apellido_usuario
+        request.session['correo_administrador'] = admin.correo_usuario
+        return redirect('vista_perfil_administrador')
+    except Usuario.DoesNotExist:
+        return redirect('vista_login')
+
+# Logica Para Crear el comentario en servicio
+def CrearComentario(request):
+    comentario = request.POST.get('comentario','').strip()
+    id_servicio = request.POST.get('id_servicio','').strip()
+    if comentario:
+        servicio = Servicio.objects.get(id_servicio = id_servicio)
+        servicio.comentario_servicio = comentario
+        servicio.save()
+        messages.success(request,'Exito')
+        return redirect('vista_gestion_solicitudes')
+    else:
+        return redirect('vista_inicio_administrador')
+    
+#Logica para respuesta del cliente
+def RespuestaCliente(request):
+    respuesta = request.POST.get('respuesta','').strip()
+    id_servicio = request.POST.get('id_servicio','').strip()
+    servicio = Servicio.objects.get(id_servicio = id_servicio)
+    if respuesta == 'SI':
+        servicio.comentario_servicio += 'True'
+    elif respuesta == 'NO':
+        servicio.comentario_servicio += 'False'
+    
+    servicio.save()
+    return redirect('vista_solicitudesPedidos')
 

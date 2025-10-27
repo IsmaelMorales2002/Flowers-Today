@@ -34,9 +34,9 @@
           <li class="nav-item"><a class="nav-link text-black" href="{% url 'vista_administradores_administracion' %}"><i class="bi bi-shield-lock me-1"></i> Administradores</a></li>
           <li class="nav-item"><a class="nav-link text-black" href="{% url 'vista_categoria_administracion' %}"><i class="bi bi-tags me-1"></i> Categorías</a></li>
           <li class="nav-item"><a class="nav-link text-black" href="{% url 'vista_productos_administracion' %}"><i class="bi bi-box-seam me-1"></i> Productos</a></li>
-          <li class="nav-item"><a class="nav-link text-black" href="#"><i class="bi bi-wrench-adjustable me-1"></i> Servicios</a></li>
+          <li class="nav-item"><a class="nav-link text-black" href="{% url 'vista_gestion_solicitudes' %}"><i class="bi bi-wrench-adjustable me-1"></i> Servicios</a></li>
+          <li class="nav-item"><a class="nav-link text-black" href="{% url 'vista_categoria_servicio' %}"><i class="bi bi-tags me-1"></i> Categorias De Servicio</a></li>
           <li class="nav-item"><a class="nav-link text-black" href="{% url 'vista_pedidos_administracion' %}"><i class="bi bi-card-checklist me-1"></i> Pedidos</a></li>
-          <li class="nav-item"><a class="nav-link text-black" href="{% url 'vista_comentario_administracion' %}"><i class="bi bi-chat-left-text me-1"></i> Comentarios</a></li>
           <li class="nav-item"><a class="nav-link text-black" href="#"><i class="bi bi-file-earmark-bar-graph me-1"></i> Reportes</a></li>
         </ul>
 
@@ -57,7 +57,7 @@
                 <li><a class="dropdown-item" href="#"><i class="bi bi-bag-check me-1"></i> Solicitudes</a></li>
                 <li><a class="dropdown-item" href="#"><i class="bi bi-clock-history me-1"></i> Historial</a></li>
                 <li><a class="dropdown-item" href="#"><i class="bi bi-receipt me-1"></i> Comprobantes</a></li>
-                <li><a class="dropdown-item" href="#"><i class="bi bi-chat-dots me-1"></i> Comentarios</a></li>
+                <li><a class="dropdown-item" href="{% url 'vista_comentario_administracion' %}"><i class="bi bi-chat-dots me-1"></i> Comentarios</a></li>
                 <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-1"></i> Configuración</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item text-danger" href="{% url 'CerrarSesion' %}"><i class="bi bi-box-arrow-right me-1"></i> Cerrar Sesión</a></li>

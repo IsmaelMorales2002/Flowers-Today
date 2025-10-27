@@ -60,30 +60,33 @@ def Iniciar_Sesion(request):
     contexto = {}
     try: 
         usuario = Usuario.objects.get(correo_usuario = correo)
-
-        #Verificacion de contraseña
-        if check_password(password,usuario.password_usuario):
-            #Session para guardar informacion del cliente
-            if usuario.id_rol.nombre_rol == 'C':
-                request.session['nombre_cliente'] = usuario.nombre_usuario
-                request.session['apellido_cliente'] = usuario.apellido_usuario
-                request.session['correo_cliente'] = usuario.correo_usuario
-                request.session['id_usuario'] = usuario.id_usuario
-                request.session['activo'] = True
-                return redirect('vista_inicio_cliente')
-            
-            #Session paran guardar informacion del administrador
-            elif usuario.id_rol.nombre_rol == 'A':
-                request.session['nombre_administrador'] = usuario.nombre_usuario
-                request.session['apellido_administrador'] = usuario.apellido_usuario
-                request.session['correo_administrador'] = usuario.correo_usuario
-                request.session['id_usuario'] = usuario.id_usuario
-                request.session['activo_administrador'] = True
-                return redirect('vista_inicio_administrador')
+        
+        if usuario.usuario_activo:
+            #Verificacion de contraseña
+            if check_password(password,usuario.password_usuario):
+                #Session para guardar informacion del cliente
+                if usuario.id_rol.nombre_rol == 'C':
+                    request.session['nombre_cliente'] = usuario.nombre_usuario
+                    request.session['apellido_cliente'] = usuario.apellido_usuario
+                    request.session['correo_cliente'] = usuario.correo_usuario
+                    request.session['id_usuario'] = usuario.id_usuario
+                    request.session['activo'] = True
+                    return redirect('vista_inicio_cliente')
+                
+                #Session paran guardar informacion del administrador
+                elif usuario.id_rol.nombre_rol == 'A':
+                    request.session['nombre_administrador'] = usuario.nombre_usuario
+                    request.session['apellido_administrador'] = usuario.apellido_usuario
+                    request.session['correo_administrador'] = usuario.correo_usuario
+                    request.session['id_usuario'] = usuario.id_usuario
+                    request.session['activo_administrador'] = True
+                    return redirect('vista_inicio_administrador')
+            else:
+                contexto['error_credenciales'] = 'Credenciales Incorrectas'
+                contexto['correo'] = correo
+                return render(request,'login.html',contexto)
         else:
-            contexto['error_credenciales'] = 'Credenciales Incorrectas'
-            contexto['correo'] = correo
-            return render(request,'login.html',contexto)
+            return redirect('vista_inicio_cliente')
 
     except Usuario.DoesNotExist:
         contexto['error_usuario'] = 'Usuario No Encontrado'
@@ -202,6 +205,24 @@ def Vista_Crear_Admi(request):
         })
     return redirect('vista_inicio_cliente')
 
+#Vista de categorias de servicio
+def Vista_Categoria_Servicio_Administracion(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        try:
+            usuarios = Usuario.objects.filter(id_rol__nombre_rol = 'A')
+            categorias = Categoria_Servicio.objects.all()
+            
+            return render(request,'categoria_servicios.html',{
+                'activo' : activo,
+                'usuarios': usuarios,
+                'categorias': categorias
+            })
+        except Exception as e:
+            return redirect('vista_inicio_administrador')
+
+    return redirect('vista_inicio_cliente')   
 
 def Vista_Categoria_Administracion(request):
      #Proteccion de ruta
@@ -230,6 +251,17 @@ def Vista_Crear_Categoria(request):
         })
     return redirect('vista_inicio_cliente')
 
+#Vista Crear Categoria Servicio
+def Vista_Crear_Categoria_Servicio(request):
+    #Proteccion de ruta
+    activo = request.session.get('activo_administrador',False)
+    
+    if activo:
+        return render(request,'crearCategoriaServicio.html',{
+            'activo':activo
+        })
+    return redirect('vista_inicio_cliente')
+
 def Vista_Editar_Categoria(request, id_categoria):
     activo = request.session.get('activo_administrador', False)
     if activo:
@@ -243,6 +275,23 @@ def Vista_Editar_Categoria(request, id_categoria):
             return render(request, 'editar_categoria.html', contexto)
         except Categoria.DoesNotExist:
             return redirect('vista_categoria_administracion')
+
+    return redirect('vista_login')
+
+#Vista_Editar_Categoria_Servicio
+def Vista_Editar_Categoria_Servicio(request, id_categoria_servicio):
+    activo = request.session.get('activo_administrador', False)
+    if activo:
+        try:
+            categoria = Categoria_Servicio.objects.get(id_categoria_servicio=id_categoria_servicio)
+            contexto = {
+                'activo': activo,
+                'nombre': categoria.nombre_categoria_servicio,
+                'id_categoria_servicio': id_categoria_servicio
+            }
+            return render(request, 'editar_categoriaServicio.html', contexto)
+        except Categoria.DoesNotExist:
+            return redirect('vista_categoria_servicio')
 
     return redirect('vista_login')
 
@@ -502,6 +551,10 @@ def Vista_Historial_Compras(request):
             usuario = Usuario.objects.get(id_usuario = request.session.get('id_usuario',None))
             compras = Compra.objects.filter(id_usuario = usuario.id_usuario)
             comprobantes = Comprobante_Pago.objects.filter(id_compra__in = compras)
+
+            if request.GET.get('pdf'):
+                return generar_comprobante_pdf(request.GET.get('pdf'))
+
             return render(request,'historial_compras.html',{
                 'activo': activo,
                 'comprobantes': comprobantes
@@ -540,5 +593,68 @@ def Vista_Configuracion(request):
     if activo:
         return render(request,'configuracion.html',{
             'activo': activo
+        })
+    return redirect('vista_inicio_cliente')
+
+#Vista Arreglos
+def Vista_Arreglos(request):
+    productos = Producto.objects.filter(producto_activo = True)
+    categorias = Categoria.objects.filter(
+        estado_categoria=True,
+        producto__producto_activo=True,
+        nombre_categoria__icontains = 'arreglo'
+    ).distinct()
+    activo = request.session.get('activo',False)
+    return render(request,'arreglos.html',{
+        'activo': activo,
+        'categorias': categorias,
+        'productos': productos
+    })
+
+#Vista Flores
+def Vista_Flores(request):
+    productos = Producto.objects.filter(producto_activo = True)
+    categorias = Categoria.objects.filter(
+        estado_categoria=True,
+        producto__producto_activo=True,
+    ).filter(
+        Q(nombre_categoria__icontains='flore') |
+        Q(nombre_categoria__icontains='rosa')
+    ).distinct()
+    activo = request.session.get('activo',False)
+    return render(request,'flores.html',{
+        'activo': activo,
+        'categorias': categorias,
+        'productos': productos
+    })
+
+# Vista Solicitar Servicio
+def Vista_Solicitar_Servicio(request):
+    activo = request.session.get('activo',False)
+    categoria_servicio = Categoria_Servicio.objects.filter(estado_categoria_servicio = True)
+    return render(request,'servicios.html',{
+        'activo': activo,
+        'categorias': categoria_servicio
+    })
+
+#Vista Solicitudes de Pedidos
+def Vista_SolicitudesPedidos(request):
+    activo = request.session.get('activo',False)
+    if activo:
+        servicios = Servicio.objects.filter(id_usuario__correo_usuario = request.session.get('correo_cliente'))
+        return render(request,'solicitudesPedidos.html',{
+            'activo': activo,
+            'servicios': servicios
+        })
+    return redirect('vista_inicio_cliente')
+
+#Vista Solicitudes de Pedidos Administracion
+def Vista_Solicitudes_Pedidos_Admin(request):
+    activo = request.session.get('activo_administrador',False)
+    if activo:
+        servicios = Servicio.objects.all()
+        return render(request,'solicitudesPedidosAdmin.html',{
+            'activo': activo,
+            'servicios': servicios
         })
     return redirect('vista_inicio_cliente')

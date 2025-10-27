@@ -1,0 +1,155 @@
+{% extends 'menuAdministrador.html' %}
+{% load static %}
+{% block title %}Solicitudes De Pedidos{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.5/css/responsive.bootstrap5.css">
+<link rel="stylesheet" href="{% static 'css/tablaCliente.css'%}" />
+
+<div class="container-fluid mt-5">
+  <h2 class="text-center text-white mb-4"><i class="bi bi-clipboard2-check"></i>Gestionar Solicitudes De Pedidos</h2>
+   
+  <div class="table-responsive bg-white p-3 rounded shadow mb-2">
+    <table id="tabla-pedidos" class="table table-striped table-bordered bg-white text-dark responsive">
+      <thead class="table-light">
+        <tr>
+          <th class="text-center align-middle">Fecha</th>
+          <th class="text-center align-middle">Cliente</th>
+          <th class="text-center align-middle">Correo</th>
+          <th class="text-center align-middle">Descripción</th>
+          <th class="text-center align-middle">Categoría</th>
+          <th class="text-center align-middle">Estado</th>
+          <th class="text-center align-middle">Comentario</th>
+          <th class="text-center align-middle">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for servicio in servicios %}
+        <tr>
+            <td class="text-center align-middle">{{servicio.fecha_servicio|date:"d/m/Y"}}</td>
+            <td class="text-center align-middle">{{servicio.id_usuario.nombre_usuario}} {{servicio.id_usuario.apellido_usuario}}</td>
+            <td class="text-center text-truncate align-middle">{{servicio.id_usuario.correo_usuario}}</td>
+            <td class="text-center align-middle">
+                <button class="btn btn-sm btn-descripcion text-white" style="background: #6C2DC7;"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalDescripcion"
+                        data-descripcion="{{ servicio.descripcion_servicio }}">
+                    Ver Descripción
+                </button>
+            </td>
+            <td class="text-center align-middle">{{servicio.id_categoria_servicio.nombre_categoria_servicio}}</td>
+            <td class="text-center align-middle">
+                {% if servicio.estado_servicio == 'Re' %}
+                <span class="badge bg-warning text-black">En Revisión</span>
+                {% elif servicio.estado_servicio == 'Ac' %}
+                <span class="badge bg-success">Aceptado</span>
+                {% elif servicio.estado_servicio == 'Ca' %}
+                <span class="badge bg-danger">Rechazado</span>
+                {% endif %}
+            </td>
+            <td class="text-center align-middle">
+                <button class="btn btn-sm btn-descripcion text-white" style="background-color: #6C2DC7;"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalAgregarComentario"
+                        data-id="{{ servicio.id_servicio }}"
+                        data-comentario="{{ servicio.comentario_servicio }}"
+                        data-validacion="{% if servicio.validacion %}{{ servicio.validacion|yesno:'Sí,No' }}{% else %}Pendiente{% endif %}">
+
+                        {% if servicio.comentario_servicio == ''%}
+                        Añadir Comentario
+                        {%elif servicio.comentario_servicio != ''%}
+                        Ver Comentario
+                        {% endif %}
+                </button>
+            </td>
+            
+            <!-- Nueva Columna Acciones -->
+            <td class="text-center align-middle">
+                {% if servicio.estado_servicio == 'Re' %}
+                    <button class="btn btn-sm btn-accion text-white" style="background: #6C2DC7;"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalGestionar"
+                        data-id="{{ servicio.id_servicio }}"
+                        data-accion="Ac">
+                        Aceptar
+                    </button>
+
+                    <button class="btn btn-danger btn-sm btn-accion" 
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalGestionar"
+                        data-id="{{ servicio.id_servicio }}"
+                        data-accion="Ca">
+                        Rechazar
+                    </button>
+                {% else %}
+                    <span class="badge bg-dark text-white">Gestionado</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal Descripción -->
+<div class="modal fade" id="modalDescripcion" tabindex="-1" aria-labelledby="modalDescripcionLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="modalDescripcionLabel">Descripción del Servicio</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <strong><p id="contenidoDescripcion"></p></strong>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger rounded-3" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Agregar Comentario -->
+<div class="modal fade" id="modalAgregarComentario" tabindex="-1" aria-labelledby="modalAgregarComentarioLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="modalAgregarComentarioLabel">Agregar Comentario</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="{% url 'CrearComentario' %}" id="formComentario">
+          {% csrf_token %}
+          <input type="hidden" name="id_servicio" id="idServicioComentario">
+
+          <div class="mb-3">
+            <label for="comentarioAdmin" class="form-label">Comentario del Administrador</label>
+            <textarea class="form-control" maxlength="145" id="comentarioAdmin" name="comentario" rows="4" required></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Estado de validación del usuario:</label>
+            <p id="estadoUsuario" class="fw-bold">Pendiente</p>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <button type="submit" class="btn text-white " style="background-color: #6C2DC7;">Guardar Comentario</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+<script src="https://cdn.datatables.net/responsive/3.0.5/js/dataTables.responsive.js"></script>
+<script src="https://cdn.datatables.net/responsive/3.0.5/js/responsive.bootstrap5.js"></script>
+<script src="{% static 'js/dataTablePedidos.js'%}"></script>
+<script src="{% static 'js/modalesPedidos.js'%}"></script>
+{% endblock %}

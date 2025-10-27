@@ -3,7 +3,7 @@ from django.shortcuts import render,redirect
 from django.contrib import messages
 from .models import *
 from django.db.models import Q
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password,check_password
 from django.utils import timezone
 import uuid
 
@@ -229,4 +229,65 @@ def RealizarCompra(request):
     except Usuario.DoesNotExist:
         return redirect('vista_carrito')
 
+#logica para actualizar contraseña
+def ActualizarClaveCliente(request):
+    correo = request.POST.get('txtCorreo','').strip()
+    password = request.POST.get('txtPasswordActual','').strip()
+    passwordNueva = request.POST.get('txtPasswordNueva','').strip()
+    try:
+        usuario = Usuario.objects.get(correo_usuario = correo)
+        if check_password(password,usuario.password_usuario):
+            nuevaPassword = make_password(passwordNueva)
+            usuario.password_usuario = nuevaPassword
+            usuario.save()
+            messages.success(request,'Exito')
+            return redirect('vista_configuracion')
+        else:
+            messages.warning(request,'Contraseña Invalida') 
+            return redirect('vista_configuracion')
+    except Usuario.DoesNotExist:
+        messages.error(request,'Error')
+        return redirect('vista_inicio_cliente')
+    
+#Logica para desactivar cuenta
+def DesactivarCuenta(request):
+    correo = request.POST.get('txtCorreo','').strip()
+    try:
+        usuario = Usuario.objects.get(correo_usuario = correo)
+        usuario.usuario_activo = False
+        usuario.save()
+        del request.session['nombre_cliente']
+        del request.session['apellido_cliente']
+        del request.session['correo_cliente']
+        del request.session['id_usuario']
+        del request.session['activo']
+        return redirect('vista_inicio_cliente')
+    except Usuario.DoesNotExist:
+        return redirect('vista_inicio_cliente')
+    
+# Logica Para registrar un servicio
+def RegistrarServicio(request):
+    activo = request.session.get('activo',False)
+    id_usuario = request.session.get('id_usuario','')
+    id_categoria = request.POST.get('categoriaServicio','').strip()
+    descripcion = request.POST.get('descripcion','').strip()
+    fecha = timezone.localtime(timezone.now()).date()
+
+
+    if activo:
+        #Registro de Servicio
+        categoria = Categoria_Servicio.objects.get(id_categoria_servicio = id_categoria)
+        usuario = Usuario.objects.get(id_usuario = id_usuario)
+        pedido = Servicio(
+            id_usuario = usuario,
+            id_categoria_servicio = categoria,
+            descripcion_servicio = descripcion,
+            estado_servicio = 'Re',
+            fecha_servicio = fecha,
+            comentario_servicio = ''
+        )
+        pedido.save()
+        return redirect('vista_inicio_cliente')
+    else:
+        return redirect('vista_inicio_cliente')
     

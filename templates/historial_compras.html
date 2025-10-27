@@ -21,6 +21,7 @@
           <th class="text-center">Total</th>
           <th class="text-center">Estado</th>
           <th class="text-center">Detalle</th>
+          <th class="text-center">Comprobante De Pago</th>
         </tr>
       </thead>
       <tbody>
@@ -38,12 +39,21 @@
             </td>
             <td class="text-center">
                 <a href="{% url 'getdetalleCompras' comprobante.id_compra.id_compra %}" 
-                class="btn btn-sm btn-ver-detalle text-white" 
-                style="background-color: #6C2DC7"
+                class="btn btn-sm bg-dark btn-ver-detalle text-white" 
                 data-bs-toggle="modal"
                 data-bs-target="#modalDetalleCompra">
                 Ver Detalle Compra
                 </a>
+            </td>
+            <td class="text-center">
+              <a
+              href="?pdf={{ comprobante.id_comprobante }}"
+              target="_blank"
+              class="btn btn-sm"
+              style="background-color: #6C2DC7; color: white;"
+            >
+              Obtener PDF
+            </a>
             </td>
         </tr>
         {% endfor %}

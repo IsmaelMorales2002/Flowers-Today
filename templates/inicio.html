@@ -59,7 +59,7 @@
         {% for producto in productos %}
           {% if producto.id_categoria.nombre_categoria == categoria.nombre_categoria %}
             <!-- Tarjeta con clase uniform-card -->
-            <div class="card uniform-card text-center shadow me-3 flex-shrink-0">
+          <div class="card uniform-card text-center shadow me-3 flex-shrink-0" style="width: 18rem;">
               <!-- Dentro de la tarjeta -->
                   <div class="img-wrap position-relative">
                     <img
@@ -85,10 +85,10 @@
                     </button>
                   </div>
 
-              <div class="card-body bg-white">
+            <div class="card-body bg-white d-flex flex-column justify-content-between" style="height: 250px;">
                 <h5 class="card-title">{{ producto.nombre_producto }}</h5>
-                <p class="card-text">{{ producto.descripcion_producto }}</p>
-                <div class="carrito-control d-flex justify-content-center">
+              <p class="card-text descripcion-truncada">{{ producto.descripcion_producto }}</p>
+              <div class="carrito-control mt-auto d-flex justify-content-center">
                   <button class="btn btn-agregar d-flex align-items-center bi bi-cart3"
                     style="background-color: rgb(108, 45, 199); color: white;"
                     data-id="{{producto.id_producto}}"
@@ -161,6 +161,15 @@
   </div>
 </div>
 <style>
+.descripcion-truncada {
+  display: -webkit-box;           
+  -webkit-box-orient: vertical;   
+  -webkit-line-clamp: 3;          
+  line-clamp: 3;                  
+  overflow: hidden;               
+  text-overflow: ellipsis;        
+  max-height: 4.5em;              /* Ajusta según altura de tus líneas */
+}
 .icono-exito {
   width: 90px;
   height: 90px;

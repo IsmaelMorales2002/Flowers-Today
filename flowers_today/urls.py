@@ -22,6 +22,11 @@ urlpatterns = [
     path('actualizar_credencial/<uidb64>/<token>/',Vista_Actualizar_Clave,name='vista_credencial'),
     path('carrito/',vista_carrito,name='vista_carrito'),
     path('historial/',Vista_Historial_Compras,name='vista_historial_compras'),
+    path('configuracion/',Vista_Configuracion,name='vista_configuracion'),
+    path('arreglos/',Vista_Arreglos,name='vista_arreglos'),
+    path('flores/',Vista_Flores,name='vista_flores'),
+    path('servicio/',Vista_Solicitar_Servicio,name='vista_servicio'),
+    path('solicitudes/',Vista_SolicitudesPedidos,name='vista_solicitudesPedidos'),
 
     #Vistas Administrador
     path('administracion/',Vista_Inicio_Administrador,name='vista_inicio_administrador'),
@@ -34,6 +39,7 @@ urlpatterns = [
     path('categoria/',Vista_Categoria_Administracion,name='vista_categoria_administracion'),
     path('crear_categoria/',Vista_Crear_Categoria,name='vista_crear_categoria'),
     path('editar-categoria/<int:id_categoria>/', Vista_Editar_Categoria, name='vista_editar_categoria'),
+    path('editar-categoria-servicio/<int:id_categoria_servicio>/', Vista_Editar_Categoria_Servicio, name='vista_editar_categoriaServicio'),
     path('administradores/editar/vista/<int:id>/', Vista_Editar_Admi, name='vista_editar_admi'),
     path('clientes/editar/vista/<int:id>/',Vista_Editar_Cliente_Admin,name='vista_editar_cliente_admin'),
     path('productos/',Vista_Productos,name='vista_productos_administracion'),
@@ -41,8 +47,9 @@ urlpatterns = [
     path('editar-producto/<int:id>',Vista_Actualizar_Producto,name='vista_actualizar_producto'),
     path('comentario/administracion/', vista_comentario_administracion, name='vista_comentario_administracion'),
     path('pedidos/administracion/', vista_pedidos_administracion, name='vista_pedidos_administracion'),
-    path('configuracion/',Vista_Configuracion,name='vista_configuracion'),
-
+    path('categoria/servicios',Vista_Categoria_Servicio_Administracion,name='vista_categoria_servicio'),
+    path('crear_categoria_servicio/',Vista_Crear_Categoria_Servicio,name='vista_crear_categoria_servicio'),
+    path('gestion-solicitudes/',Vista_Solicitudes_Pedidos_Admin,name='vista_gestion_solicitudes'),
 
  
     #Logica
@@ -50,10 +57,14 @@ urlpatterns = [
     path('IniciarSesion/',Iniciar_Sesion,name='IniciarSesion'),
     path('CerrarSesion/',Cerrar_Sesion,name='CerrarSesion'),
     path('EditarPerfilCliente/',Editar_Perfil_Cliente,name='EditarPerfilCliente'),
+    path('EditarPerfilAdmin/',Editar_Perfil_Admin,name='EditarPerfilAdmin'),
     path('CreaCuentaAdmi',Crear_Cuenta_Admi,name='CrearCuentaAdmi'),
     path('CreaCategoria',Crear_Categoria,name='CrearCategoria'),
+    path('CreaCategoriaServicio',Crear_Categoria_Servicio,name='CrearCategoriaServicio'),
     path('editar-categoria/guardar/<int:id_categoria>/', Editar_Categoria, name='editar_categoria'),
+    path('editar-categoriaServicio/guardar/<int:id_categoria_servicio>/', Editar_CategoriaServicio, name='editar_categoriaServicio'),
     path('categoria/cambiar-estado/', cambiar_estado_categoria, name='cambiar_estado_categoria'),
+    path('categoriaServicio/cambiar-estado/', cambiar_estado_categoria_servicio, name='cambiar_estado_categoriaServicio'),
     path('CorreoRecuperacion/',Correo_Recuperacion,name='CorreoRecuperacion'),
     path('administradores/editar/<int:id>/', Editar_Cuenta_Admi, name='EditarCuentaAdmi'),
     path('administradores/cambiar-estado/', cambiar_estado_administrador, name='cambiar_estado_administrador'),
@@ -63,7 +74,12 @@ urlpatterns = [
     path('CrearProducto/',Crear_Producto,name='CrearProducto'),
     path('EditarProducto/<int:id>/',Editar_Producto,name='EditarProducto'),
     path('productos/cambiar-estado/',Cambiar_Estado_Producto,name='cambiar_estado_producto'),
-    path('RealizarCompra',RealizarCompra,name='RealizarCompra'),
+    path('RealizarCompra/',RealizarCompra,name='RealizarCompra'),
+    path('ActualizarClave/',ActualizarClaveCliente,name='ActualizarClaveCliente'),
+    path('DesctivarCuenta/',DesactivarCuenta,name='DesactivarCuenta'),
+    path('CrearServicio/',RegistrarServicio,name='CrearServicio'),
+    path('CrearComentario/',CrearComentario,name='CrearComentario'),
+    path('RepuestaCliente/',RespuestaCliente,name='RespuesCliente'),
     #Apis
     path('detalleCompra/<int:compra_id>',GET_Detalle_Compra,name='getdetalleCompras'),
 ]

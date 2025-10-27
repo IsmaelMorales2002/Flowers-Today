@@ -17,90 +17,125 @@
                  alt="Foto de Perfil"
                  class="rounded-circle shadow img-thumbnail"
                  style="width: 150px; height: 150px; object-fit: cover;">
-                 <!-- Formulario -->
             <div class="mt-2">
               <form method="POST" enctype="multipart/form-data" action="{% url 'EditarPerfilCliente' %}" id="form-editar-perfil">
-              {% csrf_token %}
-              <input type="file"
-                     class="form-control form-control-sm mx-auto"
-                     style="max-width: 300px;"
-                     id="imagen_usuario"
-                     name="imagen_usuario"
-                     accept="image/*">
-              <div id="error-imagen" class="text-danger small mt-1"></div>
+                {% csrf_token %}
+                <input type="file"
+                       class="form-control form-control-sm mx-auto"
+                       style="max-width: 300px;"
+                       id="imagen_usuario"
+                       name="imagen_usuario"
+                       accept="image/*">
+                <div id="error-imagen" class="text-danger small mt-1"></div>
             </div>
           </div>
 
-            <!-- Nombre -->
-            <div class="mb-3">
-              <label for="nombre_usuario" class="form-label">Nombre</label>
-              <input type="text"
-                     class="form-control form-control-sm bg-dark text-white border-secondary {% if 'nombre' in campos_vacios %}is-invalid{% endif %}"
-                     id="nombre_usuario"
-                     name="txtNombreA"
-                     value="{% if 'nombre' in campos_vacios %}{{nombre}}{% elif 'nombre' not in campos_vacios %}{{nombre}}{% else %}{{usuario.nombre_usuario }}{% endif %}"
-                     required>
-                    {% if 'nombre' in campos_vacios %}
-                    <div class="invalid-feedback">Este campo es obligatorio.</div>
-                    {% endif %}
-            </div>
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label for="nombre_usuario" class="form-label">Nombre</label>
+            <input type="text"
+                   class="form-control form-control-sm bg-dark text-white border-secondary {% if 'nombre' in campos_vacios %}is-invalid{% endif %}"
+                   id="nombre_usuario"
+                   name="txtNombreA"
+                   value="{% if 'nombre' in campos_vacios %}{{nombre}}{% elif 'nombre' not in campos_vacios %}{{nombre}}{% else %}{{usuario.nombre_usuario}}{% endif %}"
+                   required>
+            {% if 'nombre' in campos_vacios %}
+            <div class="invalid-feedback">Este campo es obligatorio.</div>
+            {% endif %}
+          </div>
 
-            <div class="mb-3">
-              <label for="apellido_usuario" class="form-label">Apellido</label>
-              <input type="text"
-                     class="form-control form-control-sm bg-dark text-white border-secondary {% if 'apellido' in campos_vacios %}is-invalid{% endif %}"
-                     id="apellido_usuario"
-                     name="txtApellidoA"
-                     value="{% if 'apellido' in campos_vacios %}{{apellido}}{% elif 'apellido' not in campos_vacios %}{{apellido}}{% else %}{{ usuario.apellido_usuario }}{% endif %}"
-                     required>
-                    {% if 'apellido' in campos_vacios %}
-                    <div class="invalid-feedback">Este campo es obligatorio.</div>
-                    {% endif %}
-            </div>
+          <!-- Apellido -->
+          <div class="mb-3">
+            <label for="apellido_usuario" class="form-label">Apellido</label>
+            <input type="text"
+                   class="form-control form-control-sm bg-dark text-white border-secondary {% if 'apellido' in campos_vacios %}is-invalid{% endif %}"
+                   id="apellido_usuario"
+                   name="txtApellidoA"
+                   value="{% if 'apellido' in campos_vacios %}{{apellido}}{% elif 'apellido' not in campos_vacios %}{{apellido}}{% else %}{{usuario.apellido_usuario}}{% endif %}"
+                   required>
+            {% if 'apellido' in campos_vacios %}
+            <div class="invalid-feedback">Este campo es obligatorio.</div>
+            {% endif %}
+          </div>
 
-            <div class="mb-3">
-              <label for="correo_usuario" class="form-label">Correo Electrónico</label>
-              <input type="email"
-                     class="form-control form-control-sm bg-dark text-white border-secondary {% if 'correo' in campos_vacios %}is-invalid{% endif %}"
-                     id="correo_usuario"
-                     name="txtCorreoA"
-                     value="{% if 'correo' in campos_vacios %}{{correo}}{% elif 'correo' not in campos_vacios %}{{correo}}{% else %}{{ usuario.correo_usuario }}{% endif %}"
-                     required>
-                    {% if 'correo' in campos_vacios %}
-                    <div class="invalid-feedback">Este campo es obligatorio.</div>
-                    {% endif %}
-            </div>
+          <!-- Correo -->
+          <div class="mb-3">
+            <label for="correo_usuario" class="form-label">Correo Electrónico</label>
+            <input type="email"
+                   class="form-control form-control-sm bg-dark text-white border-secondary {% if 'correo' in campos_vacios %}is-invalid{% endif %}"
+                   id="correo_usuario"
+                   name="txtCorreoA"
+                   value="{% if 'correo' in campos_vacios %}{{correo}}{% elif 'correo' not in campos_vacios %}{{correo}}{% else %}{{usuario.correo_usuario}}{% endif %}"
+                   required>
+            {% if 'correo' in campos_vacios %}
+            <div class="invalid-feedback">Este campo es obligatorio.</div>
+            {% endif %}
+          </div>
 
-            <div class="mb-4">
-              <label for="telefono_usuario" class="form-label">Teléfono</label>
-              <input type="text"
-                     class="form-control form-control-sm bg-dark text-white border-secondary {% if 'telefono' in campos_vacios %}is-invalid{% endif %}"
-                     id="telefono_usuario"
-                     name="txtTelefonoA"
-                     value="{% if 'telefono' in campos_vacios %}{{telefono}}{% elif 'telefono' not in campos_vacios %}{{telefono}}{% else %}{{ usuario.telefono_usuario }}{% endif %}"
-                     required>
-                    {% if 'telefono' in campos_vacios %}
-                    <div class="invalid-feedback">Este campo es obligatorio.</div>
-                    {% endif %}
-            </div>
+          <!-- Teléfono -->
+          <div class="mb-4">
+            <label for="telefono_usuario" class="form-label">Teléfono</label>
+            <input type="text"
+                   class="form-control form-control-sm bg-dark text-white border-secondary {% if 'telefono' in campos_vacios %}is-invalid{% endif %}"
+                   id="telefono_usuario"
+                   name="txtTelefonoA"
+                   value="{% if 'telefono' in campos_vacios %}{{telefono}}{% elif 'telefono' not in campos_vacios %}{{telefono}}{% else %}{{usuario.telefono_usuario}}{% endif %}"
+                   required>
+            {% if 'telefono' in campos_vacios %}
+            <div class="invalid-feedback">Este campo es obligatorio.</div>
+            {% endif %}
+          </div>
 
-            <!-- Botones -->
-            <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
-              <button type="submit" class="btn btn-primary w-100 w-md-auto" style="background-color: #6C2DC7; border: #6C2DC7;">
-                <i class="bi bi-save me-1"></i> Guardar Cambios
-              </button>
-              <a href="{% url 'vista_perfil_cliente' %}" class="btn btn-danger w-100 w-md-auto">
-                <i class="bi bi-x-circle me-1"></i> Cancelar
-              </a>
-            </div>
-          </form>
+          <!-- Botones -->
+          <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
+            <button type="button" class="btn btn-primary w-100 w-md-auto" id="btn-confirmar-actualizacion" style="background-color: #6C2DC7; border: #6C2DC7;">
+              <i class="bi bi-save me-1"></i> Guardar Cambios
+            </button>
+            <a href="{% url 'vista_perfil_cliente' %}" class="btn btn-danger w-100 w-md-auto">
+              <i class="bi bi-x-circle me-1"></i> Cancelar
+            </a>
+          </div>
+        </form>
         </div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- Modal Confirmar Actualización de Perfil -->
+<div class="modal fade" id="modalConfirmarActualizacion" tabindex="-1" aria-labelledby="modalConfirmarActualizacionLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      
+      <!-- Encabezado -->
+      <div class="modal-header bg-dark text-white rounded-top-4">
+        <h5 class="modal-title" id="modalConfirmarActualizacionLabel">
+          Confirmar actualización
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <!-- Cuerpo -->
+      <div class="modal-body text-center p-4 ">
+        <p class="mb-3"><strong>¿Estás seguro de que deseas actualizar tu perfil?</strong></p>
+        <div class="d-flex justify-content-center gap-3">
+          <button type="button" class="btn text-white" id="btn-confirmar-guardar" style="background: #6C2DC7;">
+            <i class="bi bi-check-circle me-1"></i> Confirmar
+          </button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-1"></i> Cancelar
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
 <script src="{% static 'js/imagen_previa.js' %}"></script>
 <script src="{% static 'js/campos_vacios.js' %}"></script>
+<script src="{% static 'js/confirmacion_cliente.js' %}"></script>
+
 
 {% endblock %}

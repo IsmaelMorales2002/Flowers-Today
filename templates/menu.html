@@ -31,13 +31,13 @@
     <!-- Menú izquierdo -->
     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-            <a class="nav-link text-black" href="#"><i class="bi bi-basket2 me-1"></i> Arreglos</a>
+            <a class="nav-link text-black" href="{% url 'vista_arreglos' %}"><i class="bi bi-basket2 me-1"></i> Arreglos</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-black" href="#"><i class="bi bi-flower3 me-1"></i> Flores</a>
+            <a class="nav-link text-black" href="{% url 'vista_flores' %}"><i class="bi bi-flower3 me-1"></i> Flores</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-black" href="#"><i class="bi bi-gear-wide-connected me-1"></i> Servicios</a>
+            <a class="nav-link text-black" href="{% url 'vista_servicio' %}"><i class="bi bi-gear-wide-connected me-1"></i> Servicios</a>
         </li>
         <li class="nav-item">
             <a class="nav-link text-black" href="#"><i class="bi bi-telephone me-1"></i> Contacto</a>
@@ -70,9 +70,8 @@
           <ul class="dropdown-menu dropdown-menu-end">
             {% if activo %}
             <li><a class="dropdown-item" href="{% url 'vista_perfil_cliente' %}"><i class="bi bi-person me-1"></i> Perfil</a></li>
-            <li><a class="dropdown-item" href="#"><i class="bi bi-bag-check me-1"></i> Solicitudes De Pedidos</a></li>
+            <li><a class="dropdown-item" href="{% url 'vista_solicitudesPedidos' %}"><i class="bi bi-bag-check me-1"></i> Solicitudes De Pedidos</a></li>
             <li><a class="dropdown-item" href="{% url 'vista_historial_compras' %}"><i class="bi bi-clock-history me-1"></i> Historial De Compras</a></li>
-            <li><a class="dropdown-item" href="#"><i class="bi bi-receipt me-1"></i> Comprobantes De Pago</a></li>
             <li><a class="dropdown-item" href="{% url 'vista_comentario' %}"><i class="bi bi-chat-dots me-1"></i> Comentarios</a></li>
             <li><a class="dropdown-item" href="{% url 'vista_configuracion' %}"><i class="bi bi-gear me-1"></i> Configuración</a></li>
             <li><hr class="dropdown-divider"></li>
