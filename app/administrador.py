@@ -690,5 +690,16 @@ def Editar_Perfil_Admin(request):
     except Usuario.DoesNotExist:
         return redirect('vista_login')
 
-
+# Logica Para Crear el comentario en servicio
+def CrearComentario(request):
+    comentario = request.POST.get('comentario','').strip()
+    id_servicio = request.POST.get('id_servicio','').strip()
+    if comentario:
+        servicio = Servicio.objects.get(id_servicio = id_servicio)
+        servicio.comentario_servicio = comentario
+        servicio.save()
+        messages.success(request,'Exito')
+        return redirect('vista_gestion_solicitudes')
+    else:
+        return redirect('vista_inicio_administrador')
 

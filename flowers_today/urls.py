@@ -78,6 +78,7 @@ urlpatterns = [
     path('ActualizarClave/',ActualizarClaveCliente,name='ActualizarClaveCliente'),
     path('DesctivarCuenta/',DesactivarCuenta,name='DesactivarCuenta'),
     path('CrearServicio/',RegistrarServicio,name='CrearServicio'),
+    path('CrearComentario/',CrearComentario,name='CrearComentario'),
     #Apis
     path('detalleCompra/<int:compra_id>',GET_Detalle_Compra,name='getdetalleCompras'),
 ]

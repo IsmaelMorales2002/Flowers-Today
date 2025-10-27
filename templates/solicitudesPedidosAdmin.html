@@ -111,7 +111,7 @@
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
-        <form method="POST" action="#" id="formComentario">
+        <form method="POST" action="{% url 'CrearComentario' %}" id="formComentario">
           {% csrf_token %}
           <input type="hidden" name="id_servicio" id="idServicioComentario">
 
