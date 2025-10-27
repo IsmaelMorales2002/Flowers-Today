@@ -156,11 +156,12 @@
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  let mesesLabels = {{ meses_labels|safe }};
-  let ventasProductosDatos = {{ ventas_productos_datos|safe }};
-  let ventasServiciosDatos = {{ ventas_servicios_datos|safe }};
-  let productosLabels = {{ productos_labels|safe }};
-  let productosCantidades = {{ productos_cantidades|safe }};
+  // Pasando las variables de Django como objetos JSON
+  let mesesLabels = JSON.parse('{{ meses_labels|safe }}');
+  let ventasProductosDatos = JSON.parse('{{ ventas_productos_datos|safe }}');
+  let ventasServiciosDatos = JSON.parse('{{ ventas_servicios_datos|safe }}');
+  let productosLabels = JSON.parse('{{ productos_labels|safe }}');
+  let productosCantidades = JSON.parse('{{ productos_cantidades|safe }}');
 </script>
 <script src="{% static 'js/graficosAdmin.js' %}"></script>
 {% endblock %}
