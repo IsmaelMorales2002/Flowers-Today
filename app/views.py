@@ -14,7 +14,11 @@ from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from .token import token_generator
 from app.generar_comprobante import *
-
+from django.utils import timezone
+import datetime, json
+from django.db.models import Sum, Count, F, DecimalField, ExpressionWrapper
+from decimal import Decimal
+from django.db.models.functions import TruncMonth, TruncDate
 # Vista_Inicio, muestra la vista inicio.html
 def Vista_Inicio_Cliente(request):
     # ✅ Solo productos activos con stock
@@ -35,17 +39,172 @@ def Vista_Inicio_Cliente(request):
         'productos': productos,
         'categorias': categorias
     })
-
     
-def Vista_Inicio_Administrador(request):
-    #Proteccion de Ruta
-    activo = request.session.get('activo_administrador',False)
-    if activo:
-        return render(request,'inicioAdministrador.html',{
-                'activo': activo
-        })
-    return redirect('vista_inicio_cliente')
+    
+    
+def _first_of_month(d: datetime.date) -> datetime.date:
+    return d.replace(day=1)
 
+def _shift_months(d: datetime.date, delta: int) -> datetime.date:
+    y = d.year + (d.month - 1 + delta) // 12
+    m = (d.month - 1 + delta) % 12 + 1
+    return datetime.date(y, m, 1)
+
+def _coerce_date(x):
+    return x.date() if hasattr(x, "date") else x
+
+
+def Vista_Inicio_Administrador(request):
+    if not request.session.get('activo_administrador', False):
+        return redirect('vista_inicio_cliente')
+
+    hoy_local = timezone.localdate()
+
+    # === KPIs ===
+    total_ventas = Compra.objects.aggregate(total=Sum('total_compra'))['total'] or 0
+    total_compras = Compra.objects.count()
+    ingreso_promedio = (
+        Compra.objects.aggregate(prom=Sum('total_compra') / Count('id_compra'))['prom'] or 0
+    )
+
+    # === Productos críticos ===
+    productos_criticos = (
+        Producto.objects.filter(producto_activo=True)
+        .annotate(diferencia=F('existencia_producto') - F('cantidad_minima'))
+        .filter(diferencia=1)
+        .count()
+    )
+
+    # === Próximos a agotarse ===
+    productos_bajos = (
+        Producto.objects.filter(producto_activo=True)
+        .annotate(diferencia=F('existencia_producto') - F('cantidad_minima'))
+        .filter(diferencia=1)
+        .select_related('id_categoria')
+        .order_by('existencia_producto', 'cantidad_minima')[:30]
+    )
+
+    # === Ventas por mes (últimos 6 meses) ===
+    first_this_month = _first_of_month(hoy_local)
+    meses = [_shift_months(first_this_month, -i) for i in range(5, -1, -1)]
+    inicio_rango = meses[0]
+    fin_rango_exclusivo = _shift_months(first_this_month, 1)
+    nombres_meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+                     'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+
+    # TruncMonth sin tzinfo porque es DateField
+    ventas_prod_qs = (
+        Compra.objects
+        .filter(fecha_compra__gte=inicio_rango, fecha_compra__lt=fin_rango_exclusivo)
+        .annotate(mes=TruncMonth('fecha_compra'))
+        .values('mes')
+        .annotate(total=Sum('total_compra'))
+        .order_by('mes')
+    )
+    mapa_prod = {_coerce_date(r['mes']): r['total'] for r in ventas_prod_qs}
+
+    serv_qs = (
+        Servicio.objects
+        .filter(fecha_servicio__gte=inicio_rango, fecha_servicio__lt=fin_rango_exclusivo)
+        .annotate(mes=TruncMonth('fecha_servicio'))
+        .values('mes')
+        .annotate(total=Count('id_servicio'))
+        .order_by('mes')
+    )
+    mapa_serv = {_coerce_date(r['mes']): r['total'] for r in serv_qs}
+
+    meses_labels = [nombres_meses[m.month - 1] for m in meses]
+    ventas_productos_datos = [float(mapa_prod.get(m, Decimal('0')) or 0) for m in meses]
+    ventas_servicios_datos = [int(mapa_serv.get(m, 0) or 0) for m in meses]
+
+    # === Semana actual (lun-dom) ===
+    inicio_semana = hoy_local - datetime.timedelta(days=hoy_local.weekday())
+    fin_semana = inicio_semana + datetime.timedelta(days=6)
+
+    total_semana_actual_val = (
+        Compra.objects
+        .filter(fecha_compra__gte=inicio_semana, fecha_compra__lte=fin_semana)
+        .aggregate(total=Sum('total_compra'))['total'] or Decimal('0')
+    )
+
+        # === Últimos 7 días (con días faltantes = 0) ===
+    inicio_ultimos7 = hoy_local - datetime.timedelta(days=6)
+    # Trae lo que exista en BD
+    ventas_dias_qs = (
+        Compra.objects
+        .filter(fecha_compra__gte=inicio_ultimos7, fecha_compra__lte=hoy_local)
+        .values('fecha_compra')
+        .annotate(total=Sum('total_compra'))
+        .order_by('fecha_compra')
+    )
+    # Mapa fecha -> total real
+    mapa_dias = {v['fecha_compra']: v['total'] for v in ventas_dias_qs}
+
+    # Construye TODOS los 7 días seguidos y rellena con 0
+    dias_ultimos7 = [inicio_ultimos7 + datetime.timedelta(days=i) for i in range(7)]
+    dias_ultimos7_rows = [
+        {'fecha': d.strftime('%d/%m/%Y'), 'total': float(mapa_dias.get(d) or 0)}
+        for d in dias_ultimos7
+    ]
+
+
+    # === Estado de comprobantes ===
+    estados_qs = (
+        Comprobante_Pago.objects
+        .filter(estado_comprobante__in=['Pa', 'Pe'])
+        .values('estado_comprobante')
+        .annotate(total=Count('id_comprobante'))
+    )
+    mapa_estados = {r['estado_comprobante']: r['total'] for r in estados_qs}
+    comp_pagados = int(mapa_estados.get('Pa', 0))
+    comp_pendientes = int(mapa_estados.get('Pe', 0))
+
+    # === Top productos ===
+    top_qs = (
+        Detalle_Compra.objects.values('id_producto__nombre_producto')
+        .annotate(
+            cantidad_vendida=Sum('cantidad_producto_compra'),
+            ingresos=Sum(ExpressionWrapper(
+                F('cantidad_producto_compra') * F('precio_unitario_compra'),
+                output_field=DecimalField(max_digits=12, decimal_places=2)
+            ))
+        )
+        .order_by('-cantidad_vendida')[:5]
+    )
+    productos_labels = [r['id_producto__nombre_producto'] for r in top_qs]
+    productos_ingresos = [float(r['ingresos'] or 0) for r in top_qs]
+    productos_cantidades = [int(r['cantidad_vendida'] or 0) for r in top_qs]
+
+    return render(request, 'inicioAdministrador.html', {
+        'activo': True,
+        'nombre': request.session.get('nombre_administrador', ''),
+        'apellido': request.session.get('apellido_administrador', ''),
+
+        'productos_bajos': productos_bajos,
+        'kpi_total_ventas': f"${total_ventas:,.2f}",
+        'kpi_total_compras': total_compras,
+        'kpi_promedio': f"${ingreso_promedio:,.2f}",
+        'kpi_criticos': productos_criticos,
+
+        'meses_labels': json.dumps(meses_labels),
+        'ventas_productos_datos': json.dumps(ventas_productos_datos),
+        'ventas_servicios_datos': json.dumps(ventas_servicios_datos),
+
+        'dias_ultimos7_rows': dias_ultimos7_rows,
+        'comp_pagados': comp_pagados,
+        'comp_pendientes': comp_pendientes,
+
+        'productos_labels': json.dumps(productos_labels),
+        'productos_ingresos': json.dumps(productos_ingresos),
+        'productos_cantidades': json.dumps(productos_cantidades),
+
+        'semana_del': inicio_semana.strftime('%d/%m/%Y'),
+        'semana_al': fin_semana.strftime('%d/%m/%Y'),
+        'total_semana_actual': f"${float(total_semana_actual_val):,.2f}",
+    })
+    
+    
+    
 # Vista_Login, muestra la vista login.html
 def Vista_Login(request):
     return render(request,'login.html')

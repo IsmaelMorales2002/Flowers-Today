@@ -1,72 +1,73 @@
-    // Ventas últimos 6 meses
-    const ctxMeses = document.getElementById('ventasMesesChart').getContext('2d');
-    new Chart(ctxMeses, {
-        type: 'line',
-        data: {
-            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
-            datasets: [{
-                label: 'Ventas',
-                data: [120, 150, 180, 130, 170, 200],
-                borderColor: '#ffc107',
-                backgroundColor: 'hsla(45, 100.00%, 51.40%, 0.20)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            plugins: { legend: { labels: { color: '#fff' } } },
-            scales: {
-                x: { ticks: { color: '#fff' }, grid: { color: '#444' } },
-                y: { ticks: { color: '#fff' }, grid: { color: '#444' } }
-            }
+document.addEventListener('DOMContentLoaded', () => {
+  // === Ventas por mes ===
+  const ctxMes = document.getElementById('graficoVentasTotales');
+  if (ctxMes) {
+    new Chart(ctxMes, {
+      type: 'line',
+      data: {
+        labels: mesesLabels,
+        datasets: [
+          {
+            label: 'Ventas de productos ($)',
+            data: ventasProductosDatos,
+            borderColor: '#FFC107',
+            backgroundColor: 'rgba(255,193,7,0.2)',
+            fill: true,
+            tension: 0.4,
+            borderWidth: 2,
+            pointRadius: 4
+          },
+          {
+            label: 'Servicios (cantidad)',
+            data: ventasServiciosDatos,
+            borderColor: '#20C997',
+            backgroundColor: 'rgba(32,201,151,0.25)',
+            fill: true,
+            tension: 0.4,
+            borderWidth: 2,
+            pointRadius: 4
+          }
+        ]
+      },
+      options: {
+        plugins: { legend: { labels: { color: '#fff' } } },
+        scales: {
+          x: { ticks: { color: '#fff' }, grid: { color: '#444' } },
+          y: { ticks: { color: '#fff' }, grid: { color: '#444' } }
         }
+      }
     });
+  }
 
-    // Ventas de la semana
-    const ctxSemana = document.getElementById('ventasSemanaChart').getContext('2d');
-    new Chart(ctxSemana, {
-        type: 'bar',
-        data: {
-            labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-            datasets: [{
-                label: 'Ventas',
-                data: [20, 35, 40, 25, 50, 60, 30],
-                backgroundColor: '#6C2DC7'
-            }]
+  // (Se eliminó el gráfico de pastel de comprobantes)
+
+  // === Top productos por CANTIDAD (más vendidos) ===
+  const ctxTopCant = document.getElementById('graficoTopProductosCantidad');
+  if (ctxTopCant) {
+    new Chart(ctxTopCant, {
+      type: 'bar',
+      data: {
+        labels: productosLabels,
+        datasets: [{
+          label: 'Unidades vendidas',
+          data: productosCantidades,
+          backgroundColor: 'rgba(13,110,253,0.6)', // azul bootstrap
+          borderColor: '#0D6EFD',
+          borderWidth: 1,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y', // barras horizontales
+        plugins: {
+          legend: { labels: { color: '#fff' } },
+          tooltip: { callbacks: { label: (ctx) => ` ${ctx.raw} uds` } }
         },
-        options: {
-            plugins: { legend: { labels: { color: '#fff' } } },
-            scales: {
-                x: { ticks: { color: '#fff' }, grid: { color: '#444' } },
-                y: { ticks: { color: '#fff' }, grid: { color: '#444' } }
-            }
+        scales: {
+          x: { ticks: { color: '#fff' }, grid: { color: '#444' } },
+          y: { ticks: { color: '#fff' }, grid: { color: '#444' } }
         }
+      }
     });
-
-    // Productos más vendidos de la semana
-    const ctxProductos = document.getElementById('productosVendidosChart').getContext('2d');
-    new Chart(ctxProductos, {
-        type: 'doughnut',
-        data: {
-            labels: ['Rosa Roja', 'Lirio Blanco', 'Orquídea', 'Ramo Primavera', 'Tulipán'],
-            datasets: [{
-                label: 'Cantidad vendida',
-                data: [30, 25, 20, 15, 10],
-                backgroundColor: [
-                    '#ffc107', '#0d6efd', '#dc3545', '#198754', '#6f42c1'
-                ]
-            }]
-        },
-        options: {
-            plugins: { legend: { labels: { color: '#fff' } } }
-        }
-    });
-
-    // DataTable
-    $(document).ready(function() {
-        $('#tablaExistencias').DataTable({
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/2.3.2/i18n/es-ES.json',
-            }
-        });
-    });
+  }
+});
