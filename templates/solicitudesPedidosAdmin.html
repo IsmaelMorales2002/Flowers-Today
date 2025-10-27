@@ -111,13 +111,13 @@
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
-        <form method="POST" id="formComentario">
+        <form method="POST" action="#" id="formComentario">
           {% csrf_token %}
           <input type="hidden" name="id_servicio" id="idServicioComentario">
 
           <div class="mb-3">
             <label for="comentarioAdmin" class="form-label">Comentario del Administrador</label>
-            <textarea class="form-control" id="comentarioAdmin" name="comentario" rows="4" required></textarea>
+            <textarea class="form-control" maxlength="145" id="comentarioAdmin" name="comentario" rows="4" required></textarea>
           </div>
 
           <div class="mb-3">
