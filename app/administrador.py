@@ -710,8 +710,10 @@ def RespuestaCliente(request):
     servicio = Servicio.objects.get(id_servicio = id_servicio)
     if respuesta == 'SI':
         servicio.comentario_servicio += 'True'
+        servicio.estado_servicio = 'Ac'
     elif respuesta == 'NO':
         servicio.comentario_servicio += 'False'
+        servicio.estado_servicio = 'Ca'
     
     servicio.save()
     return redirect('vista_solicitudesPedidos')
