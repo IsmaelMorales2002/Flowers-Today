@@ -45,10 +45,12 @@
                 {% endif %}
             </td>
             <td class="text-center align-middle">
-                <button class="btn btn-sm  btn-descripcion text-white" style="background-color: #6C2DC7;"
+                <button class="btn btn-sm btn-descripcion text-white" style="background-color: #6C2DC7;"
                         data-bs-toggle="modal"
-                        data-bs-target="#modalDescripcion"
-                        data-descripcion="{{ servicio.descripcion_servicio }}">
+                        data-bs-target="#modalAgregarComentario"
+                        data-id="{{ servicio.id_servicio }}"
+                        data-comentario="{{ servicio.comentario_admin }}"
+                        data-validacion="{% if servicio.validacion %}{{ servicio.validacion|yesno:'Sí,No' }}{% else %}Pendiente{% endif %}">
                     Añadir Comentario
                 </button>
             </td>
@@ -100,15 +102,40 @@
   </div>
 </div>
 
-<script>
-  var modalDescripcion = document.getElementById('modalDescripcion');
-  modalDescripcion.addEventListener('show.bs.modal', function (event) {
-    var button = event.relatedTarget;
-    var descripcion = button.getAttribute('data-descripcion');
-    var modalBody = modalDescripcion.querySelector('#contenidoDescripcion');
-    modalBody.textContent = descripcion;
-  });
-</script>
+<!-- Modal Agregar Comentario -->
+<div class="modal fade" id="modalAgregarComentario" tabindex="-1" aria-labelledby="modalAgregarComentarioLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title" id="modalAgregarComentarioLabel">Agregar Comentario</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" id="formComentario">
+          {% csrf_token %}
+          <input type="hidden" name="id_servicio" id="idServicioComentario">
+
+          <div class="mb-3">
+            <label for="comentarioAdmin" class="form-label">Comentario del Administrador</label>
+            <textarea class="form-control" id="comentarioAdmin" name="comentario" rows="4" required></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Estado de validación del usuario:</label>
+            <p id="estadoUsuario" class="fw-bold">Pendiente</p>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <button type="submit" class="btn text-white " style="background-color: #6C2DC7;">Guardar Comentario</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
@@ -116,4 +143,5 @@
 <script src="https://cdn.datatables.net/responsive/3.0.5/js/dataTables.responsive.js"></script>
 <script src="https://cdn.datatables.net/responsive/3.0.5/js/responsive.bootstrap5.js"></script>
 <script src="{% static 'js/dataTablePedidos.js'%}"></script>
+<script src="{% static 'js/modalesPedidos.js'%}"></script>
 {% endblock %}
