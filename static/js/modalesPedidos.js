@@ -1,16 +1,17 @@
-  let modalDescripcion = document.getElementById('modalDescripcion');
-  modalDescripcion.addEventListener('show.bs.modal', function (event) {
+let modalDescripcion = document.getElementById('modalDescripcion');
+modalDescripcion.addEventListener('show.bs.modal', function (event) {
     let button = event.relatedTarget;
     let descripcion = button.getAttribute('data-descripcion');
     let modalBody = modalDescripcion.querySelector('#contenidoDescripcion');
     modalBody.textContent = descripcion;
-  });
+});
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     let modalComentario = document.getElementById('modalAgregarComentario');
-    modalComentario.addEventListener('show.bs.modal', function(event) {
+
+    modalComentario.addEventListener('show.bs.modal', function (event) {
         let button = event.relatedTarget;
-        let idServicio = button.getAttribute('data-id'); 
+        let idServicio = button.getAttribute('data-id');
         let comentario = button.getAttribute('data-comentario') || '';
 
         // Elementos del modal
@@ -18,20 +19,20 @@ document.addEventListener("DOMContentLoaded", function() {
         let textareaComentario = modalComentario.querySelector('#comentarioAdmin');
         let estadoElemento = modalComentario.querySelector('#estadoUsuario');
 
-        // Detectar True o False en el comentario
-        let estadoTexto = 'Pendiente';
-        let colorEstado = 'black'; // color por defecto
+        // Remover cualquier aparición de true o false sin afectar el resto
+        let comentarioLimpio = comentario.replace(/True|False/gi, '').trim();
 
-        if (comentario.includes('True')) {
+        let estadoTexto = 'Pendiente';
+        let colorEstado = 'black';
+
+        if (/true/i.test(comentario)) {
             estadoTexto = 'Aceptado';
             colorEstado = 'green';
-            comentario = comentario.replace('True', '').trim();
             botonGuardar.disabled = true;
             textareaComentario.disabled = true;
-        } else if (comentario.includes('False')) {
+        } else if (/false/i.test(comentario)) {
             estadoTexto = 'Rechazado';
             colorEstado = 'red';
-            comentario = comentario.replace('False', '').trim();
             botonGuardar.disabled = true;
             textareaComentario.disabled = true;
         } else {
@@ -41,11 +42,10 @@ document.addEventListener("DOMContentLoaded", function() {
             textareaComentario.disabled = false;
         }
 
-        // Llenar los campos del modal
+        // Rellenar los datos en el modal
         modalComentario.querySelector('#idServicioComentario').value = idServicio;
-        textareaComentario.value = comentario;
+        textareaComentario.value = comentarioLimpio;
         estadoElemento.textContent = estadoTexto;
-        estadoElemento.style.color = colorEstado; 
+        estadoElemento.style.color = colorEstado;
     });
 });
-
