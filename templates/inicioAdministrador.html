@@ -3,6 +3,36 @@
 {% block title %}Dashboard Administrativo{% endblock %}
 
 {% block content %}
+<style>
+  /* Scroll solo para la tabla de productos próximos a agotarse */
+  .table-productos-bajos-wrapper {
+    max-height: 420px;        /* Altura aprox. para 9 filas visibles */
+    overflow-y: auto;
+  }
+
+  .table-productos-bajos-wrapper table {
+    table-layout: fixed;
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  /* Encabezado fijo */
+  .table-productos-bajos-wrapper thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: #212529; /* mismo fondo que bg-dark */
+  }
+
+  /* Scrollbar personalizado */
+  .table-productos-bajos-wrapper::-webkit-scrollbar { width: 8px; }
+  .table-productos-bajos-wrapper::-webkit-scrollbar-thumb {
+    background: #495057;
+    border-radius: 8px;
+  }
+  .table-productos-bajos-wrapper::-webkit-scrollbar-track { background: #1f1f1f; }
+</style>
+
 <div class="container-fluid py-4">
 
  <!-- === Indicadores KPI (solo Pa donde indique) === -->
@@ -125,44 +155,47 @@
     </div>
 
     <div class="col-md-6 mb-4">
-      <div class="card bg-dark text-white shadow h-100">
-        <div class="card-header fw-semibold text-warning">⚠️ Productos próximos a agotarse (Falta 1 para mínimo)</div>
-        <div class="card-body p-0">
-          <table class="table table-dark table-striped mb-0">
-            <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Categoría</th>
-                <th>Stock</th>
-                <th>Mínimo</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for p in productos_bajos %}
-              <tr>
-                <td>{{ p.nombre_producto }}</td>
-                <td>{{ p.id_categoria.nombre_categoria }}</td>
-
-                <!-- Stock con estilo según agotado/bajo -->
-                <td class="
-                  {% if p.is_agotado %}text-danger fw-bold
-                  {% elif p.is_bajo %}text-warning fw-semibold
-                  {% endif %}
-                ">
-                  {{ p.existencia_producto }}
-                </td>
-
-                <td>{{ p.cantidad_minima }}</td>
-              </tr>
-              {% empty %}
-              <tr><td colspan="4" class="text-center text-white">Todo en buen nivel ✅</td></tr>
-              {% endfor %}
-            </tbody>
-
-          </table>
-        </div>
-      </div>
+  <div class="card bg-dark text-white shadow h-100">
+    <div class="card-header fw-semibold text-warning">
+      ⚠️ Productos próximos a agotarse (Falta 1 para mínimo)
     </div>
+    <div class="card-body p-0">
+      {% with filas=productos_bajos|length %}
+      <div class="{% if filas > 7 %}table-productos-bajos-wrapper{% else %}table-responsive{% endif %}">
+        <table class="table table-dark table-striped mb-0">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th>Stock</th>
+              <th>Mínimo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in productos_bajos %}
+            <tr>
+              <td>{{ p.nombre_producto }}</td>
+              <td>{{ p.id_categoria.nombre_categoria }}</td>
+              <td class="
+                {% if p.is_agotado %}text-danger fw-bold
+                {% elif p.is_bajo %}text-warning fw-semibold
+                {% endif %}
+              ">
+                {{ p.existencia_producto }}
+              </td>
+              <td>{{ p.cantidad_minima }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="text-center text-white">Todo en buen nivel ✅</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endwith %}
+    </div>
+  </div>
+</div>
+
   </div>
 
 </div>
