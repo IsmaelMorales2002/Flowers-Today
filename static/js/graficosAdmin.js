@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pointRadius: 4
           },
           {
-            label: 'Servicios (cantidad)',
+            label: 'Servicios ($)',
             data: ventasServiciosDatos,
             borderColor: '#20C997',
             backgroundColor: 'rgba(32,201,151,0.25)',

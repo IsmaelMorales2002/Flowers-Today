@@ -1,0 +1,267 @@
+{% extends 'menuAdministrador.html' %}
+{% load static %}
+{% block title %}Reportes Administrativos{% endblock %}
+
+{% block content %}
+
+<!-- Estilos de esta vista (SIN tocar .container-fluid ni el navbar) -->
+<style>
+  :root{
+    --accent:#6C2DC7;
+    --bg:#1E2130;         /* fondo de la sección de reportes */
+    --card:#FFFFFF;
+    --text:#1F2937;
+    --muted:#6B7280;
+    --line:#E5E7EB;
+  }
+
+  /* Wrapper propio que pinta el fondo sin interferir con la navbar */
+  .rp-shell{
+    background: var(--bg);
+    width: 100%;
+    padding: 32px 0 40px;   /* respiro vertical */
+  }
+
+  /* NO estilizamos .container-fluid para no afectar la navbar */
+  .rp-card{
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 10px 24px rgba(17, 24, 39, .08);
+    height: 100%;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .rp-card:hover{ transform: translateY(-2px); box-shadow:0 14px 28px rgba(17,24,39,.12); }
+
+  .rp-title{ color: var(--text); font-weight: 700; }
+  .rp-desc{ color: var(--muted); }
+
+  .rp-btn{
+    background: var(--accent);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 6px 16px rgba(108,45,199,.35);
+  }
+  .rp-btn:hover{ filter: brightness(1.05); }
+
+  .btn-outline-light{
+    color: var(--accent) !important;
+    border-color: var(--accent) !important;
+    background: #fff !important;
+  }
+  .btn-outline-light:hover{ background: #F4F0FE !important; }
+
+  .rp-chip{
+    background: #F4F0FE;
+    color: var(--accent);
+    border: 1px solid #E6D9FF;
+    border-radius: 999px;
+    padding: .15rem .6rem; font-size: .75rem; font-weight: 600;
+  }
+
+  .form-control, .form-select{
+    background: #fff;
+    color: var(--text);
+    border: 1px solid var(--line);
+  }
+  .form-control:focus, .form-select:focus{
+    border-color: var(--accent);
+    box-shadow: 0 0 0 .2rem rgba(108,45,199,.20);
+    color: var(--text);
+  }
+
+  .modal-content{ background:#fff; color:var(--text); border:1px solid var(--line); }
+  .modal-header, .modal-footer{ border-color: var(--line); }
+  .modal-title{ color: var(--text); }
+
+  h2.text-white{ color: #fff !important; }
+</style>
+
+<!-- RP SHELL: pinta el fondo sin tocar la navbar -->
+<section class="rp-shell">
+  <div class="container-fluid">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h2 class="m-0 text-white">Reportería Administrativa</h2>
+      <span class="badge" style="background:#6C2DC7;">Floristería</span>
+    </div>
+
+    <!-- Grid de tarjetas -->
+    <div class="row g-3 mt-2">
+        <!-- Ventas (detalle por compra) -->
+        <div class="col-12 col-md-6 col-xl-4">
+        <div class="rp-card p-3">
+            <div class="d-flex align-items-start justify-content-between">
+            <h5 class="rp-title">Ventas (detalle por compra)</h5>
+            <span class="rp-chip">Fechas</span>
+            </div>
+            <p class="rp-desc mb-3">Fecha, comprobante, cliente y monto.</p>
+            <button class="btn rp-btn w-100"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal-fechas"
+                    data-endpoint="ventas_detalle">Abrir</button>
+        </div>
+        </div>
+
+
+      <!-- Ventas por Producto -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="rp-card p-3">
+          <div class="d-flex align-items-start justify-content-between">
+            <h5 class="rp-title">Ventas por producto</h5>
+            <span class="rp-chip">Fechas</span>
+          </div>
+          <p class="rp-desc mb-3">Detalle de ingresos y unidades vendidas por producto.</p>
+          <button class="btn rp-btn w-100" data-bs-toggle="modal" data-bs-target="#modal-fechas"
+                  data-endpoint="ventas_por_producto">Abrir</button>
+        </div>
+      </div>
+
+      <!-- Ventas por Categoría -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="rp-card p-3">
+          <div class="d-flex align-items-start justify-content-between">
+            <h5 class="rp-title">Ventas por categoría</h5>
+            <span class="rp-chip">Fechas</span>
+          </div>
+          <p class="rp-desc mb-3">Resumen de ventas agrupadas por categoría.</p>
+          <button class="btn rp-btn w-100" data-bs-toggle="modal" data-bs-target="#modal-fechas"
+                  data-endpoint="ventas_por_categoria">Abrir</button>
+        </div>
+      </div>
+
+      <!-- Ventas por servicios (detalle) -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="rp-card p-3">
+          <div class="d-flex align-items-start justify-content-between">
+            <h5 class="rp-title">Ventas por servicios (detalle)</h5>
+            <span class="rp-chip">Fechas</span>
+          </div>
+          <p class="rp-desc mb-3">Listado de servicios vendidos con montos y cantidades.</p>
+          <button class="btn rp-btn w-100" data-bs-toggle="modal" data-bs-target="#modal-fechas"
+                  data-endpoint="ventas_por_servicio_detalle">Abrir</button>
+        </div>
+      </div>
+
+     <!-- Ventas totales (Productos y Servicios) -->
+        <div class="col-12 col-md-6 col-xl-4">
+        <div class="rp-card p-3">
+            <div class="d-flex align-items-start justify-content-between">
+            <h5 class="rp-title">Ventas totales</h5>
+            <span class="rp-chip">Fechas</span>
+            </div>
+            <p class="rp-desc mb-3">Totales por tipo: Productos vs. Servicios (monto y unidades).</p>
+            <button class="btn rp-btn w-100"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modal-fechas"
+                    data-endpoint="ventas_totales">Abrir</button>
+        </div>
+        </div>
+
+
+      <!-- Cantidad de productos vendidos -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="rp-card p-3">
+          <div class="d-flex align-items-start justify-content-between">
+            <h5 class="rp-title">Cantidad de productos vendidos</h5>
+            <span class="rp-chip">Fechas</span>
+          </div>
+          <p class="rp-desc mb-3">Conteo de unidades vendidas.</p>
+          <button class="btn rp-btn w-100" data-bs-toggle="modal" data-bs-target="#modal-fechas"
+                  data-endpoint="cantidad_productos_vendidos">Abrir</button>
+        </div>
+      </div>
+
+      <!-- Existencias (sin fechas) -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="rp-card p-3">
+          <div class="d-flex align-items-start justify-content-between">
+            <h5 class="rp-title">Existencias y estado de productos</h5>
+            <span class="rp-chip">Sin fechas</span>
+          </div>
+          <p class="rp-desc mb-3">Stock actual, mínimos, estado.</p>
+          <div class="d-grid gap-2">
+            <button class="btn rp-btn" data-endpoint="existencias_estado" data-no-dates="1" data-format="pdf">Generar PDF</button>
+            <button class="btn btn-outline-light" data-endpoint="existencias_estado" data-no-dates="1" data-format="xlsx">Exportar Excel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clientes (sin fechas) -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="rp-card p-3">
+          <div class="d-flex align-items-start justify-content-between">
+            <h5 class="rp-title">Clientes (detalle completo)</h5>
+            <span class="rp-chip">Sin fechas</span>
+          </div>
+          <p class="rp-desc mb-3">Lista de clientes con contacto.</p>
+          <div class="d-grid gap-2">
+            <button class="btn rp-btn" data-endpoint="clientes" data-no-dates="1" data-format="pdf">Generar PDF</button>
+            <button class="btn btn-outline-light" data-endpoint="clientes" data-no-dates="1" data-format="xlsx">Exportar Excel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparativo mensual -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="rp-card p-3">
+          <div class="d-flex align-items-start justify-content-between">
+            <h5 class="rp-title">Comparativo de ventas mensuales</h5>
+            <span class="rp-chip">Fechas</span>
+          </div>
+          <p class="rp-desc mb-3">Comparación de ventas por mes.</p>
+          <button class="btn rp-btn w-100" data-bs-toggle="modal" data-bs-target="#modal-fechas"
+                  data-endpoint="comparativo_mensual">Abrir</button>
+        </div>
+      </div>
+
+    </div><!-- row -->
+  </div><!-- container-fluid -->
+</section>
+
+<!-- Modal Fechas -->
+<div class="modal fade" id="modal-fechas" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Parámetros del reporte</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="form-filtros">
+          {% csrf_token %}
+          <input type="hidden" id="rp-endpoint" name="endpoint" />
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Desde (opcional)</label>
+              <input type="date" class="form-control" id="fecha_desde" name="desde">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Hasta (opcional)</label>
+              <input type="date" class="form-control" id="fecha_hasta" name="hasta">
+            </div>
+            <div class="col-12">
+              <div class="form-text text-muted">
+                * Si no defines fechas, se exportará <strong>toda</strong> la información disponible.
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer d-flex justify-content-between">
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-outline-light" id="btn-preview">Vista previa</button>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn rp-btn" data-format="pdf" id="btn-export-pdf">Generar PDF</button>
+          <button type="button" class="btn btn-outline-light" data-format="xlsx" id="btn-export-xlsx">Exportar Excel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Script -->
+<script src="{% static 'js/reportesAdmin.js' %}"></script>
+{% endblock %}

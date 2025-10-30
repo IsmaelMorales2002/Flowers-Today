@@ -5,65 +5,69 @@
 {% block content %}
 <div class="container-fluid py-4">
 
-  <!-- === Indicadores KPI (incluye comprobantes) === -->
-  <div class="row g-3 mb-4 text-center">
-    <div class="col-md-2">
-      <div class="card bg-dark text-white border-0 shadow">
-        <div class="card-body">
-          <h6>Total ventas</h6>
-          <h3 class="text-warning">{{ kpi_total_ventas }}</h3>
-          <div class="small text-muted">Acumulado histórico</div>
-        </div>
-      </div>
-    </div>
-   
-    <div class="col-md-2">
-      <div class="card bg-dark text-white border-0 shadow">
-        <div class="card-body">
-          <h6>Ingreso promedio</h6>
-          <h3 class="text-info">{{ kpi_promedio }}</h3>
-          <div class="small text-muted">Ticket promedio</div>
-        </div>
-      </div>
-    </div>
-     <div class="col-md-2">
-      <div class="card bg-dark text-white border-0 shadow">
-        <div class="card-body">
-          <h6>Total compras</h6>
-          <h3 class="text-success">{{ kpi_total_compras }}</h3>
-          <div class="small text-muted">Órdenes registradas</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-2">
-      <div class="card bg-dark text-white border-0 shadow">
-        <div class="card-body">
-          <h6>Ordenes Entregadas</h6>
-          <h3 class="text-success">{{ comp_pagados }}</h3>
-          <div class="small text-muted">Estado: Pa</div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-2">
-      <div class="card bg-dark text-white border-0 shadow">
-        <div class="card-body">
-          <h6>Ordenes Pendientes</h6>
-          <h3 class="text-warning">{{ comp_pendientes }}</h3>
-          <div class="small text-muted">Estado: Pe</div>
-        </div>
-      </div>
-    </div>
-        <div class="col-md-2">
-      <div class="card bg-dark text-white border-0 shadow">
-        <div class="card-body">
-          <h6>Productos críticos</h6>
-          <h3 class="text-danger">{{ kpi_criticos }}</h3>
-          <div class="small text-muted">Stock = mínimo + 1</div>
-        </div>
+ <!-- === Indicadores KPI (solo Pa donde indique) === -->
+<div class="row g-3 mb-4 text-center">
+  <div class="col-md-2">
+    <div class="card bg-dark text-white border-0 shadow">
+      <div class="card-body">
+        <h6>Total ventas</h6>
+        <h3 class="text-warning">{{ kpi_total_ventas }}</h3>
+        <div class="small text-muted">Acumulado histórico</div>
       </div>
     </div>
   </div>
+
+  <div class="col-md-2">
+    <div class="card bg-dark text-white border-0 shadow">
+      <div class="card-body">
+        <h6>Ingreso promedio</h6>
+        <h3 class="text-info">{{ kpi_promedio }}</h3>
+        <div class="small text-muted">Ticket promedio</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <div class="card bg-dark text-white border-0 shadow">
+      <div class="card-body">
+        <h6>Órdenes entregadas</h6>
+        <h3 class="text-success">{{ kpi_ordenes_entregadas }}</h3>
+        <div class="small text-muted">Comprobantes: Pa</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <div class="card bg-dark text-white border-0 shadow">
+      <div class="card-body">
+        <h6>Órdenes pendientes</h6>
+        <h3 class="text-warning">{{ kpi_ordenes_pendientes }}</h3>
+        <div class="small text-muted">Comprobantes: Pe</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-2">
+    <div class="card bg-dark text-white border-0 shadow">
+      <div class="card-body">
+        <h6>Monto pendiente</h6>
+        <h3 class="text-danger">{{ kpi_monto_pendiente }}</h3>
+        <div class="small text-muted">Suma total ($) Pe</div>
+      </div>
+    </div>
+  </div>
+  {# Si quieres mantener este KPI general #}
+  <div class="col-md-2">
+    <div class="card bg-dark text-white border-0 shadow">
+      <div class="card-body">
+        <h6>Total Servicios</h6>
+        <h3 class="text-primary">{{ total_servicios }}</h3>
+        <div class="small text-muted">Servicios registrados</div>
+      </div>
+    </div>
+  </div>
+</div>
+
   
 
   <!-- === Ventas por mes (izq) + Últimos 7 días (der) === -->
@@ -138,13 +142,23 @@
               <tr>
                 <td>{{ p.nombre_producto }}</td>
                 <td>{{ p.id_categoria.nombre_categoria }}</td>
-                <td class="text-warning fw-semibold">{{ p.existencia_producto }}</td>
+
+                <!-- Stock con estilo según agotado/bajo -->
+                <td class="
+                  {% if p.is_agotado %}text-danger fw-bold
+                  {% elif p.is_bajo %}text-warning fw-semibold
+                  {% endif %}
+                ">
+                  {{ p.existencia_producto }}
+                </td>
+
                 <td>{{ p.cantidad_minima }}</td>
               </tr>
               {% empty %}
-              <tr><td colspan="4" class="text-center text-muted">Todo en buen nivel ✅</td></tr>
+              <tr><td colspan="4" class="text-center text-white">Todo en buen nivel ✅</td></tr>
               {% endfor %}
             </tbody>
+
           </table>
         </div>
       </div>
