@@ -6,6 +6,9 @@ from django.shortcuts import redirect
 from app.views import *
 from app.cliente import *
 from app.administrador import *
+from app import views_reportes
+from app.views import Vista_Reportes_Administrador
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -50,7 +53,8 @@ urlpatterns = [
     path('categoria/servicios',Vista_Categoria_Servicio_Administracion,name='vista_categoria_servicio'),
     path('crear_categoria_servicio/',Vista_Crear_Categoria_Servicio,name='vista_crear_categoria_servicio'),
     path('gestion-solicitudes/',Vista_Solicitudes_Pedidos_Admin,name='vista_gestion_solicitudes'),
-
+    path('reportes/',Vista_Reportes_Administrador,name='vista_reportes_administracion'),
+    path('reportes/export/<str:endpoint>/', views_reportes.exportar_reporte, name='exportar_reporte'),
  
     #Logica
     path('CreaCuentaCliente',Crear_Cuenta_Cliente,name='CrearCuentaCliente'),
