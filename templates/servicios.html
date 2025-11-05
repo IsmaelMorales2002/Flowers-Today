@@ -14,7 +14,6 @@
         </div>
 
         <div class="card-body p-4">
-
           <!-- FORMULARIO SERVICIO PERSONALIZADO (Cliente) -->
           <form method="POST" action="{% url 'CrearServicio' %}">
             {% csrf_token %}
@@ -44,6 +43,20 @@
               ></textarea>
             </div>
 
+            <!-- Cantidad de arreglos -->
+            <div class="mb-3">
+              <label for="cantidad" class="form-label fw-bold">Cantidad de arreglos</label>
+              <input 
+                type="number" 
+                id="cantidad" 
+                name="cantidad" 
+                class="form-control" 
+                min="1" 
+                step="1" 
+                placeholder="Ejemplo: 3" 
+                required>
+            </div>
+
             <p class="text-muted small mb-3">
               ✅ El administrador evaluará tu solicitud y se pondrá en contacto contigo 📩
             </p>
@@ -56,7 +69,6 @@
             </div>
 
           </form>
-
         </div>
 
       </div>

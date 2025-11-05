@@ -34,7 +34,8 @@
                 <button class="btn btn-sm btn-descripcion text-white" style="background: #6C2DC7;"
                         data-bs-toggle="modal"
                         data-bs-target="#modalDescripcion"
-                        data-descripcion="{{ servicio.descripcion_servicio }}">
+                        data-descripcion="{{ servicio.descripcion_servicio }}"
+                        data-cantidad = "{{servicio.cantidad_servicio}}">
                     Ver Descripción
                 </button>
             </td>
@@ -101,15 +102,26 @@
         <h5 class="modal-title" id="modalDescripcionLabel">Descripción del Servicio</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
+
       <div class="modal-body">
-        <strong><p id="contenidoDescripcion"></p></strong>
+        <!-- Descripción -->
+        <div class="mb-3">
+          <strong><p id="contenidoDescripcion" class="text-dark"></p></strong>
+        </div>
+
+        <!-- Cantidad solicitada -->
+        <div class="text-center mt-3">
+          <label class="fw-bold d-block">Cantidad solicitada: <p id="cantidadSolicitada" class="fs-5 text-primary fw-semibold"></p></label>
+        </div>
       </div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-danger rounded-3" data-bs-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- Modal Agregar Comentario -->
 <div class="modal fade" id="modalAgregarComentario" tabindex="-1" aria-labelledby="modalAgregarComentarioLabel" aria-hidden="true">
