@@ -45,7 +45,8 @@
                 data-bs-target="#modalDetalleCompra"
                 data-comentario="{{ servicio.comentario_servicio }}"
                 data-id_servicio="{{ servicio.id_servicio }}"
-                data-estado="{{ servicio.estado_servicio }}">
+                data-estado="{{ servicio.estado_servicio }}"
+                data-precio="{{servicio.precio_servicio}}" >
                 Ver Comentario
               </button>
             </td>
@@ -104,8 +105,18 @@ document.addEventListener("DOMContentLoaded", function () {
     modal.addEventListener('show.bs.modal', function (event) {
         let button = event.relatedTarget;
 
+        // Obtener datos del botón
         let comentario = button.getAttribute('data-comentario');
         let id_servicio = button.getAttribute('data-id_servicio');
+        let precio = button.getAttribute('data-precio');
+
+        // --- Mostrar precio en el modal ---
+        let precioElemento = modal.querySelector('#precioServicioDetalle');
+        if (precio && !isNaN(precio)) {
+            precioElemento.textContent = `$${parseFloat(precio).toFixed(2)}`;
+        } else {
+            precioElemento.textContent = '$0.00';
+        }
 
         // Obtener estado desde la tabla
         let estado = button.closest('tr')
@@ -113,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .innerText
             .trim();
 
-        // Limpieza del comentario removiendo True o False
+        // Limpiar el comentario (remueve True o False)
         let comentarioLimpio = (comentario || "")
             .replace(/true|false/gi, '')
             .replace(/\s+/g, ' ')
@@ -126,9 +137,8 @@ document.addEventListener("DOMContentLoaded", function () {
         // Asignar ID al formulario
         modal.querySelector('#id_servicio').value = id_servicio;
 
-        // Sección de validación (¿Aceptas?)
+        // Mostrar u ocultar la sección de validación según estado
         let seccion = document.getElementById("seccionValidacion");
-
         let ocultarValidacion =
             estado === "Aceptado" ||
             estado === "Rechazado" ||
@@ -141,14 +151,13 @@ document.addEventListener("DOMContentLoaded", function () {
             seccion.style.display = "block";
         }
 
-        // Asegurar que los botones siempre queden centrados
+        // Centrar los botones siempre
         let botones = seccion.querySelector(".d-flex");
         if (botones) {
             botones.style.justifyContent = "center";
         }
     });
 });
-
 </script>
 
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>

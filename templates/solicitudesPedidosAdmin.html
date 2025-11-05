@@ -55,6 +55,7 @@
                         data-bs-target="#modalAgregarComentario"
                         data-id="{{ servicio.id_servicio }}"
                         data-comentario="{{ servicio.comentario_servicio }}"
+                        data-precio="{{servicio.precio_servicio}}"
                         data-validacion="{% if servicio.validacion %}{{ servicio.validacion|yesno:'Sí,No' }}{% else %}Pendiente{% endif %}">
 
                         {% if servicio.comentario_servicio == ''%}

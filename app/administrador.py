@@ -694,9 +694,11 @@ def Editar_Perfil_Admin(request):
 def CrearComentario(request):
     comentario = request.POST.get('comentario','').strip()
     id_servicio = request.POST.get('id_servicio','').strip()
+    precio = request.POST.get('precio','').strip()
     if comentario:
         servicio = Servicio.objects.get(id_servicio = id_servicio)
         servicio.comentario_servicio = comentario
+        servicio.precio_servicio = precio
         servicio.save()
         messages.success(request,'Exito')
         return redirect('vista_gestion_solicitudes')
