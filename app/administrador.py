@@ -711,6 +711,14 @@ def RespuestaCliente(request):
     if respuesta == 'SI':
         servicio.comentario_servicio += 'True'
         servicio.estado_servicio = 'Ac'
+        # compra = Compra(
+        # )
+        # detalle_servicio = Detalle_Servicio(
+        #     id_servicio = servicio,
+        #     id_compra = compra,
+        #     cantidad_producto_servicio = 1,
+        #     precio_unitario_servicio = 12.50,
+        # )
     elif respuesta == 'NO':
         servicio.comentario_servicio += 'False'
         servicio.estado_servicio = 'Ca'
