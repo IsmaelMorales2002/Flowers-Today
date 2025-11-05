@@ -145,7 +145,6 @@ class Detalle_Servicio(models.Model):
     id_detalle_servicio = models.AutoField(primary_key=True,verbose_name='ID')
     id_servicio = models.ForeignKey(Servicio,on_delete=models.RESTRICT)
     id_compra = models.ForeignKey(Compra,on_delete=models.RESTRICT)
-    id_producto = models.ForeignKey(Producto,on_delete=models.RESTRICT)
     cantidad_producto_servicio = models.IntegerField(verbose_name='Cantidad Productos')
     precio_unitario_servicio = models.DecimalField(max_digits=8,decimal_places=2,verbose_name='Precio Unitario')
 
