@@ -83,6 +83,7 @@
             {% csrf_token %}
             <div class="d-flex justify-content-center gap-2">
               <input type="hidden" name="id_servicio" id="id_servicio">
+              <input type="hidden" name="correo" value="{{request.session.correo_cliente}}">
               <button type="submit" name="respuesta" value="SI" class="btn text-white" style="background-color: #6C2DC7;">Sí</button>
               <button type="submit" name="respuesta" value="NO" class="btn btn-danger">No</button>
             </div>

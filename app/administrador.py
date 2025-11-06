@@ -1,6 +1,7 @@
 from collections import defaultdict
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
+from django.utils import timezone
 from django.contrib import messages
 from .models import *
 from django.db.models import Q
@@ -709,22 +710,32 @@ def CrearComentario(request):
 def RespuestaCliente(request):
     respuesta = request.POST.get('respuesta','').strip()
     id_servicio = request.POST.get('id_servicio','').strip()
+    correo = request.POST.get('correo','').strip()
     servicio = Servicio.objects.get(id_servicio = id_servicio)
+    usuario = Usuario.objects.get(correo_usuario = correo)
+    fecha = timezone.localtime(timezone.now()).date()
     if respuesta == 'SI':
         servicio.comentario_servicio += 'True'
         servicio.estado_servicio = 'Ac'
-        # compra = Compra(
-        # )
-        # detalle_servicio = Detalle_Servicio(
-        #     id_servicio = servicio,
-        #     id_compra = compra,
-        #     cantidad_producto_servicio = 1,
-        #     precio_unitario_servicio = 12.50,
-        # )
+        total = servicio.cantidad_servicio * servicio.precio_servicio
+        compra = Compra(
+            id_usuario = usuario,
+            fecha_compra = fecha,
+            total_compra = total
+        )
+        detalle_servicio = Detalle_Servicio(
+            id_servicio = servicio,
+            id_compra = compra,
+            cantidad_producto_servicio = servicio.cantidad_servicio,
+            precio_unitario_servicio = servicio.precio_servicio,
+            total_servicio = total
+        )
     elif respuesta == 'NO':
         servicio.comentario_servicio += 'False'
         servicio.estado_servicio = 'Ca'
     
     servicio.save()
+    compra.save()
+    detalle_servicio.save()
     return redirect('vista_solicitudesPedidos')
 
