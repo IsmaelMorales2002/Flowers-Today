@@ -1,10 +1,17 @@
 let modalDescripcion = document.getElementById('modalDescripcion');
+
 modalDescripcion.addEventListener('show.bs.modal', function (event) {
     let button = event.relatedTarget;
     let descripcion = button.getAttribute('data-descripcion');
+    let cantidad = button.getAttribute('data-cantidad');
+
     let modalBody = modalDescripcion.querySelector('#contenidoDescripcion');
+    let modalCantidad = modalDescripcion.querySelector('#cantidadSolicitada');
+
     modalBody.textContent = descripcion;
+    modalCantidad.textContent = cantidad;
 });
+
 
 document.addEventListener("DOMContentLoaded", function () {
     let modalComentario = document.getElementById('modalAgregarComentario');

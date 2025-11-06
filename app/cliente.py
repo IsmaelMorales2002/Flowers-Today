@@ -282,7 +282,7 @@ def RegistrarServicio(request):
     id_categoria = request.POST.get('categoriaServicio','').strip()
     descripcion = request.POST.get('descripcion','').strip()
     fecha = timezone.localtime(timezone.now()).date()
-
+    cantidad = request.POST.get('cantidad','').strip()
 
     if activo:
         #Registro de Servicio
@@ -294,7 +294,9 @@ def RegistrarServicio(request):
             descripcion_servicio = descripcion,
             estado_servicio = 'Re',
             fecha_servicio = fecha,
-            comentario_servicio = ''
+            comentario_servicio = '',
+            cantidad_servicio = cantidad,
+            precio_servicio = 0
         )
         pedido.save()
         return redirect('vista_inicio_cliente')

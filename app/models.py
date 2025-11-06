@@ -89,6 +89,8 @@ class Servicio(models.Model):
     estado_servicio = models.CharField(max_length=2,verbose_name='Estado Servicio')
     fecha_servicio = models.DateField(verbose_name='Fecha Pedido')
     comentario_servicio = models.CharField(max_length=150)
+    precio_servicio = models.DecimalField(max_digits=8,decimal_places=2,blank=True,null=True)
+    cantidad_servicio = models.IntegerField(blank=True,null=True)
 
     class Meta:
         db_table = 'Servicio'
@@ -145,9 +147,9 @@ class Detalle_Servicio(models.Model):
     id_detalle_servicio = models.AutoField(primary_key=True,verbose_name='ID')
     id_servicio = models.ForeignKey(Servicio,on_delete=models.RESTRICT)
     id_compra = models.ForeignKey(Compra,on_delete=models.RESTRICT)
-    id_producto = models.ForeignKey(Producto,on_delete=models.RESTRICT)
     cantidad_producto_servicio = models.IntegerField(verbose_name='Cantidad Productos')
     precio_unitario_servicio = models.DecimalField(max_digits=8,decimal_places=2,verbose_name='Precio Unitario')
+    total_servicio = models.DecimalField(max_digits=8,decimal_places=2,verbose_name='Total Servicio',blank=True,null=True)
 
     class Meta:
         db_table = 'Detalle Servicio'

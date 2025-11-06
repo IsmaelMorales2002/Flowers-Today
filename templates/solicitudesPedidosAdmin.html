@@ -34,7 +34,8 @@
                 <button class="btn btn-sm btn-descripcion text-white" style="background: #6C2DC7;"
                         data-bs-toggle="modal"
                         data-bs-target="#modalDescripcion"
-                        data-descripcion="{{ servicio.descripcion_servicio }}">
+                        data-descripcion="{{ servicio.descripcion_servicio }}"
+                        data-cantidad = "{{servicio.cantidad_servicio}}">
                     Ver Descripción
                 </button>
             </td>
@@ -54,6 +55,7 @@
                         data-bs-target="#modalAgregarComentario"
                         data-id="{{ servicio.id_servicio }}"
                         data-comentario="{{ servicio.comentario_servicio }}"
+                        data-precio="{{servicio.precio_servicio}}"
                         data-validacion="{% if servicio.validacion %}{{ servicio.validacion|yesno:'Sí,No' }}{% else %}Pendiente{% endif %}">
 
                         {% if servicio.comentario_servicio == ''%}
@@ -101,15 +103,26 @@
         <h5 class="modal-title" id="modalDescripcionLabel">Descripción del Servicio</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
+
       <div class="modal-body">
-        <strong><p id="contenidoDescripcion"></p></strong>
+        <!-- Descripción -->
+        <div class="mb-3">
+          <strong><p id="contenidoDescripcion" class="text-dark"></p></strong>
+        </div>
+
+        <!-- Cantidad solicitada -->
+        <div class="text-center mt-3">
+          <label class="fw-bold d-block">Cantidad solicitada: <p id="cantidadSolicitada" class="fs-5 text-primary fw-semibold"></p></label>
+        </div>
       </div>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-danger rounded-3" data-bs-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>
 </div>
+
 
 <!-- Modal Agregar Comentario -->
 <div class="modal fade" id="modalAgregarComentario" tabindex="-1" aria-labelledby="modalAgregarComentarioLabel" aria-hidden="true">
@@ -119,23 +132,41 @@
         <h5 class="modal-title" id="modalAgregarComentarioLabel">Agregar Comentario</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
+
       <div class="modal-body">
         <form method="POST" action="{% url 'CrearComentario' %}" id="formComentario">
           {% csrf_token %}
           <input type="hidden" name="id_servicio" id="idServicioComentario">
 
+          <!-- Comentario -->
           <div class="mb-3">
             <label for="comentarioAdmin" class="form-label">Comentario del Administrador</label>
             <textarea class="form-control" maxlength="145" id="comentarioAdmin" name="comentario" rows="4" required></textarea>
           </div>
 
+          <!-- Nuevo campo: Precio -->
+          <div class="mb-3">
+            <label for="precioServicio" class="form-label">Precio del Servicio ($)</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="precioServicio" 
+              name="precio" 
+              min="0" 
+              step="0.01" 
+              placeholder="Ejemplo: 25.50" 
+              required>
+          </div>
+
+          <!-- Estado del usuario -->
           <div class="mb-3">
             <label class="form-label">Estado de validación del usuario:</label>
             <p id="estadoUsuario" class="fw-bold">Pendiente</p>
           </div>
 
+          <!-- Botones -->
           <div class="d-flex justify-content-end gap-2">
-            <button type="submit" class="btn text-white " style="background-color: #6C2DC7;">Guardar Comentario</button>
+            <button type="submit" class="btn text-white" style="background-color: #6C2DC7;">Guardar Comentario</button>
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
           </div>
         </form>
@@ -143,6 +174,7 @@
     </div>
   </div>
 </div>
+
 
 
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>

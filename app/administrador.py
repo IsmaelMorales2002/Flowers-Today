@@ -694,9 +694,11 @@ def Editar_Perfil_Admin(request):
 def CrearComentario(request):
     comentario = request.POST.get('comentario','').strip()
     id_servicio = request.POST.get('id_servicio','').strip()
+    precio = request.POST.get('precio','').strip()
     if comentario:
         servicio = Servicio.objects.get(id_servicio = id_servicio)
         servicio.comentario_servicio = comentario
+        servicio.precio_servicio = precio
         servicio.save()
         messages.success(request,'Exito')
         return redirect('vista_gestion_solicitudes')
@@ -711,6 +713,14 @@ def RespuestaCliente(request):
     if respuesta == 'SI':
         servicio.comentario_servicio += 'True'
         servicio.estado_servicio = 'Ac'
+        # compra = Compra(
+        # )
+        # detalle_servicio = Detalle_Servicio(
+        #     id_servicio = servicio,
+        #     id_compra = compra,
+        #     cantidad_producto_servicio = 1,
+        #     precio_unitario_servicio = 12.50,
+        # )
     elif respuesta == 'NO':
         servicio.comentario_servicio += 'False'
         servicio.estado_servicio = 'Ca'
