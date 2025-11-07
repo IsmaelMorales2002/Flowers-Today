@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import get_object_or_404
 from decimal import Decimal
+import uuid
 
 def Crear_Cuenta_Admi(request):
     nombre = request.POST.get('txtNombreN','').strip()
@@ -560,7 +561,7 @@ def Crear_Producto(request):
         return redirect('vista_productos_administracion')
 
 def listar_pedidos():
-    return Comprobante_Pago.objects.all()
+    return Comprobante_Pago.objects.all().order_by('-id_comprobante')
 
 def cambiar_estado_pedido(request):
     id_comprobante = request.POST.get('id_comprobante')
@@ -730,6 +731,13 @@ def RespuestaCliente(request):
             precio_unitario_servicio = servicio.precio_servicio,
             total_servicio = total
         )
+        cod_comprobante = f"CP-{uuid.uuid4().hex[:12].upper()}"
+        comprobate = Comprobante_Pago(
+            id_compra = compra,
+            fecha_comprobante = fecha,
+            codigo_comprobante = cod_comprobante,
+            estado_comprobante = 'Pe'
+        )
     elif respuesta == 'NO':
         servicio.comentario_servicio += 'False'
         servicio.estado_servicio = 'Ca'
@@ -737,5 +745,6 @@ def RespuestaCliente(request):
     servicio.save()
     compra.save()
     detalle_servicio.save()
+    comprobate.save()
     return redirect('vista_solicitudesPedidos')
 
