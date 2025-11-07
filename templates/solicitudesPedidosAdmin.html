@@ -69,14 +69,6 @@
             <!-- Nueva Columna Acciones -->
             <td class="text-center align-middle">
                 {% if servicio.estado_servicio == 'Re' %}
-                    <button class="btn btn-sm btn-accion text-white" style="background: #6C2DC7;"
-                        data-bs-toggle="modal"
-                        data-bs-target="#modalGestionar"
-                        data-id="{{ servicio.id_servicio }}"
-                        data-accion="Ac">
-                        Aceptar
-                    </button>
-
                     <button class="btn btn-danger btn-sm btn-accion" 
                         data-bs-toggle="modal"
                         data-bs-target="#modalGestionar"
@@ -175,6 +167,31 @@
   </div>
 </div>
 
+<!-- Modal Rechazar Servicio -->
+<div class="modal fade" id="modalGestionar" tabindex="-1" aria-labelledby="modalGestionarLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header bg-dark text-white rounded-top-4">
+        <h5 class="modal-title" id="modalGestionarLabel">Rechazar Arreglo</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <form id="formRechazar" method="post" action="{% url 'RechazarServicio' %}">
+        {% csrf_token %}
+        <input type="hidden" name="id_servicio" id="id_servicio_rechazar">
+
+        <div class="modal-body text-center">
+          <p class="fs-5">¿Está seguro que desea rechazar este arreglo personalizado?</p>
+        </div>
+
+        <div class="modal-footer justify-content-center">
+          <button type="submit" class="btn px-4 text-white" style="background-color: #6C2DC7;">Confirmar</button>
+          <button type="button" class="btn btn-danger px-4" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>

@@ -748,3 +748,13 @@ def RespuestaCliente(request):
     comprobate.save()
     return redirect('vista_solicitudesPedidos')
 
+def RechazarServicio(request):
+    id_servicio = request.POST.get('id_servicio','').strip()
+    if id_servicio:
+        servicio = Servicio.objects.get(id_servicio = id_servicio)
+        servicio.comentario_servicio += 'Lamentamos informarte que en este momento no podemos procesar tu pedido. False'
+        servicio.estado_servicio = 'Ca'
+        servicio.save()
+    return redirect('vista_gestion_solicitudes')
+
+

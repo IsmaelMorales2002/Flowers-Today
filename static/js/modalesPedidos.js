@@ -70,3 +70,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('modalGestionar');
+  modal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    const servicioId = button.getAttribute('data-id');
+    document.getElementById('id_servicio_rechazar').value = servicioId;
+  });
+});
+
