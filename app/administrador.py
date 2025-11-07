@@ -1,12 +1,14 @@
 from collections import defaultdict
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
+from django.utils import timezone
 from django.contrib import messages
 from .models import *
 from django.db.models import Q
 from django.contrib.auth.hashers import make_password
 from django.shortcuts import get_object_or_404
 from decimal import Decimal
+import uuid
 
 def Crear_Cuenta_Admi(request):
     nombre = request.POST.get('txtNombreN','').strip()
@@ -559,7 +561,7 @@ def Crear_Producto(request):
         return redirect('vista_productos_administracion')
 
 def listar_pedidos():
-    return Comprobante_Pago.objects.all()
+    return Comprobante_Pago.objects.all().order_by('-id_comprobante')
 
 def cambiar_estado_pedido(request):
     id_comprobante = request.POST.get('id_comprobante')
@@ -709,22 +711,40 @@ def CrearComentario(request):
 def RespuestaCliente(request):
     respuesta = request.POST.get('respuesta','').strip()
     id_servicio = request.POST.get('id_servicio','').strip()
+    correo = request.POST.get('correo','').strip()
     servicio = Servicio.objects.get(id_servicio = id_servicio)
+    usuario = Usuario.objects.get(correo_usuario = correo)
+    fecha = timezone.localtime(timezone.now()).date()
     if respuesta == 'SI':
         servicio.comentario_servicio += 'True'
         servicio.estado_servicio = 'Ac'
-        # compra = Compra(
-        # )
-        # detalle_servicio = Detalle_Servicio(
-        #     id_servicio = servicio,
-        #     id_compra = compra,
-        #     cantidad_producto_servicio = 1,
-        #     precio_unitario_servicio = 12.50,
-        # )
+        total = servicio.cantidad_servicio * servicio.precio_servicio
+        compra = Compra(
+            id_usuario = usuario,
+            fecha_compra = fecha,
+            total_compra = total
+        )
+        detalle_servicio = Detalle_Servicio(
+            id_servicio = servicio,
+            id_compra = compra,
+            cantidad_producto_servicio = servicio.cantidad_servicio,
+            precio_unitario_servicio = servicio.precio_servicio,
+            total_servicio = total
+        )
+        cod_comprobante = f"CP-{uuid.uuid4().hex[:12].upper()}"
+        comprobate = Comprobante_Pago(
+            id_compra = compra,
+            fecha_comprobante = fecha,
+            codigo_comprobante = cod_comprobante,
+            estado_comprobante = 'Pe'
+        )
     elif respuesta == 'NO':
         servicio.comentario_servicio += 'False'
         servicio.estado_servicio = 'Ca'
     
     servicio.save()
+    compra.save()
+    detalle_servicio.save()
+    comprobate.save()
     return redirect('vista_solicitudesPedidos')
 
