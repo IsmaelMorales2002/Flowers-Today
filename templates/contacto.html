@@ -1,0 +1,68 @@
+{% extends 'menu.html' %}
+{% load static %}
+{% block title %}Contacto{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-white">
+  <div class="text-center mb-5">
+    <h2 class="fw-bold text-white">Contáctanos</h2>
+    <p class="text-white">Estamos aquí para ayudarte. Puedes comunicarte con nosotros a través de nuestras redes sociales o directamente por WhatsApp.</p>
+  </div>
+
+  <div class="row justify-content-center">
+    <!-- Gmail -->
+    <div class="col-md-4 text-center mb-4">
+      <div class="card bg-white border-0 rounded-4 shadow-lg py-4 h-100 text-dark">
+        <div class="card-body">
+          <img src="{% static 'img/gmail.webp' %}" alt="Gmail Logo" width="80" height="80" class="mb-3">
+          <h5 class="fw-semibold">Correo Electrónico</h5>
+          <a href="mailto:alesibrian25@gmail.com" 
+             class="btn mt-4 btn-sm text-white border-0" 
+             style="background-color: #EA4335;">
+            <i class="bi bi-envelope"></i> Enviar correo
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- WhatsApp -->
+    <div class="col-md-4 text-center mb-4">
+      <div class="card bg-white border-0 rounded-4 shadow-lg py-4 h-100 text-dark">
+        <div class="card-body">
+          <div class="d-inline-flex justify-content-center align-items-center rounded-circle mb-3" 
+               style="background-color: #25D366; width: 80px; height: 80px;">
+            <i class="bi bi-whatsapp text-white display-6"></i>
+          </div>
+          <h5 class="fw-semibold">WhatsApp</h5>
+          <a href="https://wa.me/50375577742" target="_blank" 
+             class="btn mt-4 btn-sm text-white border-0"
+             style="background-color: #25D366;">
+            <i class="bi bi-chat-dots"></i> Enviar mensaje
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Instagram -->
+    <div class="col-md-4 text-center mb-4">
+      <div class="card bg-white border-0 rounded-4 shadow-lg py-4 h-100 text-dark">
+        <div class="card-body">
+          <div class="d-inline-flex justify-content-center align-items-center rounded-circle mb-3" 
+               style="background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5); width: 80px; height: 80px;">
+            <i class="bi bi-instagram text-white display-6"></i>
+          </div>
+          <h5 class="fw-semibold">Instagram</h5>
+          <a href="https://www.instagram.com/flowers_today.sv/" target="_blank" 
+             class="btn mt-4 btn-sm text-white border-0"
+             style="background: linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);">
+            <i class="bi bi-camera"></i> Visitar perfil
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+{% endblock %}

@@ -864,3 +864,7 @@ def Vista_Reportes_Administrador(request):
         'nombre': request.session.get('nombre_administrador', ''),
         'apellido': request.session.get('apellido_administrador', ''),
     })
+
+#Vista Contacto
+def Vista_Contacto(request):
+    return render(request,'contacto.html')
