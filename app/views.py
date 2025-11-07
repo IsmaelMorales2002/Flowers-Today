@@ -867,4 +867,7 @@ def Vista_Reportes_Administrador(request):
 
 #Vista Contacto
 def Vista_Contacto(request):
-    return render(request,'contacto.html')
+    activo = request.session.get('activo', False)
+    return render(request,'contacto.html',{
+        'activo': activo
+    })
