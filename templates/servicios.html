@@ -3,7 +3,6 @@
 {% block title %}Servicio Personalizado{% endblock %}
 
 {% block content %}
-
 <div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-lg-6 col-md-8">
@@ -15,13 +14,16 @@
 
         <div class="card-body p-4">
           <!-- FORMULARIO SERVICIO PERSONALIZADO (Cliente) -->
-          <form method="POST" action="{% url 'CrearServicio' %}">
+          <form 
+            method="POST" 
+            action="{% if activo %}{% url 'CrearServicio' %}{% else %}#{% endif %}"
+          >
             {% csrf_token %}
 
             <!-- Categoría -->
             <div class="mb-3">
               <label for="categoria" class="form-label fw-bold">Categoría del servicio</label>
-              <select id="categoria" name="categoriaServicio" class="form-select" required>
+              <select id="categoria" name="categoriaServicio" class="form-select" required {% if not activo %}disabled{% endif %}>
                 <option value="" disabled selected>Seleccione una categoría</option>
                 {% for cat in categorias %}
                 <option value="{{cat.id_categoria_servicio}}">{{cat.nombre_categoria_servicio}}</option>
@@ -40,6 +42,7 @@
                 maxlength="145"
                 placeholder="Ej: Quiero un arreglo con rosas rojas y blancas para aniversario…" 
                 required
+                {% if not activo %}disabled{% endif %}
               ></textarea>
             </div>
 
@@ -54,7 +57,9 @@
                 min="1" 
                 step="1" 
                 placeholder="Ejemplo: 3" 
-                required>
+                required
+                {% if not activo %}disabled{% endif %}
+              >
             </div>
 
             <p class="text-muted small mb-3">
@@ -63,18 +68,43 @@
 
             <!-- Botón Enviar -->
             <div class="text-center mt-4">
-              <button type="submit" class="btn px-4 py-2 rounded-pill text-white" style="background-color: #6C2DC7;">
+              <button 
+                type="{% if activo %}submit{% else %}button{% endif %}" 
+                class="btn px-4 py-2 rounded-pill text-white"
+                style="background-color: #6C2DC7;"
+                {% if not activo %}data-bs-toggle="modal" data-bs-target="#modalLoginServicio"{% endif %}
+              >
                 <i class="bi bi-send-fill me-1"></i>Enviar solicitud
               </button>
             </div>
 
           </form>
         </div>
-
       </div>
 
     </div>
   </div>
 </div>
 
+<!-- MODAL: LOGIN REQUERIDO PARA SERVICIO -->
+<div class="modal fade" id="modalLoginServicio" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title"><i class="bi bi-person-lock me-2"></i>Inicia sesión para continuar</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body text-center text-dark">
+        <p class="mb-4">Para enviar una solicitud de servicio personalizado, primero debes iniciar sesión.</p>
+        <i class="bi bi-person-circle text-dark display-1 mb-3"></i>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+        <a href="{% url 'vista_login' %}" class="btn text-white" style="background-color: #6C2DC7;">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar sesión
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

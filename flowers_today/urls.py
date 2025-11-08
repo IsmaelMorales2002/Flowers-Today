@@ -30,6 +30,7 @@ urlpatterns = [
     path('flores/',Vista_Flores,name='vista_flores'),
     path('servicio/',Vista_Solicitar_Servicio,name='vista_servicio'),
     path('solicitudes/',Vista_SolicitudesPedidos,name='vista_solicitudesPedidos'),
+    path('contacto/',Vista_Contacto,name='vista_contacto'),
 
     #Vistas Administrador
     path('administracion/',Vista_Inicio_Administrador,name='vista_inicio_administrador'),
@@ -84,6 +85,7 @@ urlpatterns = [
     path('CrearServicio/',RegistrarServicio,name='CrearServicio'),
     path('CrearComentario/',CrearComentario,name='CrearComentario'),
     path('RepuestaCliente/',RespuestaCliente,name='RespuesCliente'),
+    path('RechazarServicio/',RechazarServicio,name='RechazarServicio'),
     #Apis
     path('detalleCompra/<int:compra_id>',GET_Detalle_Compra,name='getdetalleCompras'),
 ]
