@@ -1,6 +1,7 @@
 import os
 import uuid
 from django.db import models
+from django.contrib.auth.hashers import make_password,is_password_usable
 
 #Funcion para crear Nombre Unico a la Imagen
 def ruta_unica(instance, filename):
@@ -36,6 +37,12 @@ class Usuario(models.Model):
         db_table = 'Usuario'
         verbose_name = 'Usuario'
         verbose_name_plural = 'Usuarios'
+    
+    def save(self,*args,**kwargs):
+        if not self.password_usuario.startswith('pbkdf2_') and is_password_usable(self.password_usuario):
+            self.password_usuario = make_password(self.password_usuario)
+        super().save(*args,**kwargs)
+
 
     def __str__(self):
         return f'ID: {self.id_usuario}, Nombre: {self.nombre_usuario}, Apellido: {self.apellido_usuario}, Correo: {self.correo_usuario}'
