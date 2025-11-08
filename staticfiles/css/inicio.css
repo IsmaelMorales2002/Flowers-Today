@@ -1,0 +1,146 @@
+/* =========================
+   Carrusel / Slider
+   ========================= */
+.slider::-webkit-scrollbar { display: none; }
+.slider { -ms-overflow-style: none; scrollbar-width: none; }
+.slider-wrapper { overflow: visible; }
+
+.slider-card { flex-shrink: 0; width: 90vw; max-width: 300px; }
+@media (min-width: 768px) { .slider-card { width: 48%; } }
+@media (min-width: 992px) { .slider-card { width: 30%; } }
+
+.arrow-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  z-index: 10; border-radius: 50%; width: 40px; height: 40px;
+}
+.left-arrow { left: 0; }
+.right-arrow { right: 0; }
+
+/* =========================
+   Imágenes de producto
+   ========================= */
+.producto-img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;          /* si prefieres marco blanco, usa 'contain' y agrega padding */
+  background: #fff;
+}
+
+/* =========================
+   Hero / Banners de bienvenida
+   ========================= */
+.welcome-banner {
+  background: linear-gradient(135deg, #6C2DC7 0%, #8A2BE2 100%);
+  color: #fff; padding: 25px 0; margin-bottom: 30px;
+  position: relative; overflow: hidden;
+  box-shadow: 0 4px 15px rgba(108, 45, 199, 0.3);
+}
+.welcome-banner::before{
+  content:""; position:absolute; top:-50%; right:-50%; width:200%; height:200%;
+  background: radial-gradient(circle, rgba(255,255,255,.1) 1px, transparent 1px);
+  background-size:20px 20px; animation: float 25s infinite linear; opacity:.4;
+}
+@keyframes float { 0%{transform:translate(-100px,-100px) rotate(0)} 100%{transform:translate(-100px,-100px) rotate(360deg)} }
+.welcome-banner.logged-in,
+.welcome-banner.guest { background: linear-gradient(135deg, #6C2DC7 0%, #4a148c 100%); }
+
+.welcome-content {
+  display:flex; align-items:center; gap:20px; position:relative; z-index:1;
+  max-width:800px; margin:0 auto;
+}
+.welcome-icon { font-size:3rem; opacity:.9; animation:pulse 2s infinite; flex-shrink:0; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+
+.welcome-text { flex:1; }
+.welcome-text h4 { font-weight:600; font-size:1.8rem; margin-bottom:8px; text-shadow:0 2px 4px rgba(0,0,0,.2); }
+.welcome-text p { font-size:1.1rem; opacity:.95; margin:0; line-height:1.5; text-shadow:0 1px 2px rgba(0,0,0,.1); }
+
+@media (max-width: 768px){
+  .welcome-content { flex-direction:column; text-align:center; gap:15px; }
+  .welcome-icon { font-size:2.5rem; }
+  .welcome-text h4 { font-size:1.5rem; }
+  .welcome-text p { font-size:1rem; }
+  .welcome-banner { padding:20px 0; }
+}
+@media (max-width: 576px){
+  .welcome-text h4 { font-size:1.3rem; }
+  .welcome-text p { font-size:.95rem; }
+  .welcome-icon { font-size:2rem; }
+}
+
+/* =========================
+   Overlay "Ver producto" sobre imagen (forzado)
+   ========================= */
+.img-wrap {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Velo sobre la imagen (apagado por defecto) */
+.img-wrap::after{
+  content:"";
+  position:absolute !important;
+  inset:0 !important;
+  background: rgba(0,0,0,.28);
+  opacity:0;
+  transition: opacity .25s ease;
+  z-index:1 !important;
+}
+
+/* Botón overlay (oculto por defecto) */
+.img-wrap .hover-cta{
+  position:absolute !important;
+  left:12px !important;
+  right:12px !important;
+  bottom:12px !important;
+
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+
+  opacity:0 !important;
+  transform: translateY(6px) !important;
+  transition: all .25s ease !important;
+
+  background:#212529 !important;
+  color:#fff !important;
+  border:0 !important;
+  padding:10px 16px !important;
+  border-radius:10px !important;
+  box-shadow:0 6px 24px rgba(0,0,0,.25) !important;
+
+  pointer-events:none !important;
+  z-index:2 !important;
+}
+
+/* Mostrar en hover/focus dentro de la imagen */
+.img-wrap:hover .hover-cta,
+.img-wrap:focus-within .hover-cta{
+  opacity:1 !important;
+  transform:none !important;
+  pointer-events:auto !important;
+}
+
+.img-wrap:hover::after,
+.img-wrap:focus-within::after{
+  opacity:1 !important;
+}
+
+/* Animación sutil de la imagen */
+.img-wrap img{ transition: transform .25s ease !important; }
+.img-wrap:hover img{ transform: scale(1.02) !important; }
+
+/* Anula cualquier ancho/margen global que tengas para .btn-verProducto */
+.img-wrap .btn-verProducto{
+  width:auto !important;
+  max-width:none !important;
+  margin:0 !important;
+  background:#212529 !important;
+  color:#fff !important;
+}
+
+/* En dispositivos sin hover (móvil): mostrar botón sin velo */
+@media (hover: none){
+  .img-wrap .hover-cta{ opacity:1 !important; pointer-events:auto !important; transform:none !important; }
+  .img-wrap::after{ opacity:0 !important; }
+}
