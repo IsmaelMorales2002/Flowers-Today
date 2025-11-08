@@ -142,13 +142,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Verificacion de actividad
 # 10 minutos de inactividad (600 segundos)
-"""SESSION_COOKIE_AGE = 600"""
+SESSION_COOKIE_AGE = 600
 
 #Renovacion si interactua
-"""SESSION_SAVE_EVERY_REQUEST = True"""
+SESSION_SAVE_EVERY_REQUEST = True
 
 #Eliminar datos de sesión cuando se cierra el navegador (Opcional)
-#SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 #Sesion Para Token de Recuperacion
 PASSWORD_RESET_TIMEOUT = 300
