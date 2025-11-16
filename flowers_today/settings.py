@@ -28,14 +28,16 @@ DEBUG = False
 # CAMBIAR EN PRODUCCION!
 ALLOWED_HOSTS = [
     'flowers-today-production.up.railway.app',
-    '127.0.0.1'
+    'flowers-today-production-38c5.up.railway.app'
+    '127.0.0.1',
 ]
 # CAMBIAR EN PRODUCCION!
 
 #TODO : CAMBIAR EN PRODUCCION
 CSRF_TRUSTED_ORIGINS = [
     'https://flowers-today-production.up.railway.app',
-    'http://127.0.0.1:8000'
+    'https://flowers-today-production-38c5.up.railway.app'
+    'http://127.0.0.1:8000',
 ]
 
 # Application definition
