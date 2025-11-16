@@ -532,7 +532,7 @@ def Actualizar_Clave(request,uidb64,token):
 
 #Logica Para enviar correos de recuperacion de clave 
 def Correo_Recuperacion(request):
-    correo_destinatario = request.POST.get('txtCorreoUsuario').strip()
+    correo_destinatario = request.POST.get('txtCorreoUsuario','').strip()
     contexto = {}
 
     if correo_destinatario:

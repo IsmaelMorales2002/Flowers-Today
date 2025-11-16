@@ -161,11 +161,11 @@ PASSWORD_RESET_TIMEOUT = 300
 
 #Configuracion de envio de correo
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp-relay.brevo.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
-EMAIL_HOST_USER = 'alesibrian25@gmail.com'
-EMAIL_HOST_PASSWORD = 'sfga ecgy qeeb xeyu'
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_HOST_USER = os.getenv("BREVO_SMTP_USER")
+EMAIL_HOST_PASSWORD = os.getenv("BREVO_SMTP_KEY")
+DEFAULT_FROM_EMAIL = os.getenv("BREVO_SMTP_FROM")
