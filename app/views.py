@@ -20,6 +20,8 @@ from django.db.models import Sum, Count, F, DecimalField, ExpressionWrapper
 from decimal import Decimal
 from django.db.models.functions import TruncMonth, TruncDate
 from django.db.models import F, Case, When, Value, BooleanField
+import sib_api_v3_sdk
+from sib_api_v3_sdk.rest import ApiException
 
 # Vista_Inicio, muestra la vista inicio.html
 def Vista_Inicio_Cliente(request):
@@ -543,33 +545,40 @@ def Correo_Recuperacion(request):
             contexto['error_usuario'] = 'Usuario No Encontrado'
             return render(request,'recuperar_password.html',contexto)
         
-        # Generar UID y Tokem
+        # Generar UID y Token
         uid = urlsafe_base64_encode(force_bytes(usuario.id_usuario))
         token = token_generator.make_token(usuario)
 
-        # Enlace de recuperacion
+        # Enlace de recuperación
         enlace_recuperacion = request.build_absolute_uri(
-            reverse('vista_credencial',kwargs={'uidb64':uid, 'token': token})
+            reverse('vista_credencial', kwargs={'uidb64': uid, 'token': token})
         )
 
-        # Renderizar Plantilla HTML
-        mensaje = render_to_string('recuperacion.html',{
-            'enlace_recuperacion': enlace_recuperacion
-        })
+        # Renderizar HTML
+        mensaje_html = render_to_string('recuperacion.html', {'enlace_recuperacion': enlace_recuperacion})
 
-        # Enviar Correo
-        email = EmailMessage(
-            'Recuperación de Contraseña',
-            mensaje,
-            settings.DEFAULT_FROM_EMAIL,
-            [correo_destinatario]
+        # Configurar API de Brevo
+        configuration = sib_api_v3_sdk.Configuration()
+        configuration.api_key['api-key'] = os.environ.get("BREVO_API_KEY")
+        api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+
+        email = sib_api_v3_sdk.SendSmtpEmail(
+            to=[{"email": correo_destinatario}],
+            sender={"email": os.environ.get("BREVO_SMTP_FROM")},
+            subject="Recuperación de Contraseña",
+            html_content=mensaje_html
         )
-        email.content_subtype = 'html'
-        email.send()
-        messages.success(request,'!Enviado!')
+
+        try:
+            api_instance.send_transac_email(email)
+            messages.success(request, '!Correo enviado!')
+        except ApiException as e:
+            contexto['error_usuario'] = f"No se pudo enviar el correo: {e}"
+            return render(request, 'recuperar_password.html', contexto)
+
         return redirect('vista_recuperar_password')
     
-    return render(request,'recuperar_password.html',contexto)
+    return render(request,'recuperar_password.html', contexto)
 
 def Vista_Editar_Admi(request, id):
     # Protección de ruta
