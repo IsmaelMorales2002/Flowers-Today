@@ -110,6 +110,7 @@
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
   margin-bottom: 0.5rem;
@@ -120,6 +121,7 @@
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
   margin-bottom: 0.5rem;
