@@ -26,12 +26,16 @@ SECRET_KEY = 'django-insecure-4r=#z$i+4jszj_ba9^54$4v@x1m-oe5y0#y#hjq_cdejhg)eua
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 # CAMBIAR EN PRODUCCION!
-ALLOWED_HOSTS = ['flowers-today-production.up.railway.app']
+ALLOWED_HOSTS = [
+    'flowers-today-production.up.railway.app',
+    '127.0.0.1'
+]
 # CAMBIAR EN PRODUCCION!
 
 #TODO : CAMBIAR EN PRODUCCION
 CSRF_TRUSTED_ORIGINS = [
     'https://flowers-today-production.up.railway.app',
+    'http://127.0.0.1:8000'
 ]
 
 # Application definition

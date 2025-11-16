@@ -14,7 +14,7 @@ def Crear_Cuenta_Admi(request):
     nombre = request.POST.get('txtNombreN','').strip()
     apellido = request.POST.get('txtApellidoN','').strip()
     telefono = request.POST.get('txtTelefonoN','').strip()
-    correo = request.POST.get('txtCorreoN','').strip()
+    correo = request.POST.get('txtCorreoN','').strip().lower()
     password_plano = request.POST.get('txtPasswordN','').strip()
     tipo_rol = request.POST.get('txtRol')
     vista = request.POST.get('txtVista')
